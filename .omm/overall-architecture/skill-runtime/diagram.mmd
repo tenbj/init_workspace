@@ -1,0 +1,12 @@
+graph LR
+    meta-skills["A 域：元技能\nA01 创建 / A02 安装"]
+    governance-skills["B 域：系统治理\nB01-B06"]
+    warehouse-skills["C 域：数仓开发\nC01-C07"]
+    architecture-skills["D 域：架构文档\nD01-D03 OMM"]
+
+    meta-skills -->|"创建或安装"| governance-skills
+    governance-skills -->|"守门和记录"| warehouse-skills
+    governance-skills -->|"守门和记录"| architecture-skills
+    architecture-skills -->|"可视化"| meta-skills
+    architecture-skills -->|"可视化"| governance-skills
+    architecture-skills -->|"可视化"| warehouse-skills

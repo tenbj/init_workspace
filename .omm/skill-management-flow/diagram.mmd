@@ -1,0 +1,14 @@
+graph LR
+    skills-standard["技能管理标准\n.system/standards/Skills管理标准.md"]
+    workspace-registry["技能注册表\nworkspace-spec.json"]
+    skill-folders["技能真实目录\.agents/skills/"]
+    command-files["Claude 命令入口\.claude/commands/"]
+    stable-ids["稳定编号\nA01 / B04 / C03 / D01"]
+    installed-omm["OMM 三个技能\nD01 / D02 / D03"]
+
+    skills-standard -->|"定义域分类和命名"| workspace-registry
+    workspace-registry -->|"必须匹配"| skill-folders
+    workspace-registry -->|"派生命令文件"| command-files
+    stable-ids -->|"通过注册表解析"| workspace-registry
+    installed-omm -->|"登记到"| workspace-registry
+    installed-omm -->|"扩展 D 域"| skills-standard

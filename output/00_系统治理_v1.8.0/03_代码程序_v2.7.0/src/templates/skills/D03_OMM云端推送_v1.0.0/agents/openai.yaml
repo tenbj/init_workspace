@@ -1,0 +1,3 @@
+interface:
+  display_name: "OMM 云端推送"
+  short_description: "上传 .omm 架构文档到 oh-my-mermaid 云端"

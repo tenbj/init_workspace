@@ -1,0 +1,48 @@
+created: 2026-05-10T16:44:27.349Z
+updated: 2026-05-10T18:40:46.030Z
+update_count: 6
+last_field: description
+title: 治理强制门
+git_commit: 5321f3a
+git_branch: main
+children:
+  - execution
+  - final-validation
+  - health-check
+  - memory-write
+  - project-management
+  - session-start
+  - topic-routing
+  - version-backup
+prev_diagram: "﻿graph LR
+
+  \    session-start[\"????\\n??????\"]
+
+  \    health-check[\"B01 ????\\nframework-check.ps1\"]
+
+  \    topic-routing[\"????\\ndirection-rules.md\"]
+
+  \    project-management[\"B04 ?????\\noutput ???\"]
+
+  \    version-backup[\"B02 ????\\n.history ??\"]
+
+  \    execution[\"????\\n?? Skill ?????\"]
+
+  \    memory-write[\"B03 ????\\.memory ??\"]
+
+  \    final-validation[\"????\\nB01 ??????\"]
+
+
+  \    session-start -->|\"????\"| health-check
+
+  \    health-check -->|\"???????\"| topic-routing
+
+  \    topic-routing -->|\"?????\"| project-management
+
+  \    project-management -->|\"?? live ???\"| version-backup
+
+  \    version-backup -->|\"????\"| execution
+
+  \    execution -->|\"??????\"| memory-write
+
+  \    memory-write -->|\"??????\"| final-validation\r\n"

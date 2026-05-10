@@ -1,0 +1,9 @@
+created: 2026-05-10T16:44:25.806Z
+updated: 2026-05-10T18:40:45.766Z
+update_count: 3
+last_field: description
+kind: nested-class
+title: 数仓技能
+children: []
+parentPath:
+  - skill-runtime

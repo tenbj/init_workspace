@@ -1,0 +1,358 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>项目文件流向与用户使用方式</title>
+  <style>
+    :root {
+      --ink: #18212f;
+      --muted: #5a6678;
+      --line: #d8dee8;
+      --bg: #f7f8fb;
+      --panel: #ffffff;
+      --blue: #2f6feb;
+      --green: #17855c;
+      --amber: #9a6700;
+      --red: #c43b3b;
+      --violet: #7657d8;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      color: var(--ink);
+      background: var(--bg);
+      font: 14px/1.55 -apple-system, BlinkMacSystemFont, "Segoe UI", "Microsoft YaHei", sans-serif;
+    }
+
+    main {
+      max-width: 1160px;
+      margin: 0 auto;
+      padding: 28px 20px 44px;
+    }
+
+    h1, h2, h3, p { margin: 0; }
+    h1 { font-size: 30px; line-height: 1.2; }
+    h2 { margin-top: 28px; font-size: 20px; }
+    h3 { font-size: 15px; }
+
+    .top {
+      display: grid;
+      gap: 14px;
+      margin-bottom: 22px;
+    }
+
+    .meta {
+      color: var(--muted);
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .pill {
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: var(--panel);
+      padding: 3px 10px;
+      white-space: nowrap;
+    }
+
+    .panel {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 16px;
+      box-shadow: 0 1px 2px rgba(20, 31, 45, 0.04);
+    }
+
+    .pipeline {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(128px, 1fr));
+      gap: 10px;
+      align-items: stretch;
+    }
+
+    .node {
+      min-height: 104px;
+      border: 1px solid var(--line);
+      border-top: 4px solid var(--blue);
+      border-radius: 8px;
+      padding: 12px;
+      background: #fff;
+    }
+
+    .node:nth-child(2) { border-top-color: var(--green); }
+    .node:nth-child(3) { border-top-color: var(--amber); }
+    .node:nth-child(4) { border-top-color: var(--violet); }
+    .node:nth-child(5) { border-top-color: var(--red); }
+    .node small { display: block; color: var(--muted); margin-top: 6px; }
+
+    .arrowline {
+      margin-top: 12px;
+      color: var(--muted);
+      font-family: Consolas, "SFMono-Regular", monospace;
+      overflow-x: auto;
+      white-space: nowrap;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 12px;
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    th, td {
+      padding: 10px 11px;
+      border-bottom: 1px solid var(--line);
+      vertical-align: top;
+      text-align: left;
+    }
+
+    th {
+      background: #eef2f7;
+      font-size: 13px;
+      color: #334155;
+      white-space: nowrap;
+    }
+
+    tr:last-child td { border-bottom: 0; }
+    code {
+      font-family: Consolas, "SFMono-Regular", monospace;
+      background: #eef2f7;
+      border: 1px solid #dfe5ee;
+      border-radius: 4px;
+      padding: 1px 5px;
+      font-size: 12px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    .folder {
+      border-left: 4px solid var(--blue);
+      min-height: 112px;
+    }
+
+    .folder:nth-child(2) { border-left-color: var(--green); }
+    .folder:nth-child(3) { border-left-color: var(--amber); }
+    .folder:nth-child(4) { border-left-color: var(--violet); }
+    .folder:nth-child(5) { border-left-color: var(--red); }
+    .folder:nth-child(6) { border-left-color: #4b5563; }
+    .folder:nth-child(7) { border-left-color: #0f766e; }
+    .folder:nth-child(8) { border-left-color: #7c3aed; }
+    .folder p { margin-top: 6px; color: var(--muted); }
+
+    .rules {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    .rule {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 12px;
+      background: #fff;
+    }
+
+    .rule b {
+      display: block;
+      margin-bottom: 5px;
+    }
+
+    @media (max-width: 860px) {
+      .pipeline, .grid, .rules { grid-template-columns: 1fr; }
+      h1 { font-size: 24px; }
+      table { display: block; overflow-x: auto; }
+    }
+  </style>
+</head>
+<body>
+<main>
+  <section class="top">
+    <h1>项目文件流向与用户使用方式</h1>
+    <p class="meta">
+      <span class="pill">依据：workspace-spec.json v1.8.0</span>
+      <span class="pill">当前子项目：00_系统治理_v1.7.0</span>
+      <span class="pill">初始化工具：v2.6.1</span>
+      <span class="pill">体检状态：20 PASS / 0 FAIL / 1 WARN</span>
+    </p>
+  </section>
+
+  <section class="panel">
+    <h2>一眼看懂总流向</h2>
+    <div class="pipeline">
+      <div class="node">
+        <h3>1. 用户入口</h3>
+        <small><code>AGENTS.md</code> / <code>CLAUDE.md</code> 只写强制门和读取顺序。</small>
+      </div>
+      <div class="node">
+        <h3>2. SSOT 标准</h3>
+        <small><code>.system/standards/</code> 决定骨架、命名、Skill 注册和历史规则。</small>
+      </div>
+      <div class="node">
+        <h3>3. 执行层</h3>
+        <small><code>.agents/rules/</code> 常驻约束；<code>.agents/skills/</code> 执行动作。</small>
+      </div>
+      <div class="node">
+        <h3>4. 当前产出</h3>
+        <small><code>output/</code> 放完整成果；<code>.memory/</code> 放当前态记忆。</small>
+      </div>
+      <div class="node">
+        <h3>5. 历史留痕</h3>
+        <small><code>.history/</code> 只存备份快照；不作为 live 文件继续编辑。</small>
+      </div>
+    </div>
+    <div class="arrowline">
+      input/资料 -> 入口强制门 -> SSOT 标准 -> Rule/Skill 执行 -> B02 备份 -> output 产出 -> B03 记忆 -> history 留痕
+    </div>
+  </section>
+
+  <h2>目录职责</h2>
+  <div class="grid">
+    <div class="panel folder">
+      <h3><code>input/</code></h3>
+      <p>用户给的权威资料入口，只读参考。体检发现当前有一个治理类文档疑似误放：<code>skills问题记录.md</code>。</p>
+    </div>
+    <div class="panel folder">
+      <h3><code>.system/standards/</code></h3>
+      <p>机器和人共同遵守的标准源。冲突时，标准高于 Rule、Skill 和 output 过程稿。</p>
+    </div>
+    <div class="panel folder">
+      <h3><code>.agents/rules/</code></h3>
+      <p>常驻执行规则：方向归属、命名、记忆、版本控制。</p>
+    </div>
+    <div class="panel folder">
+      <h3><code>.agents/skills/</code></h3>
+      <p>可执行工作流：B01 体检、B02 备份、B03 记忆、B04 子项目、C 系列数仓等。</p>
+    </div>
+    <div class="panel folder">
+      <h3><code>output/</code></h3>
+      <p>唯一成果输出区。每个话题是一个子项目，内部固定为 01 问答、02 研究、03 代码。</p>
+    </div>
+    <div class="panel folder">
+      <h3><code>.memory/</code></h3>
+      <p>当前态记忆：对话记录、系统记录、知识提炼、全局知识地图。</p>
+    </div>
+    <div class="panel folder">
+      <h3><code>.history/</code></h3>
+      <p>备份区。由 B02 或初始化工具生成，手工不直接往里写。</p>
+    </div>
+    <div class="panel folder">
+      <h3><code>.claude/commands/</code></h3>
+      <p>Claude 斜杠命令包装，一条命令对应一个注册 Skill。</p>
+    </div>
+  </div>
+
+  <h2>用户对话大致分 6 类</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>对话类型</th>
+        <th>用户常见说法</th>
+        <th>文件执行流向</th>
+        <th>主要落点</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>1. 问答解释</td>
+        <td>“这是什么意思？”“帮我判断一下”</td>
+        <td>B01 -> 读 direction-rules -> 定位或创建子项目 -> B02 -> 写 01_问题答疑 -> B03</td>
+        <td><code>output/NN_主题/01_问题答疑/</code>、<code>.memory/对话记录/</code></td>
+      </tr>
+      <tr>
+        <td>2. 整理研究</td>
+        <td>“整理一下”“做个方案”“输出 HTML/Markdown”</td>
+        <td>B01 -> 话题归属 -> B02 PROJECT -> 写 02_课题研究 -> 更新目录/版本记录 -> B03</td>
+        <td><code>output/NN_主题/02_课题研究/</code></td>
+      </tr>
+      <tr>
+        <td>3. 代码程序</td>
+        <td>“改脚本”“加功能”“构建 exe”</td>
+        <td>B01 -> 读标准/规则 -> B02 -> 改 03_代码程序 或相关源码 -> 测试/构建 -> B03</td>
+        <td><code>output/NN_主题/03_代码程序/</code> 或受管源码目录</td>
+      </tr>
+      <tr>
+        <td>4. 系统治理</td>
+        <td>“改规则”“改 Skill”“调整入口/标准”</td>
+        <td>B01 -> 读 SSOT/Skills 管理标准 -> B02 CONFIG/FOLDER/MEMORY -> 改 .system/.agents/.claude -> 记录到 output/00 和 .memory/系统记录</td>
+        <td><code>.system/</code>、<code>.agents/</code>、<code>.claude/</code>、<code>output/00_系统治理/</code></td>
+      </tr>
+      <tr>
+        <td>5. 数仓开发</td>
+        <td>“查表”“生成 DWD SQL”“出字段 Excel”</td>
+        <td>C01 同步资料 -> C02/C03 只读查询 -> C05/C06/C07 生成产物 -> B03</td>
+        <td><code>input/data-assets</code>、<code>output/01_DWD开发产物/</code></td>
+      </tr>
+      <tr>
+        <td>6. 初始化升级</td>
+        <td>“初始化工作区”“升级骨架”“发布 exe”</td>
+        <td>运行 init_workspace -> 受管文件先备份到 .history -> 覆盖层更新 -> 必备层补缺 -> B01 复检</td>
+        <td><code>output/00_系统治理/03_代码程序/</code>、目标工作区根目录</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2>关键门</h2>
+  <div class="rules">
+    <div class="rule">
+      <b>B01 先体检</b>
+      会话开始先做只读健康检查；FAIL 先处理，WARN 可记录后继续。
+    </div>
+    <div class="rule">
+      <b>B02 先备份再修改</b>
+      改 live 文件前必须备份。<code>output/</code> 用 PROJECT，Rule 用 CONFIG，Skill/.system 用 FOLDER，知识提炼用 MEMORY。
+    </div>
+    <div class="rule">
+      <b>B03 先记忆再回复</b>
+      有知识回答或文件操作就写记忆；涉及 output 产出时至少写项目对话记录。
+    </div>
+  </div>
+
+  <h2>最短判断法</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>如果用户要...</th>
+        <th>先看哪里</th>
+        <th>通常写哪里</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>理解、判断、说明</td>
+        <td><code>direction-rules.md</code> 和现有 <code>output/</code> 子项目</td>
+        <td><code>01_问题答疑</code></td>
+      </tr>
+      <tr>
+        <td>完整整理、研究、方案</td>
+        <td><code>.system/standards/</code>、相关 Rule/Skill、现有产出</td>
+        <td><code>02_课题研究</code></td>
+      </tr>
+      <tr>
+        <td>生成脚本、SQL、工具</td>
+        <td>对应 Skill 和代码目录</td>
+        <td><code>03_代码程序</code></td>
+      </tr>
+      <tr>
+        <td>改框架规则或 Skill</td>
+        <td><code>workspace-spec.json</code>、<code>Skills管理标准.md</code></td>
+        <td><code>.system/</code>、<code>.agents/</code>，并在 <code>output/00</code> 留过程说明</td>
+      </tr>
+    </tbody>
+  </table>
+</main>
+</body>
+</html>

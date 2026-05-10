@@ -1,0 +1,3 @@
+interface:
+  display_name: "OMM 架构扫描"
+  short_description: "扫描代码结构并生成 .omm 架构文档"

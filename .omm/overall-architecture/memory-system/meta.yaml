@@ -1,0 +1,28 @@
+created: 2026-05-10T16:44:26.072Z
+updated: 2026-05-10T18:37:08.261Z
+update_count: 5
+last_field: diagram
+kind: nested-class
+title: 记忆系统
+children:
+  - conversation-records
+  - global-map
+  - knowledge-distill
+  - system-records
+parentPath: []
+prev_diagram: "﻿graph TD
+
+  \    conversation-records[\"????\\n.memory/????/\"]
+
+  \    system-records[\"????\\n.memory/????/\"]
+
+  \    knowledge-distill[\"????\\n.memory/????/\"]
+
+  \    global-map[\"??????\\n.memory/??????.md\"]
+
+
+  \    conversation-records -->|\"??????\"| knowledge-distill
+
+  \    system-records -->|\"??????\"| knowledge-distill
+
+  \    global-map -->|\"???? output ???\"| conversation-records\r\n"

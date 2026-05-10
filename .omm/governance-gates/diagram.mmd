@@ -1,0 +1,17 @@
+graph LR
+    session-start["会话开始\n进入项目工作"]
+    health-check["B01 框架体检\nframework-check.ps1"]
+    topic-routing["话题归属\ndirection-rules.md"]
+    project-management["B04 子项目管理\noutput 子项目"]
+    version-backup["B02 版本备份\n.history 快照"]
+    execution["执行任务\n调用 Skill 或局部修改"]
+    memory-write["B03 写入记忆\.memory 记录"]
+    final-validation["最终验证\nB01 或针对性检查"]
+
+    session-start -->|"第一道门"| health-check
+    health-check -->|"知识回答前进入"| topic-routing
+    topic-routing -->|"新话题创建"| project-management
+    project-management -->|"修改 live 文件前"| version-backup
+    version-backup -->|"随后执行"| execution
+    execution -->|"产生信息增量"| memory-write
+    memory-write -->|"再确认一致性"| final-validation

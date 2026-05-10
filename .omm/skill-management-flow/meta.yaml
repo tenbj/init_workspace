@@ -1,0 +1,40 @@
+created: 2026-05-10T16:44:29.141Z
+updated: 2026-05-10T18:40:47.307Z
+update_count: 7
+last_field: diagram
+title: 技能管理流程
+git_commit: 5321f3a
+git_branch: main
+children:
+  - command-files
+  - installed-omm
+  - skill-folders
+  - skills-standard
+  - stable-ids
+  - workspace-registry
+prev_diagram: "graph LR
+
+  \    skills-standard[\"Skills 管理标准\\n.system/standards/Skills管理标准.md\"]
+
+  \    workspace-registry[\"Skill 注册表\\nworkspace-spec.json\"]
+
+  \    skill-folders[\"Skill 真实目录\\.agents/skills/\"]
+
+  \    command-files[\"Claude 命令入口\\.claude/commands/\"]
+
+  \    stable-ids[\"稳定编号\\nA01 / B04 / C03 / D01\"]
+
+  \    installed-omm[\"OMM 三个 Skill\\nD01 / D02 / D03\"]
+
+
+  \    skills-standard -->|\"定义域分类和命名\"| workspace-registry
+
+  \    workspace-registry -->|\"必须匹配\"| skill-folders
+
+  \    workspace-registry -->|\"派生命令文件\"| command-files
+
+  \    stable-ids -->|\"通过注册表解析\"| workspace-registry
+
+  \    installed-omm -->|\"登记到\"| workspace-registry
+
+  \    installed-omm -->|\"扩展 D 域\"| skills-standard\r\n"

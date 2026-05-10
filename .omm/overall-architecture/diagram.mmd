@@ -1,0 +1,26 @@
+graph LR
+    agent-entrypoints["智能体入口\nAGENTS.md / CLAUDE.md / .claude/commands/"]
+    workspace-standards["工作区标准\n.system/standards/"]
+    execution-rules["执行规则\n.agents/rules/"]
+    skill-runtime["技能运行层\n.agents/skills/"]
+    memory-system["记忆系统\n.memory/"]
+    output-projects["输出子项目\noutput/"]
+    history-backups["历史备份\n.history/"]
+    external-input["外部输入\ninput/"]
+
+    agent-entrypoints -->|"会话入口读取并转向"| workspace-standards
+    workspace-standards -->|"定义骨架与注册表"| skill-runtime
+    workspace-standards -->|"约束"| execution-rules
+    execution-rules -->|"触发并编排"| skill-runtime
+    skill-runtime -->|"创建和更新"| output-projects
+    skill-runtime -->|"写入对话和系统记录"| memory-system
+    skill-runtime -->|"修改前快照进入"| history-backups
+    external-input -->|"为任务提供权威资料"| skill-runtime
+    output-projects -->|"沉淀为知识"| memory-system
+
+    classDef external fill:#585b70,stroke:#585b70,color:#cdd6f4
+    classDef entry fill:#89b4fa,stroke:#89b4fa,color:#1e1e2e
+    classDef store fill:#a6e3a1,stroke:#a6e3a1,color:#1e1e2e
+    class agent-entrypoints entry
+    class workspace-standards,skill-runtime,memory-system,output-projects,history-backups store
+    class external-input external

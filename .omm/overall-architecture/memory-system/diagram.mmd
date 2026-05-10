@@ -1,0 +1,9 @@
+graph TD
+    conversation-records["对话记录\n.memory/对话记录/"]
+    system-records["系统记录\n.memory/系统记录/"]
+    knowledge-distill["知识提炼\n.memory/知识提炼/"]
+    global-map["全局知识地图\n.memory/全局知识地图.md"]
+
+    conversation-records -->|"汇总项目对话"| knowledge-distill
+    system-records -->|"汇总治理变化"| knowledge-distill
+    global-map -->|"索引当前 output 子项目"| conversation-records
