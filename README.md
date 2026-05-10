@@ -69,6 +69,12 @@ CLAUDE.md             Claude 入口强制门
 
 这些文件可能包含本机配置、临时数据、历史快照或二进制产物。发布 exe 时请使用 GitHub Release 附件。
 
+GitHub 授权、创建仓库和发布 Release 的完整流程见：
+
+```text
+docs/GitHub发布授权与Release流程.md
+```
+
 ## 重要规则
 
 - `AGENTS.md` 和 `CLAUDE.md` 只做入口强制门，不承载完整制度。
