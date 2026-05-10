@@ -1,0 +1,2 @@
+display_name: "C03_Doris建表语句查询_v1.0.0"
+short_description: 运行脚本查询 Doris 表的 CREATE TABLE 语句，保存为本地 SQL 文件

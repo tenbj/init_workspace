@@ -1,0 +1,3 @@
+interface:
+  display_name: "B02_版本控制备份_v1.0.0"
+  short_description: "修改文件前执行备份与版本记录"

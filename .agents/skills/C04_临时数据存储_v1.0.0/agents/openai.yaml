@@ -1,0 +1,3 @@
+interface:
+  display_name: "C04_临时数据存储_v1.0.0"
+  short_description: "向测试库写入中间态数据，沙盒隔离生产环境，支持 DDL 建表与批量 DML 写入"

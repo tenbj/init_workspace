@@ -1,0 +1,56 @@
+# Local private configuration
+/.Claude.json
+/.claude/settings.local.json
+
+# Runtime input and temp contents
+/input/*
+!/input/.gitkeep
+/.temp/*
+!/.temp/.gitkeep
+
+# Local history snapshots; Git keeps repository history.
+/.history/**
+!.history/
+!.history/output/
+!.history/output/.gitkeep
+!.history/AGENTS/
+!.history/AGENTS/.gitkeep
+!.history/CLAUDE/
+!.history/CLAUDE/.gitkeep
+!.history/.agents/
+!.history/.agents/rules/
+!.history/.agents/rules/.gitkeep
+!.history/.agents/skills/
+!.history/.agents/skills/.gitkeep
+!.history/.claude/
+!.history/.claude/.gitkeep
+!.history/.claude/commands/
+!.history/.claude/commands/.gitkeep
+!.history/.memory/
+!.history/.memory/对话记录/
+!.history/.memory/对话记录/.gitkeep
+!.history/.memory/知识提炼/
+!.history/.memory/知识提炼/.gitkeep
+!.history/.memory/系统记录/
+!.history/.memory/系统记录/.gitkeep
+!.history/.memory/全局知识地图/
+!.history/.memory/全局知识地图/.gitkeep
+!.history/.system/
+!.history/.system/.gitkeep
+!.history/.system/standards/
+!.history/.system/standards/.gitkeep
+
+# Build and cache artifacts
+__pycache__/
+*.py[cod]
+*.pyo
+*.log
+**/build_tmp/
+*.spec
+*.exe
+
+# OS/editor noise
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/

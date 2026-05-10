@@ -1,0 +1,2 @@
+display_name: "C07_ODS-DWD-一键生成_v1.0.0"
+short_description: 输入 ODS 表名，一键生成 DWD SQL 和字段信息 xlsx 两个文件

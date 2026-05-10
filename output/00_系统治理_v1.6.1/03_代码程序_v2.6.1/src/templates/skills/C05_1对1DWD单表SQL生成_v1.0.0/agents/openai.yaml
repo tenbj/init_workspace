@@ -1,0 +1,2 @@
+display_name: "C05_1对1DWD单表SQL生成_v1.0.0"
+short_description: 输入 ODS 表名，一键生成符合命名规范的 DWD 一对一清洗 SQL

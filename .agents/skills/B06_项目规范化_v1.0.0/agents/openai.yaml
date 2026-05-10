@@ -1,0 +1,3 @@
+interface:
+  display_name: "B06_项目规范化_v1.0.0"
+  short_description: "脚本修复后由大模型按标准复核 output、.history、.memory 并记录异常"

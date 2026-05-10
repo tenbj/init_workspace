@@ -1,0 +1,2 @@
+display_name: "C06_DWD字段信息Excel生成_v1.0.0"
+short_description: 输入 DWD 表名，自动拉取 ODS/DIM 建表语句并生成字段信息 xlsx 文件

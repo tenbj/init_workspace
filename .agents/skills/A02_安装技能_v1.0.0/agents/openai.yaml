@@ -1,0 +1,3 @@
+interface:
+  display_name: "A02_安装技能_v1.0.0"
+  short_description: "评估、安装并本地化外部 skill 到当前项目"

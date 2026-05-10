@@ -1,0 +1,3 @@
+interface:
+  display_name: "C02_数仓生产库查询_v1.0.0"
+  short_description: "只读查询生产 Doris 数仓，支持多库探查与 SQL 执行，是数据分析类技能的基础底座"
