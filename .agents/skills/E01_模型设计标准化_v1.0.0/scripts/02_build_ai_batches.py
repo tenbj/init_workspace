@@ -1,0 +1,162 @@
+from __future__ import annotations
+
+import argparse
+from collections import defaultdict
+from pathlib import Path
+from typing import Any
+
+from e01_common import (
+    clean_text,
+    markdown_table,
+    read_json,
+    read_jsonl,
+    rel,
+    stringify_record,
+    to_project_path,
+    write_jsonl,
+)
+
+
+def parse_args() -> argparse.Namespace:
+    parser = argparse.ArgumentParser(description="Build AI review batches from parsed E01 artifacts.")
+    parser.add_argument("--run-dir", required=True)
+    parser.add_argument("--max-standard-rows", type=int, default=200)
+    return parser.parse_args()
+
+
+def contains_context(record: dict[str, Any], needles: list[str]) -> bool:
+    text = stringify_record(record)
+    return any(needle and needle in text for needle in needles)
+
+
+def catalog_for_sheet(catalog: list[dict[str, Any]], sheet_name: str, declared_table: str) -> list[dict[str, Any]]:
+    return [
+        row for row in catalog
+        if contains_context(row, [sheet_name, declared_table])
+    ]
+
+
+def dependency_for_sheet(dependency_rows: list[dict[str, Any]], sheet_name: str, declared_table: str) -> list[dict[str, Any]]:
+    return [
+        row for row in dependency_rows
+        if contains_context(row, [sheet_name, declared_table])
+    ]
+
+
+def make_decision_templates(fields_by_sheet: dict[str, list[dict[str, Any]]], entity_sheets: list[dict[str, Any]]) -> tuple[list[dict[str, Any]], list[dict[str, Any]]]:
+    field_templates: list[dict[str, Any]] = []
+    for sheet_name, fields in fields_by_sheet.items():
+        for field in fields:
+            field_templates.append({
+                "sheet_name": sheet_name,
+                "row_number": field["row_number"],
+                "current_field_name": field.get("field_name", ""),
+                "recommended_field_name": "",
+                "decision": "",
+                "confidence": "",
+                "reason": "",
+                "human_question": "",
+                "writeback_allowed": False,
+            })
+
+    table_templates = [
+        {
+            "sheet_name": sheet["sheet_name"],
+            "current_table_name": sheet.get("declared_table", ""),
+            "recommended_table_name": "",
+            "decision": "",
+            "confidence": "",
+            "reason": "",
+            "human_question": "",
+        }
+        for sheet in entity_sheets
+    ]
+    return field_templates, table_templates
+
+
+def main() -> None:
+    args = parse_args()
+    run_dir = to_project_path(args.run_dir)
+    if not run_dir.exists():
+        raise FileNotFoundError(run_dir)
+
+    entity_sheets = read_jsonl(run_dir / "01_parse" / "entity_sheets.jsonl")
+    entity_fields = read_jsonl(run_dir / "01_parse" / "entity_fields.jsonl")
+    catalog = read_json(run_dir / "01_parse" / "model_catalog.json")
+    dependency = read_json(run_dir / "01_parse" / "dependency_raw.json")
+    standard = read_json(run_dir / "01_parse" / "standard_library_raw.json")
+
+    fields_by_sheet: dict[str, list[dict[str, Any]]] = defaultdict(list)
+    for field in entity_fields:
+        fields_by_sheet[field["sheet_name"]].append(field)
+
+    sheet_lookup = {sheet["sheet_name"]: sheet for sheet in entity_sheets}
+    standard_context = {
+        "rules": standard.get("rules", [])[:args.max_standard_rows],
+        "mappings": standard.get("mappings", [])[:args.max_standard_rows],
+        "note": "标准库是 AI 权威参考资料，不是脚本语义规则。",
+    }
+
+    batches: list[dict[str, Any]] = []
+    for sheet_name, fields in fields_by_sheet.items():
+        sheet = sheet_lookup.get(sheet_name, {})
+        declared_table = sheet.get("declared_table", "")
+        batches.append({
+            "batch_id": f"entity:{sheet_name}",
+            "sheet_name": sheet_name,
+            "declared_table": declared_table,
+            "instructions": {
+                "goal": "全量评审本实体 sheet 的字段命名、字段描述、参考字段、参考库表和标准库符合度。",
+                "script_boundary": "脚本不做语义预筛；请 AI 对所有字段逐行判断。",
+                "output_schema": "见 references/ai_decision_schema.md",
+            },
+            "model_context": {
+                "entity_sheet": sheet,
+                "catalog_rows": catalog_for_sheet(catalog, sheet_name, declared_table),
+                "dependency_rows": dependency_for_sheet(dependency, sheet_name, declared_table),
+            },
+            "standard_library_context": standard_context,
+            "fields": fields,
+        })
+
+    write_jsonl(run_dir / "02_ai_batches" / "ai_field_review_batches.jsonl", batches)
+
+    index_rows = []
+    for batch in batches:
+        index_rows.append([
+            batch["batch_id"],
+            batch["sheet_name"],
+            batch.get("declared_table", ""),
+            len(batch["fields"]),
+            "待 AI 评审",
+        ])
+    batch_index = "# AI 批次索引\n\n" + markdown_table(
+        ["batch_id", "sheet", "declared_table", "字段行数", "状态"],
+        index_rows,
+    )
+    (run_dir / "02_ai_batches" / "batch_index.md").write_text(batch_index, encoding="utf-8")
+
+    field_templates, table_templates = make_decision_templates(fields_by_sheet, entity_sheets)
+    write_jsonl(run_dir / "03_ai_decisions" / "ai_field_review_decisions.template.jsonl", field_templates)
+    write_jsonl(run_dir / "03_ai_decisions" / "ai_table_review_decisions.template.jsonl", table_templates)
+    write_jsonl(run_dir / "03_ai_decisions" / "ai_standard_gaps.template.jsonl", [])
+
+    summary = [
+        "# AI 决策填写说明",
+        "",
+        f"- 工作包：`{rel(run_dir / '02_ai_batches' / 'ai_field_review_batches.jsonl')}`",
+        f"- 字段决策模板：`{rel(run_dir / '03_ai_decisions' / 'ai_field_review_decisions.template.jsonl')}`",
+        "- 请复制模板内容，填充后保存为 `ai_field_review_decisions.jsonl`。",
+        "- 表名决策保存为 `ai_table_review_decisions.jsonl`。",
+        "- 标准缺口保存为 `ai_standard_gaps.jsonl`，没有缺口时可为空文件。",
+        "",
+    ]
+    (run_dir / "03_ai_decisions" / "ai_decision_summary.md").write_text("\n".join(summary), encoding="utf-8")
+
+    print(f"[OK] batches={len(batches)}")
+    print(f"[OK] field_decision_template_rows={len(field_templates)}")
+    print(f"[OK] batch_index={rel(run_dir / '02_ai_batches' / 'batch_index.md')}")
+
+
+if __name__ == "__main__":
+    main()
