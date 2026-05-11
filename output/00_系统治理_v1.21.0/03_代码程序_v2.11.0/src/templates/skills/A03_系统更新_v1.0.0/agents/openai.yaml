@@ -1,0 +1,3 @@
+interface:
+  display_name: "A03_系统更新_v1.0.0"
+  short_description: "识别核心骨架变更并更新 .system"

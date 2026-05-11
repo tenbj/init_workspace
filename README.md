@@ -9,19 +9,20 @@
 - 同时支持 Codex 与 Claude Code 的入口文件：`AGENTS.md` 和 `CLAUDE.md`。
 - 通过 `.system/standards/` 管理 SSOT 标准，避免规则散落在各个 Skill 中。
 - 通过稳定 Skill 编号（如 `B04`、`C01`）做意图分流，降低 Skill 改名或版本升级后的维护成本。
+- 每次运行初始化程序时，会在 `.history/.system/更新日志.md` 追加一条记录，标明本次是初始化还是升级。
 
 ## 当前版本
 
-- 工作区骨架标准：`workspace-spec.json` v1.8.0
-- 系统治理子项目：`00_系统治理_v1.6.1`
-- 初始化程序：v2.6.1
-- Windows 可执行文件：`初始化工作区_v2.6.1.exe`
+- 工作区骨架标准：`workspace-spec.json` v1.14.0
+- 系统治理子项目：`00_系统治理_v1.21.0`
+- 初始化程序：v2.11.0
+- Windows 可执行文件：`初始化工作区_v2.11.0.exe`
 
 如果 GitHub Release 已发布，建议从 Release 页面下载 exe；源码中保留构建脚本，可自行重新构建。
 
 ## 快速使用
 
-1. 下载 Release 中的 `初始化工作区_v2.6.1.exe`。
+1. 下载 Release 中的 `初始化工作区_v2.11.0.exe`。
 2. 将 exe 放到目标工作区目录。
 3. 双击运行，选择初始化或升级。
 4. 工具会生成或更新 `.agents/`、`.system/`、`.memory/`、`.history/`、`input/`、`output/` 等目录。
@@ -33,13 +34,13 @@
 在 Windows PowerShell 中运行：
 
 ```powershell
-powershell -ExecutionPolicy Bypass -File "output\00_系统治理_v1.6.1\03_代码程序_v2.6.1\src\build.ps1"
+powershell -ExecutionPolicy Bypass -File "output\00_系统治理_v1.21.0\03_代码程序_v2.11.0\src\build.ps1"
 ```
 
 构建结果会生成在：
 
 ```text
-output/00_系统治理_v1.6.1/03_代码程序_v2.6.1/dist/
+output/00_系统治理_v1.21.0/03_代码程序_v2.11.0/dist/
 ```
 
 ## 目录说明

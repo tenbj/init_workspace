@@ -1,0 +1,4 @@
+interface:
+  display_name: "B10_课题分离_v1.0.0"
+  short_description: "把混沌表达拆成事实、感受、判断、假设、目标和约束。"
+  default_prompt: "使用 /B10 请只把下面这段混沌表达拆清楚，不要给实验、行动计划或内容选题："
