@@ -1,0 +1,3 @@
+interface:
+  display_name: "F01_钉钉文档下载_v1.1.0"
+  short_description: "下载钉钉在线文档并校验本地文件"

@@ -1,0 +1,26 @@
+{
+  "defaultDocument": "标准库",
+  "chromeDebugPort": 9222,
+  "chromeProfileDir": "../.tmp/alidocs-chrome-profile",
+  "downloadDir": "../outputs",
+  "documents": {
+    "标准库": {
+      "type": "dingtalk-alidocs-spreadsheet",
+      "url": "https://alidocs.dingtalk.com/spreadsheetv2/63PknjlVmcQkX7yo/edit?docKey=MAeqxeba1rVr6O8j&dentryKey=63PknjlVmcQkX7yo&type=s",
+      "outputFile": "标准库.xlsx",
+      "format": "xlsx",
+      "expectedSheets": [
+        {
+          "name": "规则标准库",
+          "minRows": 1,
+          "minCols": 1
+        },
+        {
+          "name": "映射标准库",
+          "minRows": 1,
+          "minCols": 1
+        }
+      ]
+    }
+  }
+}
