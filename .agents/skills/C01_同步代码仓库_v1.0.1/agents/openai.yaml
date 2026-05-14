@@ -1,0 +1,4 @@
+interface:
+  display_name: "C01_同步代码仓库_v1.0.1"
+  short_description: "缺失时从默认远端克隆并强制同步 input/data-assets 到 master"
+  default_prompt: "使用 /C01 将 ./input/data-assets 强制同步到 git@git.rabbitgoo.com:dw-dev/data-assets.git 的 master 最新状态；如果本地缺失则先自动克隆，并覆盖本地改动。"
