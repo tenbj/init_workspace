@@ -4,6 +4,41 @@ All notable public changes to this project are documented here.
 
 ## [Unreleased]
 
+## [v2.13.0] - 2026-05-15
+
+### Highlights
+
+- Added the `E03_模型命名建议_v1.0.0` Skill for lightweight model and field naming recommendations.
+- Refreshed bundled initializer templates from the live workspace, now including 28 registered Skills and `workspace-spec.json` v1.19.0.
+- Rebuilt the Windows Release asset with the English filename `init_workspace_v2.13.0.exe`.
+
+### Added
+
+- `E03_模型命名建议_v1.0.0` copies a model design workbook and writes recommended field names without running the full E01 review workflow.
+- The bundled templates now include the E03 Skill, its script, references, and Claude command wrapper.
+
+### Changed
+
+- `SKELETON_VERSION` is now `2.13.0`.
+- `SSO_SPEC_VERSION` is aligned to `workspace-spec.json` v1.19.0.
+- `Skills管理标准.md` is aligned to v1.12.0 and lists three E-domain model design Skills.
+- README version and build paths now point to the v2.13.0 initializer.
+
+### Upgrade Notes
+
+- Existing workspaces can continue to upgrade in place; managed files are backed up before replacement.
+- Download the executable from GitHub Release assets. The binary is not intended to be committed as a normal Git file.
+
+### Assets
+
+- `init_workspace_v2.13.0.exe`
+- Size: `11.16 MB`
+- SHA256: `C2CCF3186875896446B4802354B43C7489D6A179BE34E330803C9C31E7264CC5`
+
+### Full Diff
+
+- `v2.12.0...v2.13.0`
+
 ## [v2.12.0] - 2026-05-15
 
 ### Highlights

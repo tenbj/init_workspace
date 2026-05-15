@@ -6,7 +6,7 @@
 #>
 $ErrorActionPreference = "Stop"
 Set-Location $PSScriptRoot
-$Version = "2.12.0"
+$Version = "2.13.0"
 $ExeName = "init_workspace_v$Version"
 Write-Host ""
 Write-Host "=========================================="

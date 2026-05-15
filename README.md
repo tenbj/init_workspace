@@ -13,16 +13,16 @@
 
 ## 当前版本
 
-- 工作区骨架标准：`workspace-spec.json` v1.14.0
-- 系统治理子项目：`00_系统治理_v1.21.0`
-- 初始化程序：v2.11.0
-- Windows 可执行文件：`初始化工作区_v2.11.0.exe`
+- 工作区骨架标准：`workspace-spec.json` v1.19.0
+- 系统治理子项目：`00_系统治理_v1.24.0`
+- 初始化程序：v2.13.0
+- Windows 可执行文件：`init_workspace_v2.13.0.exe`
 
 如果 GitHub Release 已发布，建议从 Release 页面下载 exe；源码中保留构建脚本，可自行重新构建。
 
 ## 快速使用
 
-1. 下载 Release 中的 `初始化工作区_v2.11.0.exe`。
+1. 下载 Release 中的 `init_workspace_v2.13.0.exe`。
 2. 将 exe 放到目标工作区目录。
 3. 双击运行，选择初始化或升级。
 4. 工具会生成或更新 `.agents/`、`.system/`、`.memory/`、`.history/`、`input/`、`output/` 等目录。
@@ -34,13 +34,13 @@
 在 Windows PowerShell 中运行：
 
 ```powershell
-powershell -ExecutionPolicy Bypass -File "output\00_系统治理_v1.21.0\03_代码程序_v2.11.0\src\build.ps1"
+powershell -ExecutionPolicy Bypass -File "output\00_系统治理_v1.24.0\03_代码程序_v2.13.0\src\build.ps1"
 ```
 
 构建结果会生成在：
 
 ```text
-output/00_系统治理_v1.21.0/03_代码程序_v2.11.0/dist/
+output/00_系统治理_v1.24.0/03_代码程序_v2.13.0/dist/
 ```
 
 ## 目录说明

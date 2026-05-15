@@ -1,0 +1,11 @@
+{
+    "schema":  "b09.init_exe_build.v1",
+    "built_at":  "2026-05-15 17:37:36",
+    "program_src":  "output/00_系统治理_v1.24.0/03_代码程序_v2.13.0/src",
+    "version":  "2.13.0",
+    "asset":  "output/00_系统治理_v1.24.0/03_代码程序_v2.13.0/dist/init_workspace_v2.13.0.exe",
+    "size_bytes":  11706557,
+    "size_mb":  11.16,
+    "sha256":  "C2CCF3186875896446B4802354B43C7489D6A179BE34E330803C9C31E7264CC5",
+    "update_manifest":  "output/00_系统治理_v1.24.0/03_代码程序_v2.13.0/src/.b09_update_manifest.json"
+}
