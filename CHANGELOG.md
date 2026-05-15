@@ -4,6 +4,41 @@ All notable public changes to this project are documented here.
 
 ## [Unreleased]
 
+## [v2.12.0] - 2026-05-15
+
+### Highlights
+
+- Upgraded the initializer to `v2.12.0` and changed the Release asset name to English: `init_workspace_v2.12.0.exe`.
+- Refreshed bundled templates from the current live workspace, including 27 registered Skills and `workspace-spec.json` v1.18.1.
+- Fixed Windows builds when PyInstaller is installed but the `pyinstaller` command is not on PATH.
+
+### Changed
+
+- `SKELETON_VERSION` is now `2.12.0`.
+- `SSO_SPEC_VERSION` is aligned to `workspace-spec.json` v1.18.1.
+- The build script now produces `init_workspace_v{version}.exe` instead of the previous Chinese filename.
+- Release cleanup now removes both old Chinese initializer names and the new English initializer names before rebuilding.
+
+### Fixed
+
+- `build.ps1` now invokes PyInstaller through `python -m PyInstaller`, avoiding PATH-dependent build failures.
+- Several `output/` subprojects were normalized to include all three required classification folders before release.
+
+### Upgrade Notes
+
+- Existing workspaces can continue to upgrade in place; managed files are backed up before replacement.
+- Download the executable from GitHub Release assets. The binary is not intended to be committed as a normal Git file.
+
+### Assets
+
+- `init_workspace_v2.12.0.exe`
+- Size: `11.16 MB`
+- SHA256: `B0A92FDA67633541E2D0F194A6F0CA614D84D072290BD71F98DC3DB054EA5DB8`
+
+### Full Diff
+
+- `v2.11.0...v2.12.0`
+
 ## [v2.11.0] - 2026-05-12
 
 ### Highlights
