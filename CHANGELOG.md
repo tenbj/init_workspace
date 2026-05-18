@@ -4,6 +4,55 @@ All notable public changes to this project are documented here.
 
 ## [Unreleased]
 
+## [v2.14.0] - 2026-05-18
+
+### Highlights
+
+- Added the `G01_HTML交互产物_v1.0.0` Skill for single-file HTML reports, diagrams, decision artifacts, data explorers, and lightweight interactive tools.
+- Refreshed bundled initializer templates from the live workspace, now including 29 registered Skills and `workspace-spec.json` v1.20.0.
+- Rebuilt and published the Windows Release asset as `init_workspace_v2.14.0.exe`, with manifest-tracked source templates, size, and SHA256.
+
+### Added
+
+- `G01_HTML交互产物_v1.0.0` provides a project-level entry for HTML artifacts while keeping the imported 16-mode HTML skill package in references.
+- The bundled templates now include the G01 Skill, HTML mode index, localized references, assets, and Claude command wrapper.
+- Added HTML documentation under `output/02_Skills管理体系_v1.22.0/02_课题研究_v1.7.0/`, including the G01 usage guide and the `init_workspace` project overview.
+
+### Changed
+
+- `SKELETON_VERSION` is now `2.14.0`.
+- `SSO_SPEC_VERSION` is aligned to `workspace-spec.json` v1.20.0.
+- `Skills管理标准.md` is aligned to v1.13.0 and adds the G-domain HTML artifact category.
+- README version and build paths now point to the v2.14.0 initializer.
+- The initializer bundle was regenerated from current live sources: `AGENTS.md`, `CLAUDE.md`, 4 rule files, 227 Skill files, and 4 standard files.
+- B09 release manifests are included with the source tree so the template refresh and executable build can be audited after release.
+
+### Security
+
+- The executable remains a GitHub Release asset only; `*.exe` is ignored for normal Git commits.
+- Private/runtime paths remain outside the release commit boundary: `.Claude.json`, `.claude/settings.local.json`, `.memory/`, `.history/`, `.temp/`, and `input/`.
+- The release candidate was checked with B01 and a sensitive-pattern scan before publishing.
+
+### Upgrade Notes
+
+- Existing workspaces can upgrade in place. The initializer backs up managed entry files, rules, Skills, standards, and Claude command wrappers before replacing them with the bundled templates.
+- G01 adds HTML artifact generation capability without changing the existing B/A/C/D/E/F Skill call patterns.
+- Download `init_workspace_v2.14.0.exe` from GitHub Release assets. The binary is intentionally not stored in the Git tree.
+
+### Assets
+
+- `init_workspace_v2.14.0.exe`
+- Platform: Windows
+- Source: `output/00_系统治理_v1.25.0/03_代码程序_v2.14.0/dist/init_workspace_v2.14.0.exe`
+- Size: `10.8 MB` (`11,321,112` bytes)
+- SHA256: `78C4EF40BF4B67044C9D15BD0AEF47C1A21DC6CCC53650DF98B1169B5D5C898E`
+- Build manifest: `output/00_系统治理_v1.25.0/03_代码程序_v2.14.0/dist/.b09_build_manifest.json`
+- Update manifest: `output/00_系统治理_v1.25.0/03_代码程序_v2.14.0/src/.b09_update_manifest.json`
+
+### Full Diff
+
+- `v2.13.0...v2.14.0`
+
 ## [v2.13.0] - 2026-05-15
 
 ### Highlights
