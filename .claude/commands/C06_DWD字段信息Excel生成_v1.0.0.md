@@ -1,1 +1,0 @@
-请读取并执行 .agents/skills/C06_DWD字段信息Excel生成_v1.0.0/SKILL.md

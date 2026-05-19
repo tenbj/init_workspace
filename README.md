@@ -13,16 +13,16 @@
 
 ## 当前版本
 
-- 工作区骨架标准：`workspace-spec.json` v1.20.0
-- 系统治理子项目：`00_系统治理_v1.25.0`
-- 初始化程序：v2.14.0
-- Windows 可执行文件：`init_workspace_v2.14.0.exe`
+- 工作区骨架标准：`workspace-spec.json` v1.22.0
+- 系统治理子项目：`00_系统治理`
+- 初始化程序：v2.15.0
+- Windows 可执行文件：`init_workspace_v2.15.0.exe`
 
-GitHub Release 附件提供 `init_workspace_v2.14.0.exe`。本次附件大小为 `10.8 MB`（`11,321,112` bytes），SHA256 为 `78C4EF40BF4B67044C9D15BD0AEF47C1A21DC6CCC53650DF98B1169B5D5C898E`；源码中保留构建脚本和 B09 manifest，可自行重新构建并校验。
+GitHub Release 附件提供 `init_workspace_v2.15.0.exe`。本次附件大小为 `10.79 MB`（`11,318,720` bytes），SHA256 为 `0F26289B2F869049E0042BB30C86BF2C06D31D668F473527D5DDEEF2BA53F65B`；源码中保留构建脚本和 B09 manifest，可自行重新构建并校验。
 
 ## 快速使用
 
-1. 下载 Release 中的 `init_workspace_v2.14.0.exe`。
+1. 下载 Release 中的 `init_workspace_v2.15.0.exe`。
 2. 将 exe 放到目标工作区目录。
 3. 双击运行，选择初始化或升级。
 4. 工具会生成或更新 `.agents/`、`.system/`、`.memory/`、`.history/`、`input/`、`output/` 等目录。
@@ -34,13 +34,13 @@ GitHub Release 附件提供 `init_workspace_v2.14.0.exe`。本次附件大小为
 在 Windows PowerShell 中运行：
 
 ```powershell
-powershell -ExecutionPolicy Bypass -File "output\00_系统治理_v1.25.0\03_代码程序_v2.14.0\src\build.ps1"
+powershell -ExecutionPolicy Bypass -File "output\00_系统治理\03_代码程序\src\build.ps1"
 ```
 
 构建结果会生成在：
 
 ```text
-output/00_系统治理_v1.25.0/03_代码程序_v2.14.0/dist/
+output/00_系统治理/03_代码程序/dist/
 ```
 
 ## 目录说明

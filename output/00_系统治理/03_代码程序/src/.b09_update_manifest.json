@@ -1,0 +1,40 @@
+{
+    "schema":  "b09.init_program_update.v1",
+    "updated_at":  "2026-05-19 23:02:01",
+    "program_src":  "output/00_系统治理/03_代码程序/src",
+    "version":  "2.15.0",
+    "spec_version":  "1.22.0",
+    "copied":  [
+                   {
+                       "kind":  "file",
+                       "source":  "AGENTS.md",
+                       "destination":  "output/00_系统治理/03_代码程序/src/templates/AGENTS.md",
+                       "files":  1
+                   },
+                   {
+                       "kind":  "file",
+                       "source":  "CLAUDE.md",
+                       "destination":  "output/00_系统治理/03_代码程序/src/templates/CLAUDE.md",
+                       "files":  1
+                   },
+                   {
+                       "kind":  "dir",
+                       "source":  ".agents/rules",
+                       "destination":  "output/00_系统治理/03_代码程序/src/templates/rules",
+                       "files":  4
+                   },
+                   {
+                       "kind":  "dir",
+                       "source":  ".agents/skills",
+                       "destination":  "output/00_系统治理/03_代码程序/src/templates/skills",
+                       "files":  227
+                   },
+                   {
+                       "kind":  "dir",
+                       "source":  ".system/standards",
+                       "destination":  "output/00_系统治理/03_代码程序/src/templates/system/standards",
+                       "files":  4
+                   }
+               ],
+    "notes":  "Templates were replaced from current workspace sources without diff comparison."
+}

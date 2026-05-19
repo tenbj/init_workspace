@@ -4,6 +4,49 @@ All notable public changes to this project are documented here.
 
 ## [Unreleased]
 
+## [v2.15.0] - 2026-05-19
+
+### Highlights
+
+- 发布稳定 live 路径模型：`output/` 子项目、三分类目录和 `.memory/对话记录` 不再把版本号写进当前路径，版本由 `版本记录.md`、历史快照、Git tag 和 Release 承载。
+- 发布稳定 Skill 命名模型：`.agents/skills` 目录、`.claude/commands` 文件和 `SKILL.md` YAML `name` 使用稳定名称，版本号保留在 `agents/openai.yaml` 的 `display_name`。
+- 重新同步初始化程序模板并封装 Windows 附件 `init_workspace_v2.15.0.exe`，内置 `workspace-spec.json` v1.22.0 和 29 个注册 Skill。
+
+### Changed
+
+- `SKELETON_VERSION` 升级为 `2.15.0`。
+- `SSO_SPEC_VERSION` 对齐到 `workspace-spec.json` v1.22.0。
+- `README.md` 改为稳定源码路径和 `v2.15.0` 英文 exe 附件名。
+- `B01_框架体检`、`B06_项目规范化`、`B02_版本控制备份`、`B04_子项目管理`、`A01_创建技能`、`A02_安装技能` 等受管模板同步稳定命名口径。
+- 初始化程序模板从当前 live 工作区全量刷新：`AGENTS.md`、`CLAUDE.md`、4 个 Rule 文件、227 个 Skill 文件和 4 个标准文件。
+
+### Security
+
+- `*.exe` 继续只作为 GitHub Release 附件发布，不作为普通 Git 文件提交。
+- `.Claude.json`、`.claude/settings.local.json`、`.memory/`、`.history/`、`.temp/` 和 `input/` 仍保持在普通提交边界之外。
+- 本次发布前执行 B01 体检、SHA256 复算和敏感信息扫描。
+
+### Upgrade Notes
+
+- 新建工作区会直接使用稳定 Skill 路径和稳定 output 路径模型。
+- 升级已有工作区时，初始化程序仍会先备份受管入口、Rules、Skills、Standards 和 Claude 命令，再替换为内置模板。
+- 已有工作区中的历史 output 目录不会被 exe 强制迁移；如需消除旧 `_v*` live 路径，应按当前工作区标准单独执行规范化治理。
+- 下载 GitHub Release 附件 `init_workspace_v2.15.0.exe`，不要从 Git 树中寻找二进制文件。
+
+### Assets
+
+- `init_workspace_v2.15.0.exe`
+- Platform: Windows
+- Source: `output/00_系统治理/03_代码程序/dist/init_workspace_v2.15.0.exe`
+- Size: `10.79 MB` (`11,318,720` bytes)
+- SHA256: `0F26289B2F869049E0042BB30C86BF2C06D31D668F473527D5DDEEF2BA53F65B`
+- Build manifest: `output/00_系统治理/03_代码程序/dist/.b09_build_manifest.json`
+- Update manifest: `output/00_系统治理/03_代码程序/src/.b09_update_manifest.json`
+
+### Full Diff
+
+- `v2.14.0...v2.15.0`
+
 ## [v2.14.0] - 2026-05-18
 
 ### Highlights

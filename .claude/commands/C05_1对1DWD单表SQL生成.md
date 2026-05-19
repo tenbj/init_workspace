@@ -1,0 +1,1 @@
+请读取并执行 .agents/skills/C05_1对1DWD单表SQL生成/SKILL.md
