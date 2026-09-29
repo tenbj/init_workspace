@@ -1,9 +1,9 @@
 {
   "schema": "b09.init_program_update.v1",
-  "updated_at": "2026-09-29 19:37:23",
+  "updated_at": "2026-09-29 19:51:30",
   "program_src": "output/00_系统治理/03_代码程序/src",
   "version": "2.15.0",
-  "spec_version": "1.24.0",
+  "spec_version": "1.25.0",
   "copied": [
     {
       "kind": "file",
@@ -27,7 +27,7 @@
       "kind": "dir",
       "source": ".agents/skills",
       "destination": "output/00_系统治理/03_代码程序/src/templates/skills",
-      "files": 251
+      "files": 265
     },
     {
       "kind": "dir",
@@ -36,5 +36,5 @@
       "files": 4
     }
   ],
-  "notes": "Live entries, rules, skills and standards copied after retiring D01/D02/D03 template directories to .temp. B01 is manual-only. Source/template update only; no EXE build or release performed."
+  "notes": "Templates synchronized for B11 generic Git workflow registration (source P03); 29 registered skills, B01 remains manual-only. Source/template changes only, no EXE build or release."
 }
