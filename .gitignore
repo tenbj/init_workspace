@@ -2,6 +2,15 @@
 /.Claude.json
 /.claude/settings.local.json
 
+# Local memory contents; retain directory skeleton placeholders.
+/.memory/**
+!/.memory/**/
+!/.memory/**/.gitkeep
+
+# Local project outputs; retain system governance sources.
+/output/*
+!/output/00_系统治理/
+
 # Runtime input and temp contents
 /input/*
 !/input/.gitkeep
