@@ -1,0 +1,39 @@
+{
+  "source": ".temp/skills_20260929/HH02_原型设计",
+  "source_skill": "HH02_原型设计",
+  "source_version": "1.0.0",
+  "installed_skill": "H01_原型设计",
+  "installed_version": "1.0.1",
+  "migration_date": "2026-09-29",
+  "changes": [
+    "按单字母功能域规则迁入H域并同步调用引用",
+    "保留原始入口与原始协议标识，增加本地迁入说明"
+  ],
+  "files": {
+    "input.schema.json": "7d2bb7a13879b7f0e9fddd408881cf521f35e34ce1c7fea6d07f372d2cea83d4",
+    "output.schema.json": "488e5528318a08fa3abea1cf366ec4e3246385451e09b4242f6d34cd8b9f8ad1",
+    "SKILL.md": "6c209b14d47d65198618438f3d04adabbe051b6bd80da576ba17ccdb1cba7e10",
+    "workflow.yaml": "4629ce040d67f0fac471e0bd5cc07946451f926a421884919711cd1b78fd4a27",
+    "agents/openai.yaml": "ea9ad93e17124cfcbce78f23b12d1f5c196ea6095ae02559f0f564b5a93c8b5a",
+    "assets/prototype-package/api.yaml": "92ebf69b33a4242fe480252a61d234b1fc920268a5597c1f7356ab4e6e60dc23",
+    "assets/prototype-package/database.sql": "b407638b553b5ec0b2300ca0440ac8cf80ea64c5449004355a532a2eac61d103",
+    "assets/prototype-package/interaction.json": "c24e9516a274ad4a596d12caee4675e106e62744f7ea01a96d502beb434e9174",
+    "assets/prototype-package/manifest.json": "539d84f7c90541dca6768b7495fea3ed4ae86581f169b753d2abd83fb1bd08e2",
+    "assets/prototype-package/prd.md": "fd866d65db406edcee568ad0c47eb42a67d388f2c5494ca7b332cb8c940f63d6",
+    "assets/prototype-package/prototype.html": "b43b4737a00083ec2bf83436ad6bdbdb1c55debb328c5ad0aaed0b88675aaf3a",
+    "assets/prototype-package/ui.schema.json": "ba4a3c57f5969cd1c62f067b3ad3f8275a67f00481eece0e41df236032ec4d03",
+    "assets/prototype-package/user-flow.md": "717202162b75196d6da09c774c68724c0b1eff70fb577459eb401efa4f5f5b45",
+    "evaluation/behavior-tdd.md": "dd29e21cc52fc9ba8307501d51e05ce82beabe2df6274aa482a79406b41ffab1",
+    "evaluation/checklist.md": "a9e277802441723ec70bf1b213ad9df7bf20cec5e9b2fb97fa957a3a8a353b7a",
+    "evaluation/test_cases.json": "0e17a5b217d461de9dae6ba6c41a0a74b5ebb307a773f7a55750ba3ffd8305fd",
+    "examples/订单详情输入.json": "53de7d95d37bbd6895fafed9f625082e0407bb5e6ffff706cb3ea94744abbe7a",
+    "references/ASOC协议.md": "42f65ace3d02a674ccf3d4aeacbd70a9a930a918940019850ba6c02f61dcfa12",
+    "references/原型产物规格.md": "84c67463594557e33d811078967ca2ad35138e01f61efb79038297388d570c39",
+    "references/独立运行与迁移规则.md": "8083040aac667db52c09854f2499be154437ec558b0eb6c6dfcd4c39fd421ef2",
+    "scripts/create_package.py": "dfcb2084217d2e76dc49115060a2a3ff7f3667c22335aaaf2bd94f2eecadd799",
+    "scripts/requirements.txt": "4a53977402a3e5fb0bf4c31cf5c3dfaccd7f6b6a1b8169df2ee34a6a1d31f73d",
+    "scripts/run_contract_tests.py": "0c232dffec703da89a29c722865be7ded2e91ecb63ade35b8841f99f5638d87a",
+    "scripts/validate_package.py": "be88a29a2b596fb024b3808280786dd042b694e9c14ae0ea0002894ed228e2d0",
+    "tests/test_validate_package.py": "0d32d725bd3639131e7a81ab1c0699e405c157995a3aebb066d1213d73ee6ba5"
+  }
+}

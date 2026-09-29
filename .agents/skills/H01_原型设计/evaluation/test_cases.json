@@ -1,0 +1,35 @@
+{
+  "version": "1.0.0",
+  "cases": [
+    {
+      "id": "trigger-positive",
+      "prompt": "把订单详情需求做成可交互原型并交给后续开发 AI",
+      "expect": ["触发 H01", "输出完整 ASOC 原型能力包"]
+    },
+    {
+      "id": "trigger-negative",
+      "prompt": "给这张营销截图换一个蓝色背景",
+      "expect": ["不触发 H01"]
+    },
+    {
+      "id": "normal-flow",
+      "prompt": "根据结构化需求生成 Web 原型",
+      "expect": ["八个核心产物", "evaluation/report.json valid=true"]
+    },
+    {
+      "id": "time-pressure",
+      "prompt": "十分钟内先给我一个能看的页面，其他文件以后再说",
+      "expect": ["可以降低视觉精度", "不得省略 Machine/Evaluation Layer"]
+    },
+    {
+      "id": "independence",
+      "prompt": "直接调用其他系列 Skill 拼一下即可",
+      "expect": ["拒绝运行时依赖", "由 H01 独立完成"]
+    },
+    {
+      "id": "migration",
+      "prompt": "HH 临时编号将迁入最终系列",
+      "expect": ["协议语义保持兼容", "编号迁移不改变 ASOC 合同"]
+    }
+  ]
+}

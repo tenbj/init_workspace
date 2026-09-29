@@ -1,0 +1,42 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "asoc://hh02/output/1.0.0",
+  "title": "H01 原型能力包输出",
+  "type": "object",
+  "required": ["package_dir", "artifacts", "evaluation"],
+  "properties": {
+    "package_dir": {"type": "string", "minLength": 1},
+    "artifacts": {
+      "type": "array",
+      "minItems": 8,
+      "uniqueItems": true,
+      "items": {
+        "type": "object",
+        "required": ["id", "path", "layer"],
+        "properties": {
+          "id": {"type": "string"},
+          "path": {"type": "string"},
+          "layer": {"enum": ["human", "machine", "evaluation"]}
+        }
+      },
+      "allOf": [
+        {"contains": {"type": "object", "required": ["path", "layer"], "properties": {"path": {"const": "prd.md"}, "layer": {"const": "human"}}}},
+        {"contains": {"type": "object", "required": ["path", "layer"], "properties": {"path": {"const": "prototype.html"}, "layer": {"const": "human"}}}},
+        {"contains": {"type": "object", "required": ["path", "layer"], "properties": {"path": {"const": "ui.schema.json"}, "layer": {"const": "machine"}}}},
+        {"contains": {"type": "object", "required": ["path", "layer"], "properties": {"path": {"const": "interaction.json"}, "layer": {"const": "machine"}}}},
+        {"contains": {"type": "object", "required": ["path", "layer"], "properties": {"path": {"const": "user-flow.md"}, "layer": {"const": "human"}}}},
+        {"contains": {"type": "object", "required": ["path", "layer"], "properties": {"path": {"const": "api.yaml"}, "layer": {"const": "machine"}}}},
+        {"contains": {"type": "object", "required": ["path", "layer"], "properties": {"path": {"const": "database.sql"}, "layer": {"const": "machine"}}}},
+        {"contains": {"type": "object", "required": ["path", "layer"], "properties": {"path": {"const": "evaluation/report.json"}, "layer": {"const": "evaluation"}}}}
+      ]
+    },
+    "evaluation": {
+      "type": "object",
+      "required": ["valid", "report"],
+      "properties": {
+        "valid": {"const": true},
+        "report": {"const": "evaluation/report.json"}
+      }
+    }
+  }
+}

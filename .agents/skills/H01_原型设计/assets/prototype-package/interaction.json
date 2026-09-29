@@ -1,0 +1,14 @@
+{
+  "schema_version": "1.0.0",
+  "interactions": [
+    {
+      "id": "primary_action",
+      "component_id": "primary_button",
+      "trigger": "click",
+      "from_state": "ready",
+      "to_state": "completed",
+      "action": "local prototype state transition",
+      "requirement_ids": ["REQ-001"]
+    }
+  ]
+}

@@ -473,9 +473,9 @@
           <p class="lead">这是一个把知识工作区、AI 强制门、Skill 注册、版本备份、任务进度、记忆沉淀和多领域自动化能力组织在一起的本地框架。它的核心不是单个脚本，而是一套围绕 SSOT 运转的工作区操作系统。</p>
           <div class="hero-meta">
             <span class="pill">当前 SSOT: workspace-spec.json v1.20.0</span>
-            <span class="pill">注册 Skill: 29 个</span>
+            <span class="pill">注册 Skill: 28 个</span>
             <span class="pill">output 子项目: 6 个</span>
-            <span class="pill">B01 体检: 31 PASS / 0 FAIL</span>
+            <span class="pill">B01 体检: 手动触发</span>
           </div>
         </div>
         <div class="hero-diagram" aria-label="项目核心循环图">
@@ -563,8 +563,8 @@
               <span>根目录骨架：.agents、.claude、.history、.memory、.system、.temp、input、output</span>
             </div>
             <div class="panel metric">
-              <b>29</b>
-              <span>当前注册 Skill，覆盖 A 到 G 七个能力域</span>
+              <b>28</b>
+              <span>当前注册 Skill，覆盖 A/B/C/E/F/G/H 七个在用能力域</span>
             </div>
             <div class="panel metric">
               <b>6</b>
@@ -572,7 +572,7 @@
             </div>
           </div>
           <div class="callout">
-            <strong>读法建议：</strong>先看 SSOT，再看 B01/B02/B03/B04/B08/B10 这些治理型 Skill。业务 Skill 只是能力枝叶，真正定义项目气质的是这几个强制门怎样保护目录、版本、记忆和任务连续性。
+            <strong>读法建议：</strong>先看 SSOT，再看 B02/B03/B04/B08/B10 等治理型 Skill，理解目录、版本、记忆和任务连续性。B01 是可手动调用的体检工具。
           </div>
         </section>
 
@@ -774,8 +774,8 @@
             <div class="step">
               <div class="step-num">1</div>
               <div class="step-body">
-                <strong>进入工作区先体检</strong>
-                <p>B01 执行 `framework-check.ps1`，检查 SSOT、骨架、对话记录、BOM、知识地图、目录链接和 Skill 注册。当前检查结果是 31 PASS、0 FAIL、0 WARN。</p>
+                <strong>按需手动体检</strong>
+                <p>只有用户显式调用 B01 或要求框架体检时，才运行 `framework-check.ps1`。会话开始、批量修改、发布和模型评审均不自动触发。</p>
               </div>
             </div>
             <div class="step">
@@ -858,12 +858,6 @@
                 <td>C02、C03、C05、C06、C07</td>
               </tr>
               <tr>
-                <td>D 架构文档</td>
-                <td>3</td>
-                <td>OMM 架构扫描、查看和云端推送。</td>
-                <td>D01、D02、D03</td>
-              </tr>
-              <tr>
                 <td>E 模型设计</td>
                 <td>3</td>
                 <td>模型设计 Excel 的 AI-first 标准化、评审编排和命名建议。</td>
@@ -881,6 +875,13 @@
                 <td>聚合 HTML 报告、图示、数据探索、路线图、互动编辑器等单文件产物模式。</td>
                 <td>G01</td>
               </tr>
+              <tr>
+                <td>H 原型与系统交付</td>
+                <td>2</td>
+                <td>从产品需求生成 ASOC 原型能力包，再交付系统、API、MCP 与验证证据。</td>
+                <td>H01、H02</td>
+              </tr>
+
             </tbody>
           </table>
 
@@ -940,7 +941,7 @@
           <div class="grid cols-2">
             <div class="panel">
               <h3>README 与源码中的版本口径</h3>
-              <p>当前 live SSOT 是 <span class="path">workspace-spec.json v1.20.0</span>，B01 体检也以这个版本读取。README 和 `init_workspace.py` 中仍可看到 v1.19.0 相关元信息。解释项目现状时，应以 `.system/standards` 为准。</p>
+              <p>当前 live SSOT 是 <span class="path">workspace-spec.json v1.24.0</span>，源码模板已同步。工具发布版本和骨架标准版本分别管理；B01 仅由用户手动触发。</p>
             </div>
             <div class="panel">
               <h3>入口文件不可随意修改</h3>
@@ -981,14 +982,14 @@
             <li><span class="path">.memory/全局知识地图.md</span></li>
             <li><span class="path">README.md</span></li>
             <li><span class="path">output/00_系统治理_v1.24.0/03_代码程序_v2.13.0/src/init_workspace.py</span></li>
-            <li>B01 框架体检输出：31 PASS、0 FAIL、0 WARN</li>
+            <li>本次仅验证注册、命令、模板一致性，未自动运行 B01</li>
           </ul>
         </section>
       </main>
     </div>
 
     <footer>
-      <p>最后更新：2026-05-17 19:22 Asia/Shanghai。产物位置：<span class="path">output/02_Skills管理体系/02_课题研究/07_init_workspace项目总览_v1.0.0.html</span></p>
+      <p>最后更新：2026-09-29 19:37 Asia/Shanghai。产物位置：<span class="path">output/02_Skills管理体系/02_课题研究/07_init_workspace项目总览_v1.0.0.html</span></p>
     </footer>
   </div>
 </body>

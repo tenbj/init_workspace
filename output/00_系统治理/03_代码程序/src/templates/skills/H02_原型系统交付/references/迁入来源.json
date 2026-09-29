@@ -1,0 +1,30 @@
+{
+  "source": ".temp/skills_20260929/HH03_原型系统交付",
+  "source_skill": "HH03_原型系统交付",
+  "source_version": "1.0.0",
+  "installed_skill": "H02_原型系统交付",
+  "installed_version": "1.0.1",
+  "migration_date": "2026-09-29",
+  "changes": [
+    "按单字母功能域规则迁入H域并同步调用引用",
+    "保留原始入口与原始协议标识，增加本地迁入说明"
+  ],
+  "files": {
+    "SKILL.md": "766200ea75767b5dc9f10b769352fa02e679dc89b8d49c2020aa28d264a86778",
+    "agents/openai.yaml": "d3fc708776e01c6d12b3496eb1d97669c80c60b5f7b34a8ea606a292a850bf18",
+    "assets/.gitkeep": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "assets/project-contract.example.json": "35867f8db7354255ae51a815c124362e5b112a6cd1f2b95c29480a71823c4b98",
+    "references/执行流程.md": "797779240b264b191ec4e73c4b66234b683a1dec08a2e652d50990c3df1123d8",
+    "references/扩展说明.md": "c9efcd85e082a4e470eea61e77123d73a4c4e9f9d3adfa54140a8d0c994b81ae",
+    "references/文档与AI接入.md": "1511d67cdc2fe605e3d0e7ae60565878861b432f142985277effbab23e2b80b4",
+    "references/结构融合索引.md": "2e434c0138a1c756ed39ed3e5292ad3efe6163a65329cd9db21fe556609e7b4e",
+    "references/能力与接口设计.md": "8910c505a4693c7fcc9c7328990a4095068527232913f3512eeceb0ae8f62268",
+    "references/输出契约.md": "93e98f999db7a1d56c39c6ee812347ec97f4b72cc1ab29966bc087e989b09dfd",
+    "references/验证与项目打包.md": "fa9ce921db8067cbe592cba21cfffa235bfb092c6c4ed200c59fc9828582163d",
+    "scripts/.gitkeep": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "scripts/init_project.py": "f597ed3de826d7fc269416454bb88d2fdbe35944047051990518c84ddc5f1fd8",
+    "scripts/validate_project.py": "3556127cf024d0de50874b6e7e22cb9a1aaead5bcdb5d11b0e44902cece4f441",
+    "scripts/__pycache__/init_project.cpython-313.pyc": "1891297dd31b8e60cac4c73dad9d05fefcb2331c10a98a2e6b8749b0452628f0",
+    "scripts/__pycache__/validate_project.cpython-313.pyc": "1ce39be78c8a34cea592c801dd9f77aea2a917246dc1b97e7e689c5b2eeeddcb"
+  }
+}

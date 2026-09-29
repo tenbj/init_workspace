@@ -1,0 +1,19 @@
+{
+  "intent": "让用户查看订单状态并在待支付状态下取消订单",
+  "product_context": "电商订单中心",
+  "target_users": ["已登录消费者"],
+  "requirements": [
+    {
+      "id": "REQ-001",
+      "statement": "用户可以查看订单详情与当前状态",
+      "acceptance_criteria": ["展示商品、金额、状态和时间"]
+    },
+    {
+      "id": "REQ-002",
+      "statement": "待支付订单可以取消",
+      "acceptance_criteria": ["取消成功后状态变为 cancelled", "非法状态返回明确错误"]
+    }
+  ],
+  "target_platform": "web",
+  "constraints": ["原型必须离线打开"]
+}

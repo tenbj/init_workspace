@@ -1,0 +1,26 @@
+asoc_version: 1.0.0
+skill: H01_原型设计
+intent: 将产品需求转换为人机双读、可验证、可继续工程化的原型能力包
+steps:
+  - id: normalize_input
+    output: normalized_brief
+    gate: input.schema.json
+  - id: model_requirements
+    output: prd.md
+    gate: 每条核心需求具有 REQ ID 与验收标准
+  - id: design_experience
+    output: [user-flow.md, ui.schema.json, interaction.json]
+    gate: 页面、组件、状态、事件形成闭环
+  - id: build_prototype
+    output: prototype.html
+    gate: 交互元素可操作且事件 ID 可追踪
+  - id: define_engineering_contracts
+    output: [api.yaml, database.sql]
+    gate: 接口含错误响应，数据模型支撑状态变化
+  - id: evaluate
+    output: evaluation/report.json
+    gate: validate_package 返回零错误
+failure_policy:
+  missing_input: 写入显式假设；若假设会改变产品范围则暂停等待确认
+  not_applicable: 保留对应文件并使用 ASOC-NOT-APPLICABLE 标记说明理由
+  validation_failed: 修复后重跑，不交付失败报告

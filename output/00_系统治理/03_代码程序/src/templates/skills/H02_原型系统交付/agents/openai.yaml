@@ -1,0 +1,4 @@
+interface:
+  display_name: "H02_原型系统交付_v1.0.1"
+  short_description: "从原型交付系统、开放API、MCP和完整项目包"
+  default_prompt: "请使用 $H02 将提供的原型交付为可运行系统、开放API、MCP和完整项目包。"

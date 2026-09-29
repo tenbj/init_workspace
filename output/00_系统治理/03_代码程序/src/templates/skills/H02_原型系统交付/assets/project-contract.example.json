@@ -1,0 +1,20 @@
+{
+  "schema_version": "1.0",
+  "project_name": "原型对应的业务系统",
+  "status": "draft",
+  "prototype": {"sha256": "填写实际输入文件SHA256", "source_modified": false},
+  "operations": [
+    {"id": "list_assets", "method": "GET", "path": "/api/assets", "mcp_tool": "list_assets", "python_example": "examples/api_client.py"}
+  ],
+  "checks": [
+    {"name": "business", "status": "not_run", "evidence": "verification/business.json"},
+    {"name": "api", "status": "not_run", "evidence": "verification/api.json"},
+    {"name": "mcp", "status": "not_run", "evidence": "verification/mcp.json"},
+    {"name": "browser", "status": "not_run", "evidence": "verification/browser.json"},
+    {"name": "persistence", "status": "not_run", "evidence": "verification/persistence.json"},
+    {"name": "portable", "status": "not_run", "evidence": "verification/portable.json"},
+    {"name": "release_scan", "status": "not_run", "evidence": "verification/release-scan.json"},
+    {"name": "ai_task", "status": "not_run", "evidence": ""}
+  ],
+  "limits": ["填写当前交付限制，不得用示例合同代替实际验收"]
+}

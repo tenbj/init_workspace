@@ -29,7 +29,7 @@ from datetime import datetime
 from pathlib import Path
 
 SKELETON_VERSION = "2.15.0"
-SSO_SPEC_VERSION = "1.22.0"
+SSO_SPEC_VERSION = "1.24.0"
 
 SYSTEM_RECORD_FILES = {
     "规则变更记录.md": "规则变更记录",

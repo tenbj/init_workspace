@@ -1,6 +1,6 @@
 {
   "$schema": "workspace-spec/1.0.0",
-  "version": "1.22.0",
+  "version": "1.24.0",
   "description": "工作区骨架规格 — 单一事实源（SSOT）。framework-check.ps1、normalize.ps1、init_workspace.py 均从此文件读取标准。",
 
   "rootDirectories": [
@@ -65,15 +65,20 @@
       "C05_1对1DWD单表SQL生成",
       "C06_DWD字段信息Excel生成",
       "C07_ODS-DWD-一键生成",
-      "D01_OMM架构扫描",
-      "D02_OMM架构查看",
-      "D03_OMM云端推送",
       "E01_模型设计标准化",
       "E02_模型评审编排",
       "E03_模型命名建议",
       "F01_钉钉文档下载",
-      "G01_HTML交互产物"
+      "G01_HTML交互产物",
+      "H01_原型设计",
+      "H02_原型系统交付"
     ]
+  },
+
+  "frameworkHealthCheck": {
+    "skill": "B01_框架体检",
+    "trigger": "manual-only",
+    "description": "仅用户显式调用 B01 或明确要求框架体检时执行；会话开始、批量修改、发布和模型评审不自动触发，也不作为普通任务的强制门。"
   },
 
   "claudeIntegration": {

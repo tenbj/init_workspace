@@ -1,0 +1,29 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "asoc://hh02/input/1.0.0",
+  "title": "H01 原型设计输入",
+  "type": "object",
+  "required": ["intent", "requirements"],
+  "properties": {
+    "intent": {"type": "string", "minLength": 1},
+    "product_context": {"type": "string"},
+    "target_users": {"type": "array", "items": {"type": "string"}},
+    "requirements": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["id", "statement"],
+        "properties": {
+          "id": {"type": "string", "pattern": "^REQ-[0-9]{3,}$"},
+          "statement": {"type": "string", "minLength": 1},
+          "acceptance_criteria": {"type": "array", "items": {"type": "string"}}
+        }
+      }
+    },
+    "target_platform": {"enum": ["web", "mobile-web", "desktop", "cross-platform"]},
+    "constraints": {"type": "array", "items": {"type": "string"}},
+    "assumptions": {"type": "array", "items": {"type": "string"}}
+  },
+  "additionalProperties": true
+}

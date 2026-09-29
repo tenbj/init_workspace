@@ -1,0 +1,26 @@
+# 行为 TDD 记录
+
+## RED
+
+目标 Skill 不存在时，基线会退化为通用 Prompt 或单 HTML 交付，具体缺口：
+
+- 没有稳定的必备产物、顺序和验收定义。
+- 时间压力下会省略 UI/Interaction/API/Database 或 Evaluation。
+- 没有 artifact manifest、跨文件 ID 和状态一致性。
+- 容易把外部可视化或研发流程能力误当成完整原型设计。
+
+## GREEN 合同
+
+- 正向触发：产品原型、交互验证、产品到工程 AI 交接。
+- 反向边界：图片编辑、纯文案、已有代码小改不触发。
+- 正常流程：输入合同到八个核心产物，再生成通过的验证报告。
+- 压力场景：只允许降低视觉精细度，不允许删除协议层。
+- 独立性：不得依赖任何外部系列 Skill。
+
+## REFACTOR 关注点
+
+- 已把验证报告加入 manifest 和输出 Schema 的必备路径。
+- 已把 API 校验从关键词搜索升级为 YAML/OpenAPI 结构校验。
+- 已增加 HTML 事件 ID 与 JavaScript 绑定检查。
+- 已增加六类行为合同静态回归脚本 `scripts/run_contract_tests.py`。
+- 后续仍需补浏览器级真实点击测试；编号迁移时保持 ASOC Schema ID 与文件合同兼容。

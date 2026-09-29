@@ -55,7 +55,6 @@
 - `.gitattributes`
 - `.github`
 - `.gitignore`
-- `.omm`
 - `CHANGELOG.md`
 - `docs`
 - `README.md`

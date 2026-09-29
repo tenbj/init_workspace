@@ -1,0 +1,16 @@
+{
+  "schema_version": "1.0.0",
+  "page": {
+    "id": "prototype_home",
+    "states": ["ready", "completed"]
+  },
+  "components": [
+    {
+      "id": "primary_button",
+      "type": "button",
+      "states": ["enabled", "disabled"],
+      "events": ["primary_action"],
+      "requirement_ids": ["REQ-001"]
+    }
+  ]
+}

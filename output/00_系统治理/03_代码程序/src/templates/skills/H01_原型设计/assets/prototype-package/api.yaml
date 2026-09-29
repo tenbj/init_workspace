@@ -1,0 +1,12 @@
+openapi: 3.0.3
+info:
+  title: Prototype API
+  version: 1.0.0
+paths:
+  /prototype/action:
+    post:
+      responses:
+        '200':
+          description: success
+        '400':
+          description: invalid request
