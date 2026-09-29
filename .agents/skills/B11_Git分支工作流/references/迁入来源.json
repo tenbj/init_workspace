@@ -1,0 +1,19 @@
+{
+  "source_skill": "P03_Git分支工作流",
+  "source_version": "1.0.0",
+  "installed_skill": "B11_Git分支工作流",
+  "installed_version": "2.0.0",
+  "date": "2026-09-29",
+  "original_archive": ".temp/p03-source-20260929",
+  "source_files": {
+    "SKILL.md": "1563b05b4b5a4569ea2cdab7a61ba069b3de5f765fccfb620208df1bf176ca9f",
+    "agents/openai.yaml": "a3d6dae5b31081311fa0df915a89bdacffbbf01d403a933ebc5fcdabd3e4972b",
+    "assets/.gitkeep": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "references/仓库定位与分支规则.md": "ad975a3f07dfd888deccce48863fb8438c23ec56938dafebb64034c33b3c3a0e",
+    "references/校验与发布规则.md": "ffe5437e4231da5cf3fe78990a3422494b9c777bc679d11262316f70dd57c55d",
+    "references/结构融合索引.md": "8b79903940f64149fe204b8dfe5b59b961269957f09a61265c2db150b8959f91",
+    "references/输出契约.md": "83b998dab0017a9be1052d06e1a0f86a4853dd3657232b2a4316288aa9000bb4",
+    "references/验收与合并流程.md": "9dbf98041b36f894356a28ddbeaee83d37c575771e754548abbf15097c1b8b76",
+    "scripts/.gitkeep": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  }
+}
