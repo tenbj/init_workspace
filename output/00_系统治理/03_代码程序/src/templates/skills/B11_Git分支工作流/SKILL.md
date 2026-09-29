@@ -17,6 +17,7 @@ metadata:
 
 - 每次使用先读 `references/仓库定位与分支规则.md`，结合目标仓库的 AGENTS.md 和实际 Git 状态定位。
 - 实现或检查前读 `references/校验与发布规则.md`；提交、推送或合并前读 `references/验收与合并流程.md`。
+- 提交或合并前读取目标工作区的提交描述语言规则；本骨架统一约束见 `.agents/rules/version-control-rules.md`。
 - 汇报时读 `references/输出契约.md`；迁入来源和适装边界见 `references/扩展说明.md`。
 
 ## 固定动作

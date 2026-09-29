@@ -35,7 +35,7 @@ git push -u origin main
 
 ```powershell
 git add CHANGELOG.md README.md docs/GitHub发布授权与Release流程.md .github/release-notes/vX.Y.Z.md
-git commit -m "chore(release): prepare vX.Y.Z"
+git commit -m "chore(release): 准备发布 vX.Y.Z"
 git tag vX.Y.Z
 git push origin main
 git push origin vX.Y.Z
