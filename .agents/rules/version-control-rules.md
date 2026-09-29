@@ -78,3 +78,12 @@ $c = [System.IO.File]::ReadAllText($path)
 | `remove.ps1` | `.agents/skills/B03_记忆管理/scripts/remove.ps1` |
 
 > 完整根因分析、踩坑经过、操作规则详见知识提炼 [PowerShell 编码陷阱](../../.memory/知识提炼/PowerShell 编码陷阱.md)。本节约定操作规则（事实源），知识提炼承载完整上下文。
+
+
+## Git 提交描述语言（统一约束）
+
+- 本工作区由 AI 创建的 Git 提交标题、正文，以及 merge / squash 提交说明，必须用中文描述改动和原因；不得使用整句英文描述。
+- 可以保留 Conventional Commits 类型与作用域（如 `feat(skill)`、`fix`、`chore(release)`），以及代码标识、路径、分支名、版本号等原文。中文要求针对说明文字，不要求翻译这些标识。
+- 执行 commit 或 merge 前先检查拟使用的标题与正文；Git 默认生成的英文合并说明也必须替换成中文，不因自动生成而跳过检查。
+- 示例：`feat(skill): 将 P03 通用化为 B11 并注册到骨架`；`merge: 合并 Git 分支工作流通用化改动`。
+- B11 日常提交和 B09 发布提交统一引用本节；既有英文历史不作为继续使用英文的依据。修改历史提交描述需要用户明确要求，不自动 amend、rebase 或强推。

@@ -13,6 +13,7 @@ description: 当用户需要把项目提交 GitHub、创建 tag、发布 Release
 
 ## 先读哪些本地知识
 
+- 提交前读取 `.agents/rules/version-control-rules.md` 的“Git 提交描述语言”统一约束。
 - 先读 `references/发布流程.md`，确认默认发布顺序。
 - 涉及更新日志、版本号、Release Notes 时，读 `references/更新日志方案.md`。
 - 涉及发布前验收、安全扫描、资产校验时，读 `references/发布前检查.md`。

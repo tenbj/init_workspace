@@ -1,6 +1,6 @@
 {
   "schema": "b09.init_program_update.v1",
-  "updated_at": "2026-09-29 19:51:30",
+  "updated_at": "2026-09-29 20:04:19",
   "program_src": "output/00_系统治理/03_代码程序/src",
   "version": "2.15.0",
   "spec_version": "1.25.0",
@@ -36,5 +36,5 @@
       "files": 4
     }
   ],
-  "notes": "Templates synchronized for B11 generic Git workflow registration (source P03); 29 registered skills, B01 remains manual-only. Source/template changes only, no EXE build or release."
+  "notes": "同步中文提交描述统一规则、B11 v2.0.1与B09 v1.0.2；仅更新源文件和模板，未构建exe或发布。"
 }

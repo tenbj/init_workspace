@@ -1,4 +1,4 @@
 interface:
-  display_name: "B11_Git分支工作流_v2.0.0"
+  display_name: "B11_Git分支工作流_v2.0.1"
   short_description: "通用仓库定位、分支保护、检查与验收工作流"
   default_prompt: "$B11"

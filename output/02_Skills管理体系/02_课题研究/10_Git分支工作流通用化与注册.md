@@ -59,3 +59,9 @@
 本次尚未提交或推送，已有.memory本地记录保留。用户可通过 `$B11` 或 `/B11` 调用，复核仓库定位、动作授权和验收分册；也可运行 `python .agents/skills/B11_Git分支工作流/scripts/inspect_repo.py --target .agents/skills/B11_Git分支工作流/SKILL.md` 验证当前仓库识别。
 
 修改前已按B02备份P03、标准、两个成果子项目和知识提炼。标准快照为 `.history/.system/standards_20260929194850`。
+
+## 2026-09-29 补充：中文提交描述约束
+
+此前 B11 未规定提交语言，B09 还提供英文示例，造成提交和合并说明均为英文。语言规则统一写入 `.agents/rules/version-control-rules.md`；B11 v2.0.1 和 B09 v1.0.2 显式读取并执行，提交标题、正文及 merge / squash 说明均用中文。Conventional Commits 类型、作用域、代码标识保留原文。
+
+规则及两个技能同步到初始化模板，后续初始化可继承。此为指令层约束，并非已安装 Git hook；不改写现有英文提交历史。示例：`fix: 统一提交和合并说明为中文`。
