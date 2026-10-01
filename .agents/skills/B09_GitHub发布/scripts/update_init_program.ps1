@@ -178,6 +178,9 @@ function Copy-DirectoryFresh {
     New-Item -ItemType Directory -Path $Destination -Force | Out-Null
     foreach ($item in @(Get-ChildItem -LiteralPath $Source -Force)) {
         if ($item.Name -in @("__pycache__", ".git")) { continue }
+        $skillSource = Join-Path $workspaceRoot ".agents\skills"
+        if ($Source.Equals($skillSource, [System.StringComparison]::OrdinalIgnoreCase) -and
+            $item.Name -notin @($spec.skillsManagement.registeredSkills)) { continue }
         Copy-Item -LiteralPath $item.FullName -Destination $Destination -Recurse -Force
     }
     Get-ChildItem -LiteralPath $Destination -Recurse -Directory -Force -ErrorAction SilentlyContinue |
@@ -287,7 +290,7 @@ foreach ($item in $copyPlan) {
         kind = $item.Kind
         source = (Get-RelativePath -Path $item.Source -Root $workspaceRoot) -replace '\\', '/'
         destination = (Get-RelativePath -Path $item.Destination -Root $workspaceRoot) -replace '\\', '/'
-        files = Count-Files $item.Source
+        files = Count-Files $item.Destination
     }
 }
 $manifest = [ordered]@{

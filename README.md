@@ -13,16 +13,16 @@
 
 ## 当前版本
 
-- 工作区骨架标准：`workspace-spec.json` v1.22.0
+- 工作区骨架标准：`workspace-spec.json` v1.27.0
 - 系统治理子项目：`00_系统治理`
-- 初始化程序：v2.15.0
-- Windows 可执行文件：`init_workspace_v2.15.0.exe`
+- 初始化程序：v2.16.0
+- Windows 可执行文件：`init_workspace_v2.16.0.exe`
 
-GitHub Release 附件提供 `init_workspace_v2.15.0.exe`。本次附件大小为 `10.79 MB`（`11,318,720` bytes），SHA256 为 `0F26289B2F869049E0042BB30C86BF2C06D31D668F473527D5DDEEF2BA53F65B`；源码中保留构建脚本和 B09 manifest，可自行重新构建并校验。
+GitHub Release 附件提供 `init_workspace_v2.16.0.exe`。本次附件大小为 `11.35 MB`（`11,900,753` bytes），SHA256 为 `9BBEE4E995FD3BAA0422E883DF71ED0D3AE377CB706A0A8694D343EE1A4CF618`；源码中保留构建脚本和 B09 manifest，可自行重新构建并校验。
 
 ## 快速使用
 
-1. 下载 Release 中的 `init_workspace_v2.15.0.exe`。
+1. 下载 Release 中的 `init_workspace_v2.16.0.exe`。
 2. 将 exe 放到目标工作区目录。
 3. 双击运行，选择初始化或升级。
 4. 工具会生成或更新 `.agents/`、`.system/`、`.memory/`、`.history/`、`input/`、`output/` 等目录。

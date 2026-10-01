@@ -21,6 +21,7 @@
 """
 
 import os
+import json
 import sys
 import shutil
 import uuid
@@ -29,8 +30,8 @@ from tkinter import messagebox
 from datetime import datetime
 from pathlib import Path
 
-SKELETON_VERSION = "2.15.0"
-SSO_SPEC_VERSION = "1.25.0"
+SKELETON_VERSION = "2.16.0"
+SSO_SPEC_VERSION = "1.27.0"
 
 SYSTEM_RECORD_FILES = {
     "规则变更记录.md": "规则变更记录",
@@ -268,6 +269,7 @@ def _init_system_standards(workspace: Path, templates: Path, ts: str, stats: dic
 
     standards_template = templates / "system" / "standards"
     if standards_template.exists():
+        standard_files = sorted(p.name for p in standards_template.iterdir() if p.is_file())
         for name in standard_files:
             src = standards_template / name
             dst = std_dir / name
@@ -365,7 +367,9 @@ def _init_ai_entrypoints(workspace: Path, templates: Path, ts: str, stats: dict)
     skills_dir = workspace / ".agents" / "skills"
     if not skills_dir.exists():
         return
-    for skill_dir in sorted(p for p in skills_dir.iterdir() if p.is_dir()):
+    spec = json.loads((workspace / '.system' / 'standards' / 'workspace-spec.json').read_text(encoding='utf-8'))
+    registered = spec['skillsManagement']['registeredSkills']
+    for skill_dir in (skills_dir / name for name in registered):
         if not (skill_dir / "SKILL.md").exists():
             continue
         command_path = commands_dir / f"{skill_dir.name}.md"
@@ -442,29 +446,29 @@ def _core_conv_record_content() -> str:
 ## {now}
 
 **用户问**：运行「初始化工作区」工具
-**AI做了**：自动创建核心骨架子项目 00_系统治理_v1.0.0，骨架版本 v{SKELETON_VERSION}
+**AI做了**：自动创建核心骨架子项目 00_系统治理，骨架版本 v{SKELETON_VERSION}
 
 ---
 """
 
 
 def _init_core_subproject(workspace: Path):
-    """创建核心骨架子项目 output/00_系统治理_v1.0.0（仅当不存在时）。"""
+    """创建稳定核心子项目；已有旧版项目保留原位，不强制迁移用户数据。"""
     import glob
     output_dir = workspace / "output"
     # 检查是否已存在 00_系统治理_v* 子项目
     existing = list(output_dir.glob("00_系统治理_v*"))
-    if existing:
+    if existing or (output_dir / '00_系统治理').exists():
         return  # 已存在，跳过
 
-    core_dir = output_dir / "00_系统治理_v1.0.0"
+    core_dir = output_dir / "00_系统治理"
     ensure_dir(core_dir / "01_问题答疑")
     ensure_dir(core_dir / "02_课题研究")
     ensure_dir(core_dir / "03_代码程序")
     write_if_missing(core_dir / "目录.md", _core_catalog_content())
     write_if_missing(core_dir / "版本记录.md", _core_version_record_content())
     # 对话记录
-    conv_record = workspace / ".memory" / "对话记录" / "00_系统治理_v1.0.0.md"
+    conv_record = workspace / ".memory" / "对话记录" / "00_系统治理.md"
     write_if_missing(conv_record, _core_conv_record_content())
 
 
@@ -579,6 +583,13 @@ def initialize_workspace(workspace: Path, templates: Path, operation_type: str) 
         "input",
         "output",
     ]
+    # Bundled SSOT defines the current skeleton, including B08 progress folders.
+    spec = json.loads((templates / 'system' / 'standards' / 'workspace-spec.json').read_text(encoding='utf-8'))
+    skeleton_dirs = spec['rootDirectories'] + spec['requiredLayer']['directories']
+    registered = spec['skillsManagement']['registeredSkills']
+    for name in registered:
+        if not (templates / 'skills' / name / 'SKILL.md').is_file():
+            raise ValueError(f'Missing registered skill template: {name}')
     for d in skeleton_dirs:
         ensure_dir(workspace / d)
 
@@ -604,7 +615,7 @@ def initialize_workspace(workspace: Path, templates: Path, operation_type: str) 
     skills_src = templates / "skills"
     skills_dst = workspace / ".agents" / "skills"
     if skills_src.exists():
-        for skill_dir in sorted(skills_src.iterdir()):
+        for skill_dir in (skills_src / name for name in registered):
             if skill_dir.is_dir():
                 backup = replace_managed_skill(
                     skill_dir,
@@ -628,6 +639,7 @@ def initialize_workspace(workspace: Path, templates: Path, operation_type: str) 
             workspace / ".memory" / "系统记录" / file_name,
             named_system_record_content(title),
         )
+    write_if_missing(workspace / '.memory' / '任务进度' / '索引.md', '# 任务进度索引\n\n暂无进行中的任务。\n')
 
     # 5. 初始化 .system/standards/ 标准文件（覆盖层：备份旧版，替换为新版）
     _init_system_standards(workspace, templates, ts, stats)
