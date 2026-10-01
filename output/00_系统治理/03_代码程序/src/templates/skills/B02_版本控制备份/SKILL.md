@@ -14,6 +14,17 @@ description: 修改 live 文件前必须使用；按目标类型备份到 .histo
 
 ---
 
+
+## Git 项目的快照边界
+
+- PROJECT/FOLDER 保存目标目录的工作文件快照，在每一层排除名为 `.git` 的目录或文件；包括嵌套仓库、子模块和 linked worktree 的 Git 入口。
+- 不跳过整个仓库，不使用 `git archive` 或 `.gitignore` 过滤：已提交、未提交、未跟踪、被忽略和隐藏的实际文件均保留，空目录也保留。`.gitignore`、`.gitattributes`、`.gitmodules` 是工作文件，仍备份。
+- 不复制 Git 对象历史、索引、stash、hooks、remote 或本地 Git 配置。快照恢复的是工作文件，不是 Git 仓库/暂存状态；暂存后又修改的旧索引内容及 stash 不在此快照保护范围。需要完整 Git 灾备时须另行明确安排。
+- 不跟随符号链接/junction；发现工作文件链接或来源/目标祖先链接时停止，先明确链接目标的独立保护方式。`.git` 链接直接排除。
+- 枚举/复制失败立即停止；未完成快照保留 `.incomplete-*` 标记，不更新 live 版本、不覆盖已有快照。备份成功后才允许继续修改。
+- PROJECT 只接受 `output/<直接子项目>`，避免误对仓库根或内部目录做整仓快照。B06 的规范化前置快照复用同一复制函数。
+- 仍保留整个子项目的工作内容；本次不自动删除缓存或依赖，也不清理已有历史快照。备份时避免其他进程同时写入文件。
+
 ## 核心流程（每次修改文件前必须完整执行）
 
 ### 第 1 步：判断目标类型，选择对应模式
@@ -67,7 +78,7 @@ description: 修改 live 文件前必须使用；按目标类型备份到 .histo
 
 #### 📁 PROJECT 模式 — output/ 子项目（最常用）
 
-整个子项目文件夹被**完整复制**到 `.history/output/`，快照名为 `{稳定子项目文件夹名}_v{备份时版本}_{yyyyMMddHHmmss}`；live 文件夹名称不变。`版本记录.md` 自动追加新版本条目。
+整个子项目的**工作内容快照（各层排除 `.git` 元数据）被复制**到 `.history/output/`，快照名为 `{稳定子项目文件夹名}_v{备份时版本}_{yyyyMMddHHmmss}`；live 文件夹名称不变。`版本记录.md` 自动追加新版本条目。
 
 ```powershell
 powershell -ExecutionPolicy Bypass -File ".agents\skills\B02_版本控制备份\scripts\backup.ps1" `
