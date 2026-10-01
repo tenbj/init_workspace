@@ -37,6 +37,10 @@ description: 当用户需要把项目提交 GitHub、创建 tag、发布 Release
 - 需要复制命令、改版本号、算 hash 或创建 Release 时，读 `references/GitHub命令模板.md`。
 - 遇到 tag 已存在、Release 创建失败、远端不同步、敏感扫描失败时，回到 `references/发布流程.md` 的异常边界。
 
+## 提交命名检查
+
+执行提交、合并或发布准备提交前，读取 `.agents/rules/version-control-rules.md` 的“Git 提交描述语言”统一约束，核对类型、范围和中文描述格式；通过该规则读取 `.system/standards/Git版本控制标准.md`；流程与命名只在核心标准维护，不在 Skill 中另设不同口径。用户和目标仓库的明确约定优先；不自动改写既有提交历史。
+
 ## 边界
 
 - 不在未完成敏感信息检查时推送公开仓库或创建 Release。
