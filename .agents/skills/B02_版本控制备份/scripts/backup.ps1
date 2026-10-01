@@ -3,7 +3,7 @@
     File, folder, config, memory, and project backup script.
 .DESCRIPTION
     Supports five modes:
-    - PROJECT : output/ subproject folders — snapshot entire folder to .history with version + timestamp, bump 版本记录.md only
+    - PROJECT : output/ subproject folders — snapshot working contents (exclude all .git entries) to .history with version + timestamp, bump 版本记录.md only
     - FOLDER  : .agents/skills/ folders or .system/ subfolders — snapshot with timestamp, source unchanged; .system snapshots append .history/.system/更新日志.md
     - CONFIG  : .agents/rules/ files and root independent files — copy with timestamp, source unchanged
     - MEMORY  : versioned .memory files — stable live filename, old versions → .history/.memory/
@@ -11,7 +11,7 @@
 
     output/ backup design (PROJECT mode):
     - Subproject folder named: {编号}_{主题}
-    - Backup: Copy entire folder → .history/output/{name}_v{x.y.z}_{timestamp}
+    - Backup: Copy working contents, excluding .git → .history/output/{name}_v{x.y.z}_{timestamp}
     - Keep live folder stable; do not rename output/ or .memory/对话记录 files
     - 版本记录.md inside each subproject tracks version history
     - Subproject version and individual file versions are independent
@@ -31,6 +31,8 @@ param(
 )
 
 chcp 65001 > $null
+$ErrorActionPreference = "Stop"
+. (Join-Path $PSScriptRoot "content_snapshot.ps1")
 
 function Normalize-PathString {
     param([string]$Path)
@@ -496,7 +498,11 @@ if ($Mode -eq "PROJECT") {
         exit 1
     }
 
-    $folderItem = Get-Item $TargetPath
+    $projectRelative = Get-RelativePath -Path $TargetPath -Root $workspaceRoot
+    if ($projectRelative -notmatch '^output\\[^\\]+$') {
+        throw "PROJECT mode requires one direct output subproject root: $projectRelative"
+    }
+    $folderItem = Get-Item -LiteralPath $TargetPath
     $folderName = $folderItem.Name
     $projectFullName = Get-ProjectFullName $folderName
     $projectTopic = Get-ProjectTopic $folderName
@@ -523,7 +529,7 @@ if ($Mode -eq "PROJECT") {
     $historyTimestampDir = Join-Path $historyBaseDir "${projectFullName}_v${currentVersion}_${timestamp}"
 
     Ensure-Directory $historyBaseDir
-    Copy-Item -Path $TargetPath -Destination $historyTimestampDir -Recurse -Force
+    New-ContentSnapshot -Source $TargetPath -Destination $historyTimestampDir
     Write-Host "[OK] History snapshot: $historyTimestampDir"
 
     Update-VersionRecord -VersionRecordPath $versionRecordPath -NewVersion $newVersion -ChangeType $ChangeType -DisplayTimestamp $displayTimestamp -ProjectTopic $projectTopic
@@ -569,8 +575,7 @@ if ($Mode -eq "FOLDER") {
         exit 1
     }
 
-    Ensure-Directory $snapshotDir
-    Copy-Item -Path (Join-Path $TargetPath "*") -Destination $snapshotDir -Recurse -Force
+    New-ContentSnapshot -Source $TargetPath -Destination $snapshotDir
 
     if ($relativePath -match '^\.system\\[^\\]+$') {
         Add-SystemHistoryLogEntry -SourcePath $TargetPath -SnapshotDir $snapshotDir -SnapshotName $snapshotName -DisplayTimestamp $displayTimestamp -WorkspaceRoot $workspaceRoot -HistoryRoot $historyRoot

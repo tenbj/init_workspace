@@ -1,0 +1,95 @@
+{
+  "passed": 18,
+  "fixtures": "C:\\Users\\ADMINI~1\\AppData\\Local\\Temp\\backup-validation-t7guaj17\\backup-content-integration-rn9sfmhe",
+  "cases": [
+    {
+      "engine": "powershell.exe0",
+      "case": "PROJECT real nested git, submodule, worktree; staged/dirty/untracked/ignored/hidden/literal/empty preserved",
+      "passed": true
+    },
+    {
+      "engine": 0,
+      "case": "FOLDER .git file excluded, contents preserved",
+      "passed": true
+    },
+    {
+      "engine": 0,
+      "case": "existing snapshot, recursive destination and wrong PROJECT boundary refused",
+      "passed": true
+    },
+    {
+      "engine": 0,
+      "case": "junction aborts before snapshot/version mutation",
+      "passed": true
+    },
+    {
+      "engine": 0,
+      "case": "real file-lock copy failure: no success snapshot, no version bump, partial retained",
+      "passed": true
+    },
+    {
+      "engine": 0,
+      "case": "B06 actual snapshot function: Git excluded, contents preserved, duplicate within run avoided",
+      "passed": true
+    },
+    {
+      "engine": "pwsh.exe1",
+      "case": "PROJECT real nested git, submodule, worktree; staged/dirty/untracked/ignored/hidden/literal/empty preserved",
+      "passed": true
+    },
+    {
+      "engine": 1,
+      "case": "FOLDER .git file excluded, contents preserved",
+      "passed": true
+    },
+    {
+      "engine": 1,
+      "case": "existing snapshot, recursive destination and wrong PROJECT boundary refused",
+      "passed": true
+    },
+    {
+      "engine": 1,
+      "case": "junction aborts before snapshot/version mutation",
+      "passed": true
+    },
+    {
+      "engine": 1,
+      "case": "real file-lock copy failure: no success snapshot, no version bump, partial retained",
+      "passed": true
+    },
+    {
+      "engine": 1,
+      "case": "B06 actual snapshot function: Git excluded, contents preserved, duplicate within run avoided",
+      "passed": true
+    },
+    {
+      "engine": "Python initializer",
+      "case": "directory upgrade backup excludes every .git and preserves work payload",
+      "passed": true
+    },
+    {
+      "engine": "Python initializer",
+      "case": "existing snapshots get unique names, never overwritten",
+      "passed": true
+    },
+    {
+      "engine": "Python initializer",
+      "case": "recursive destination rejected without writing",
+      "passed": true
+    },
+    {
+      "engine": "Python initializer",
+      "case": "junction rejected before history creation or managed-source replacement",
+      "passed": true
+    },
+    {
+      "engine": "Python initializer",
+      "case": "managed skill repository replacement refused; Git metadata preserved live",
+      "passed": true
+    },
+    {
+      "case": "all staged PowerShell scripts retain UTF-8 BOM",
+      "passed": true
+    }
+  ]
+}
