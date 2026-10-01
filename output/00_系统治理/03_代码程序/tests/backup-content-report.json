@@ -1,6 +1,6 @@
 {
   "passed": 18,
-  "fixtures": "C:\\Users\\ADMINI~1\\AppData\\Local\\Temp\\backup-validation-t7guaj17\\backup-content-integration-rn9sfmhe",
+  "fixtures": "isolated temporary test workspace",
   "cases": [
     {
       "engine": "powershell.exe0",
