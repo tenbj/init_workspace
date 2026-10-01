@@ -4,6 +4,56 @@ All notable public changes to this project are documented here.
 
 ## [Unreleased]
 
+## [v2.16.0] - 2026-10-02
+
+### Highlights
+
+- 新增 I01 内网穿透技能，提供 FRP TCP 配置备份、端口检查、NSSM 重启与公网验证流程。
+- 汇集上次正式发布以来的原型与系统交付、单画布 ER 图、Git 工作流和备份保护更新。
+- 修正初始化目录与当前 SSOT 的差异，重新构建 Windows 初始化工具，内置 31 个注册技能和 workspace-spec v1.27.0。
+
+### Added
+
+- I01_内网穿透：配置计划、候选校验、同目录字节备份、并发修改检查和默认小于 15000 的公网端口约束。
+- G02_单画布ER图生成：单画布鸡脚关系、在线连接键、字段显隐及浏览器几何验收。
+- H01_原型设计、H02_原型系统交付和 B11_Git分支工作流纳入本次公开版本。
+- 初始化程序隔离验证脚本 verify_release.py，覆盖新建、升级、私人数据保留和内嵌仓库保护。
+
+### Changed
+
+- 初始化程序版本升级为 2.16.0，SSOT 版本对齐到 1.27.0。
+- B09 模板更新按 registeredSkills 全量刷新，未注册的本地目录不进入公开包。
+- Claude 命令按注册表生成；Git 流程及提交描述统一使用核心标准。
+- 删除旧架构技能及隐式框架体检入口的历史变更随本版发布；B01 仅人工显式调用。
+
+### Fixed
+
+- 新建工作区使用稳定 output/00_系统治理 和对话记录路径。
+- 从 SSOT 补齐任务进度目录与索引，并复制 Git版本控制标准.md 等全部标准模板。
+- 工作内容备份排除 Git 元数据并保护链接及失败中间态；遇到托管技能包含 Git 仓库时拒绝覆盖。
+
+### Security
+
+- 内网穿透技能使用公开占位示例，不分发真实机器路径、部署域名或认证参数。
+- 私人配置、memory/history/input/temp 继续留在提交边界之外；exe 仅作为 Release 附件。
+- 已完成真实凭据匹配、GitHub token / 私钥模式扫描、模板与附件内容校验。
+
+### Upgrade Notes
+
+- 升级前仍先备份受管入口、规则、技能和标准，保留私人配置及用户输入/成果。
+- 已存在的旧版核心项目目录保留原位；新工作区采用稳定目录名，不自动迁移历史用户项目。
+
+### Assets
+
+- init_workspace_v2.16.0.exe
+- Platform: Windows
+- Size: 11,900,753 bytes (11.35 MB)
+- SHA256: 9BBEE4E995FD3BAA0422E883DF71ED0D3AE377CB706A0A8694D343EE1A4CF618
+
+### Full Diff
+
+- https://github.com/tenbj/init_workspace/compare/v2.15.0...v2.16.0
+
 ## [v2.15.0] - 2026-05-19
 
 ### Highlights

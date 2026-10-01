@@ -21,7 +21,7 @@ description: 当用户需要把项目提交 GitHub、创建 tag、发布 Release
 
 ## 固定动作
 
-1. 先运行 `scripts/update_init_program.ps1` 更新 `output/00_系统治理/03_代码程序/src` 内的初始化程序：全量刷新 `src/templates`，同步版本常量，并生成 `.b09_update_manifest.json`。
+1. 先运行 `scripts/update_init_program.ps1` 更新 `output/00_系统治理/03_代码程序/src` 内的初始化程序：按SSOT注册表全量刷新 `src/templates`，同步版本常量，并生成 `.b09_update_manifest.json`。
 2. 确认第 1 步成功后，再运行 `scripts/build_init_exe.ps1` 重封装 `dist/初始化工作区_v*.exe`；该脚本默认要求存在更新清单，否则停止构建。
 3. 确认发布目标：仓库、公开版本号、主要交付物、是否需要上传 Release 附件。
 4. 按 B02/B03/B08 处理备份、任务进度和记忆；仅用户明确要求框架体检时调用 B01。
@@ -45,7 +45,7 @@ description: 当用户需要把项目提交 GitHub、创建 tag、发布 Release
 
 - 不在未完成敏感信息检查时推送公开仓库或创建 Release。
 - 不跳过 `00_系统治理` 内初始化程序更新脚本与 exe 重封装脚本就进入 GitHub 发布。
-- 不手工比对或零散复制初始化程序模板；更新程序时以当前 live 工作区为权威源，全量刷新到最新。
+- 不手工比对或零散复制初始化程序模板；更新程序时以当前 live 工作区为权威源，全量刷新已注册技能到最新。
 - 不把 `.history/`、`.memory/`、`input/`、`.temp/`、本机私有配置或 `*.exe` 直接提交进 Git。
 - 不把 GitHub 自动生成 Release Notes 当作唯一事实源；它只能作为草稿辅助。
 - 不覆盖用户已有 Git 配置、远端、tag 或 Release；冲突时先报告并等待用户确认。

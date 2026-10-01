@@ -1,0 +1,7 @@
+# 仅代理模板，认证配置沿用原文件。
+[[proxies]]
+name = "<proxy-name>"
+type = "tcp"
+localIP = "127.0.0.1"
+localPort = 8765
+remotePort = 11865
