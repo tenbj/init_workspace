@@ -1,0 +1,4 @@
+interface:
+  display_name: "G02_单画布ER图生成_v1.1.1"
+  short_description: "生成单画布、鸡脚、在线连接键和字段显隐的HTML ER图"
+  default_prompt: "使用 $G02_单画布ER图生成 生成或审查一份单画布 ER 图 HTML，并按展开与隐藏字段双态完成几何验收。"
