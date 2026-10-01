@@ -83,6 +83,8 @@ $c = [System.IO.File]::ReadAllText($path)
 ## Git 提交描述语言（统一约束）
 
 - 本工作区由 AI 创建的 Git 提交标题、正文，以及 merge / squash 提交说明，必须用中文描述改动和原因；不得使用整句英文描述。
+- 提交标题统一使用 `类型(范围): 中文描述`；类型使用 `feat`、`fix`、`docs`、`refactor`、`test`、`chore` 等，范围标明主要模块或事项。发布准备使用 `chore(release): 发布X.Y.Z`。
+- 普通合并提交统一使用 `merge: 中文描述`；squash 提交按最终改动使用 `类型(范围): 中文描述`。
 - 可以保留 Conventional Commits 类型与作用域（如 `feat(skill)`、`fix`、`chore(release)`），以及代码标识、路径、分支名、版本号等原文。中文要求针对说明文字，不要求翻译这些标识。
 - 执行 commit 或 merge 前先检查拟使用的标题与正文；Git 默认生成的英文合并说明也必须替换成中文，不因自动生成而跳过检查。
 - 示例：`feat(skill): 将 P03 通用化为 B11 并注册到骨架`；`merge: 合并 Git 分支工作流通用化改动`。
