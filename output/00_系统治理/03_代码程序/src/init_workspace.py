@@ -23,6 +23,7 @@
 import os
 import sys
 import shutil
+import uuid
 import tkinter as tk
 from tkinter import messagebox
 from datetime import datetime
@@ -109,13 +110,40 @@ def backup_existing_file(src: Path, history_dir: Path, ts: str) -> Path | None:
 def backup_existing_dir(src: Path, history_dir: Path, ts: str) -> Path | None:
     if not src.exists():
         return None
-    ensure_dir(history_dir)
     backup = unique_path(history_dir / f"{src.name}_{ts}")
-    shutil.copytree(src, backup, ignore=shutil.ignore_patterns("__pycache__"))
+    # Protect work contents while leaving repository metadata in the live repository.
+    # Reject links before the caller can replace the managed source directory.
+    for current, dirs, files in os.walk(src, followlinks=False):
+        dirs[:] = [name for name in dirs if name not in {".git", "__pycache__"}]
+        for name in dirs + [name for name in files if name != ".git"]:
+            item = Path(current) / name
+            if item.is_symlink() or getattr(item.lstat(), "st_file_attributes", 0) & 0x400:
+                raise ValueError(f"Cannot back up link contents automatically: {item}")
+    for item in (src, *src.parents):
+        if item.is_symlink() or getattr(item.lstat(), "st_file_attributes", 0) & 0x400:
+            raise ValueError(f"Cannot traverse linked backup source: {item}")
+    for item in (history_dir, *history_dir.parents):
+        if item.exists() and (item.is_symlink() or getattr(item.lstat(), "st_file_attributes", 0) & 0x400):
+            raise ValueError(f"Cannot traverse linked backup destination: {item}")
+    if history_dir.absolute() == src.absolute() or src.absolute() in history_dir.absolute().parents:
+        raise ValueError("Backup destination must be outside its source tree")
+    ensure_dir(history_dir)
+    pending = backup.with_name(backup.name + ".incomplete-" + uuid.uuid4().hex)
+    try:
+        shutil.copytree(src, pending, ignore=shutil.ignore_patterns("__pycache__", ".git"))
+        pending.rename(backup)
+    except Exception as exc:
+        raise RuntimeError(f"Backup failed; incomplete data retained at {pending}: {exc}") from exc
     return backup
 
 
 def replace_managed_skill(src: Path, dst: Path, history_dir: Path, ts: str) -> Path | None:
+    # A content snapshot is not Git metadata disaster recovery.
+    # Refuse whole-directory replacement of a user's repository/worktree.
+    if dst.exists():
+        for current, dirs, files in os.walk(dst, followlinks=False):
+            if any(name.lower() == ".git" for name in dirs + files):
+                raise ValueError(f"Managed skill contains Git metadata; selective update required: {current}")
     backup = backup_existing_dir(dst, history_dir, ts)
     if dst.exists():
         shutil.rmtree(dst)

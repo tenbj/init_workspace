@@ -20,6 +20,7 @@ while ($wn -and -not (Test-Path (Join-Path $wn ".history"))) {
     $wn = $p
 }
 if (-not $wn) { Write-Host "ERROR: Workspace root not found"; exit 1 }
+. (Join-Path $wn ".agents\skills\B02_版本控制备份\scripts\content_snapshot.ps1")
 
 $workspaceSpec = $null
 $specPath = Join-Path $wn ".system\standards\workspace-spec.json"
@@ -400,7 +401,7 @@ function Ensure-ProjectSnapshot($projectDir) {
     $histOut = Join-Path $wn ".history\output"
     if (-not (Test-Path $histOut)) { New-Item -ItemType Directory -Path $histOut -Force | Out-Null }
     $snapshot = Join-Path $histOut "${name}_$ts"
-    Copy-Item -LiteralPath $projectDir -Destination $snapshot -Recurse -Force
+    New-ContentSnapshot -Source $projectDir -Destination $snapshot
     $script:snapshottedProjects[$name] = $snapshot
     $script:fixLog += "Snapshot: $projectDir -> $snapshot"
     Write-Host "  [FIXED] Snapshot before project normalization: $($snapshot.Substring($wn.Length+1))"
