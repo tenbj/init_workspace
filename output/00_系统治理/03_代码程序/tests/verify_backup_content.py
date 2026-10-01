@@ -215,7 +215,7 @@ except ValueError:
 assert before == metadata(init_source) and not (testroot / 'must-not-replace').exists()
 RESULTS.append({'engine': 'Python initializer', 'case': 'managed skill repository replacement refused; Git metadata preserved live', 'passed': True})
 
-for staged in STAGE.rglob('*.ps1'):
+for staged in list((STAGE / '.agents').rglob('*.ps1')) + list((STAGE / 'output/00_系统治理/03_代码程序/src').rglob('*.ps1')):
     assert staged.read_bytes().startswith(b'\xef\xbb\xbf'), staged
 RESULTS.append({'case': 'all staged PowerShell scripts retain UTF-8 BOM', 'passed': True})
 report = {'passed': len(RESULTS), 'fixtures': str(testroot), 'cases': RESULTS}
