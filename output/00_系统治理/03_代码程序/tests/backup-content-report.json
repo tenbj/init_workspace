@@ -1,6 +1,6 @@
 {
   "passed": 18,
-  "fixtures": "isolated temporary test workspace",
+  "fixtures": "temporary isolated fixtures (local path omitted)",
   "cases": [
     {
       "engine": "powershell.exe0",

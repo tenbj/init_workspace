@@ -1,0 +1,3 @@
+interface:
+  display_name: "D04_架构图生成_v1.0.0"
+  short_description: "把系统/框架/模块结构画成自包含 HTML+SVG 分层架构图"

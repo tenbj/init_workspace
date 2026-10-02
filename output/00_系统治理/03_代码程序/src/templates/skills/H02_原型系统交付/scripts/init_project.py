@@ -6,6 +6,7 @@ import json
 from pathlib import Path
 import re
 import shutil
+from uuid import uuid4
 
 
 def initialize(prototype: Path, project_name: str, output_dir: Path):
@@ -18,20 +19,22 @@ def initialize(prototype: Path, project_name: str, output_dir: Path):
     if not project_name.strip() or len(project_name)>100:
         raise ValueError('project-name必须为1至100字符')
     target.mkdir(parents=True,exist_ok=True)
-    for folder in ['docs','examples','scripts','tests','static','data','verification','private']:
+    for folder in ['docs','docs/diagrams','examples','scripts','tests','static','data','verification','private']:
         (target/folder).mkdir(exist_ok=True)
     shutil.copyfile(source,target/'private/prototype.html')
     html=source.read_text(encoding='utf-8-sig')
     titles=re.findall(r'<title[^>]*>(.*?)</title>',html,re.I|re.S)
     contract={
-        'schema_version':'1.0','project_name':project_name,'status':'draft',
+        'schema_version':'1.1','project_name':project_name,'status':'draft',
+        'delivery_id':str(uuid4()),
+        'diagrams':{kind:dict(skill=skill,path=f'docs/diagrams/{kind}.html',sha256='',maintenance='not_run',change_note='',sources=[]) for kind,skill in [('architecture','D04'),('erd','G02')]},
         'prototype':{'sha256':hashlib.sha256(source.read_bytes()).hexdigest(),'title':titles[0].strip() if titles else '',
                      'private_copy':'private/prototype.html','source_modified':False},
         'operations':[],
         'checks':[{'name':name,'status':'not_run','evidence':''} for name in
-                  ['business','api','mcp','browser','persistence','portable','release_scan','ai_task']],
+                  ['business','api','mcp','browser','persistence','portable','release_scan','architecture','erd','ai_task']],
         'limits':[],
-        'next_action':'AI读取原型，完成业务映射并实际实现系统；骨架不代表功能完成。'}
+        'next_action':'AI读取原型，完成业务映射与系统实现，首次调用D04/G02生成架构与ER两个HTML页面并完成本轮验收；骨架不代表功能完成。'}
     (target/'project-contract.json').write_text(json.dumps(contract,ensure_ascii=False,indent=2),encoding='utf-8')
     (target/'.gitignore').write_text('.env\n.env.*\n!.env.example\nprivate/\nruntime/\nverification/\n__pycache__/\n.pytest_cache/\n.venv/\nrelease/\n*.zip\n',encoding='utf-8')
     (target/'docs/需求与能力映射.md').write_text(

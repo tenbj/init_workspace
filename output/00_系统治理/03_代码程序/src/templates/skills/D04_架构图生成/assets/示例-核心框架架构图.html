@@ -1,0 +1,258 @@
+<!--
+  D04_架构图生成 · 技能内附绘制样本
+  ============================================
+  本文件是技能打包时所依据的一次真实架构图绘制实践的成品（即"核心框架整体架构图"），
+  仅作为《架构图绘制方法论.md》中"画法复盘"的对照样本，供理解本技能的画法来源。
+  通用绘制新图时，请从同目录的 `架构图模板.html`（空白骨架）出发，而非复制本文件。
+  -->
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>核心框架整体架构图（D04 技能内附样本）</title>
+<style>
+  :root{
+    --ai:#7c3aed; --ssot:#4338ca; --exec:#475569; --mech:#0d9488;
+    --gate:#d97706; --store:#0284c7; --seq:#e11d48; --ink:#1e293b; --muted:#64748b;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;background:#f8fafc;color:var(--ink);
+    font-family:-apple-system,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;}
+  .wrap{max-width:1180px;margin:0 auto;padding:28px 20px 48px;}
+  h1{font-size:24px;margin:0 0 4px;}
+  .sub{color:var(--muted);font-size:14px;margin-bottom:18px;}
+  .card{background:#fff;border:1px solid #e2e8f0;border-radius:14px;padding:14px;
+    box-shadow:0 1px 3px rgba(15,23,42,.06);}
+  svg{width:100%;height:auto;display:block;}
+  .notes{margin-top:20px;display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+  .notes h3{font-size:15px;margin:0 0 8px;}
+  .notes ul{margin:0;padding-left:18px;font-size:13.5px;line-height:1.7;color:#334155;}
+  .legend{display:flex;flex-wrap:wrap;gap:10px 18px;margin-top:14px;font-size:13px;color:#334155;}
+  .legend span{display:inline-flex;align-items:center;gap:6px;}
+  .sw{width:14px;height:14px;border-radius:4px;display:inline-block;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>核心框架整体架构图（D04 技能内附样本）</h1>
+  <div class="sub">SSOT 单一事实源 · 五大治理机制 · 数据存储区 · 多 AI 接入 · 强制门协同流</div>
+
+  <div class="card">
+  <svg viewBox="0 0 1120 1460" xmlns="http://www.w3.org/2000/svg" font-family="-apple-system,Segoe UI,PingFang SC,Microsoft YaHei,sans-serif">
+    <defs>
+      <marker id="ar" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth">
+        <path d="M0,0 L8,3 L0,6 Z" fill="#64748b"/>
+      </marker>
+      <marker id="ard" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth">
+        <path d="M0,0 L8,3 L0,6 Z" fill="#94a3b8"/>
+      </marker>
+    </defs>
+
+    <!-- ===== A. 多 AI 接入层 ===== -->
+    <text x="40" y="34" font-size="15" font-weight="700" fill="#7c3aed">① 多 AI 接入层（统一指向同一套标准）</text>
+    <g>
+      <rect x="40"  y="48"  width="320" height="62" rx="9" fill="#f5f3ff" stroke="#7c3aed" stroke-width="2"/>
+      <text x="200" y="74"  text-anchor="middle" font-size="14" font-weight="700" fill="#5b21b6">Codex</text>
+      <text x="200" y="95"  text-anchor="middle" font-size="12" fill="#6d28d9">AGENTS.md · 薄入口</text>
+
+      <rect x="400" y="48"  width="320" height="62" rx="9" fill="#f5f3ff" stroke="#7c3aed" stroke-width="2"/>
+      <text x="560" y="74"  text-anchor="middle" font-size="14" font-weight="700" fill="#5b21b6">Claude Code</text>
+      <text x="560" y="95"  text-anchor="middle" font-size="12" fill="#6d28d9">CLAUDE.md + .claude/</text>
+
+      <rect x="760" y="48"  width="320" height="62" rx="9" fill="#f5f3ff" stroke="#7c3aed" stroke-width="2"/>
+      <text x="920" y="74"  text-anchor="middle" font-size="14" font-weight="700" fill="#5b21b6">CodeBuddy（本环境）</text>
+      <text x="920" y="95"  text-anchor="middle" font-size="12" fill="#6d28d9">CODEBUDDY.md + .workbuddy/</text>
+    </g>
+    <text x="560" y="138" text-anchor="middle" font-size="13" fill="#7c3aed">三者均指向 .system/standards 同一套治理标准，避免规则漂移</text>
+    <line x1="560" y1="138" x2="560" y2="178" stroke="#64748b" stroke-width="1.5" marker-end="url(#ar)"/>
+
+    <!-- ===== B. SSOT 单一事实源 ===== -->
+    <rect x="40" y="182" width="1040" height="86" rx="10" fill="#eef2ff" stroke="#4338ca" stroke-width="2.5"/>
+    <text x="60" y="212" font-size="16" font-weight="800" fill="#3730a3">0 · SSOT 单一事实源（Single Source of Truth）</text>
+    <text x="60" y="236" font-size="13" fill="#4338ca">分层裁决链：① workspace-spec.json（机器可读权威）→ ② *.md 标准（人读）→ ③ .agents 执行层 → ④ output 过程记录（不覆盖标准）</text>
+    <text x="60" y="256" font-size="12.5" fill="#6366f1">三层目录模型：覆盖层（exe 强替）· 必备层（exe 补缺）· 可变层（用户/AI 按需） ｜ 写入权限边界：入口控制区 / 核心只读区</text>
+
+    <!-- SSOT -> execution -->
+    <line x1="295" y1="268" x2="295" y2="333" stroke="#64748b" stroke-width="1.6" marker-end="url(#ar)"/>
+    <line x1="825" y1="268" x2="825" y2="333" stroke="#64748b" stroke-width="1.6" marker-end="url(#ar)"/>
+
+    <!-- ===== C. 执行层 ===== -->
+    <text x="40" y="328" font-size="15" font-weight="700" fill="#475569">② 执行层（标准的具体动作载体）</text>
+    <rect x="40"  y="336" width="510" height="80" rx="9" fill="#f1f5f9" stroke="#475569" stroke-width="2"/>
+    <text x="60" y="364" font-size="14" font-weight="700" fill="#334155">.agents/rules/（4 强制规则）</text>
+    <text x="60" y="386" font-size="12.5" fill="#475569">direction-rules · filename-rules · memory-rules · version-control-rules</text>
+    <text x="60" y="406" font-size="12" fill="#64748b">定义"何时读标准 / 何时必备份 / 如何记忆 / 如何命名"</text>
+
+    <rect x="570" y="336" width="510" height="80" rx="9" fill="#f1f5f9" stroke="#475569" stroke-width="2"/>
+    <text x="590" y="364" font-size="14" font-weight="700" fill="#334155">.agents/skills/（32 技能 A00–G01）</text>
+    <text x="590" y="386" font-size="12.5" fill="#475569">治理技能 B01–B10 · 元技能 A01–A03 · 领域技能 C/D/E/F/G</text>
+    <text x="590" y="406" font-size="12" fill="#64748b">机制以 Skill 形式落地（B04/B02/B03/B08 即本图机制）</text>
+
+    <line x1="825" y1="416" x2="560" y2="489" stroke="#64748b" stroke-width="1.6" marker-end="url(#ar)"/>
+    <text x="760" y="460" text-anchor="middle" font-size="12" fill="#475569">机制 = Skill 的执行</text>
+
+    <!-- ===== D. 治理机制层 ===== -->
+    <text x="40" y="490" font-size="15" font-weight="700" fill="#0d9488">③ 治理机制（5 核心机制 + 3 支撑门）</text>
+
+    <!-- 5 core cards -->
+    <!-- card 0 -->
+    <rect x="40" y="498" width="196" height="138" rx="9" fill="#f0fdfa" stroke="#0d9488" stroke-width="2"/>
+    <text x="138" y="524" text-anchor="middle" font-size="14" font-weight="800" fill="#0f766e">0 · SSOT 机制</text>
+    <text x="138" y="548" text-anchor="middle" font-size="12" fill="#115e59">分层裁决链</text>
+    <text x="138" y="568" text-anchor="middle" font-size="12" fill="#115e59">三层目录模型</text>
+    <text x="138" y="600" text-anchor="middle" font-size="12" fill="#0d9488">↳ 权威：.system/</text>
+
+    <!-- card 1 -->
+    <rect x="249" y="498" width="196" height="138" rx="9" fill="#f0fdfa" stroke="#0d9488" stroke-width="2"/>
+    <text x="347" y="524" text-anchor="middle" font-size="14" font-weight="800" fill="#0f766e">1 · 子项目管理 B04</text>
+    <text x="347" y="548" text-anchor="middle" font-size="12" fill="#115e59">话题归属入口门</text>
+    <text x="347" y="568" text-anchor="middle" font-size="12" fill="#115e59">命名 / 结构规范</text>
+    <text x="347" y="600" text-anchor="middle" font-size="12" fill="#0d9488">↳ output/</text>
+
+    <!-- card 2 -->
+    <rect x="458" y="498" width="196" height="138" rx="9" fill="#f0fdfa" stroke="#0d9488" stroke-width="2"/>
+    <text x="556" y="524" text-anchor="middle" font-size="14" font-weight="800" fill="#0f766e">2 · 备份管理 B02</text>
+    <text x="556" y="548" text-anchor="middle" font-size="12" fill="#115e59">改前强制备份</text>
+    <text x="556" y="568" text-anchor="middle" font-size="12" fill="#115e59">PROJECT/CONFIG/</text>
+    <text x="556" y="585" text-anchor="middle" font-size="12" fill="#115e59">FOLDER/MEMORY</text>
+    <text x="556" y="612" text-anchor="middle" font-size="12" fill="#0d9488">↳ .history/</text>
+
+    <!-- card 3 -->
+    <rect x="667" y="498" width="196" height="138" rx="9" fill="#f0fdfa" stroke="#0d9488" stroke-width="2"/>
+    <text x="765" y="524" text-anchor="middle" font-size="14" font-weight="800" fill="#0f766e">3 · 记忆管理 B03</text>
+    <text x="765" y="548" text-anchor="middle" font-size="12" fill="#115e59">四类记忆</text>
+    <text x="765" y="568" text-anchor="middle" font-size="12" fill="#115e59">PROJECT/SYSTEM/BOTH</text>
+    <text x="765" y="600" text-anchor="middle" font-size="12" fill="#0d9488">↳ .memory/</text>
+
+    <!-- card 4 -->
+    <rect x="876" y="498" width="196" height="138" rx="9" fill="#f0fdfa" stroke="#0d9488" stroke-width="2"/>
+    <text x="974" y="524" text-anchor="middle" font-size="14" font-weight="800" fill="#0f766e">4 · 任务管理 B08</text>
+    <text x="974" y="548" text-anchor="middle" font-size="12" fill="#115e59">运行态进度</text>
+    <text x="974" y="568" text-anchor="middle" font-size="12" fill="#115e59">状态机 + 恢复</text>
+    <text x="974" y="600" text-anchor="middle" font-size="12" fill="#0d9488">↳ .memory/任务进度</text>
+
+    <!-- supporting gates -->
+    <text x="40" y="660" font-size="13" font-weight="700" fill="#d97706">支撑门（非独立产出，嵌入执行链路）</text>
+    <rect x="40"  y="668" width="340" height="44" rx="8" fill="#fffbeb" stroke="#d97706" stroke-width="2"/>
+    <text x="210" y="695" text-anchor="middle" font-size="13" font-weight="700" fill="#b45309">话题归属（入口强制门 · direction-rules）</text>
+    <rect x="400" y="668" width="320" height="44" rx="8" fill="#fffbeb" stroke="#d97706" stroke-width="2"/>
+    <text x="560" y="695" text-anchor="middle" font-size="13" font-weight="700" fill="#b45309">框架体检 B01（只读健康检查）</text>
+    <rect x="740" y="668" width="340" height="44" rx="8" fill="#fffbeb" stroke="#d97706" stroke-width="2"/>
+    <text x="910" y="695" text-anchor="middle" font-size="13" font-weight="700" fill="#b45309">超管模式 A00（仅人类显式激活）</text>
+
+    <!-- ===== E. 数据存储区 ===== -->
+    <text x="40" y="748" font-size="15" font-weight="700" fill="#0284c7">④ 数据存储区</text>
+
+    <rect x="40"  y="758" width="196" height="100" rx="9" fill="#f0f9ff" stroke="#0284c7" stroke-width="2"/>
+    <text x="138" y="788" text-anchor="middle" font-size="14" font-weight="800" fill="#0369a1">input/</text>
+    <text x="138" y="812" text-anchor="middle" font-size="12" fill="#075985">用户权威源</text>
+    <text x="138" y="832" text-anchor="middle" font-size="12" fill="#075985">只读参考</text>
+
+    <rect x="249" y="758" width="196" height="100" rx="9" fill="#f0f9ff" stroke="#0284c7" stroke-width="2"/>
+    <text x="347" y="788" text-anchor="middle" font-size="14" font-weight="800" fill="#0369a1">output/</text>
+    <text x="347" y="812" text-anchor="middle" font-size="12" fill="#075985">AI 唯一输出</text>
+    <text x="347" y="832" text-anchor="middle" font-size="12" fill="#075985">子项目产出</text>
+
+    <rect x="458" y="758" width="196" height="100" rx="9" fill="#f0f9ff" stroke="#0284c7" stroke-width="2"/>
+    <text x="556" y="788" text-anchor="middle" font-size="14" font-weight="800" fill="#0369a1">.history/</text>
+    <text x="556" y="812" text-anchor="middle" font-size="12" fill="#075985">备份快照</text>
+    <text x="556" y="832" text-anchor="middle" font-size="12" fill="#075985">四模式落点</text>
+
+    <rect x="667" y="758" width="196" height="100" rx="9" fill="#f0f9ff" stroke="#0284c7" stroke-width="2"/>
+    <text x="765" y="788" text-anchor="middle" font-size="14" font-weight="800" fill="#0369a1">.memory/</text>
+    <text x="765" y="812" text-anchor="middle" font-size="12" fill="#075985">4 类记忆 + 地图</text>
+    <text x="765" y="832" text-anchor="middle" font-size="12" fill="#075985">对话/系统/提炼/进度</text>
+
+    <rect x="876" y="758" width="196" height="100" rx="9" fill="#f0f9ff" stroke="#0284c7" stroke-width="2"/>
+    <text x="974" y="788" text-anchor="middle" font-size="14" font-weight="800" fill="#0369a1">.system/</text>
+    <text x="974" y="812" text-anchor="middle" font-size="12" fill="#075985">核心只读区</text>
+    <text x="974" y="832" text-anchor="middle" font-size="12" fill="#075985">SSOT 标准所在</text>
+
+    <!-- mechanism -> store arrows -->
+    <line x1="347" y1="636" x2="347" y2="756" stroke="#0d9488" stroke-width="2" marker-end="url(#ar)"/>
+    <line x1="556" y1="636" x2="556" y2="756" stroke="#0d9488" stroke-width="2" marker-end="url(#ar)"/>
+    <line x1="765" y1="636" x2="765" y2="756" stroke="#0d9488" stroke-width="2" marker-end="url(#ar)"/>
+    <line x1="974" y1="636" x2="765" y2="756" stroke="#0d9488" stroke-width="2" marker-end="url(#ar)"/>
+    <!-- dashed input -> output -->
+    <line x1="138" y1="858" x2="347" y2="858" stroke="#94a3b8" stroke-width="1.6" stroke-dasharray="6 4" marker-end="url(#ard)"/>
+    <text x="242" y="850" text-anchor="middle" font-size="11.5" fill="#64748b">参考资料输入</text>
+
+    <!-- ===== F. 强制门协同时序 ===== -->
+    <text x="40" y="918" font-size="15" font-weight="700" fill="#e11d48">⑤ 强制门协同时序（每次知识性产出必经的串行检查）</text>
+    <g font-size="13" font-weight="700" fill="#9f1239">
+      <rect x="60"  y="936" width="150" height="54" rx="8" fill="#fff1f2" stroke="#e11d48" stroke-width="2"/>
+      <text x="135" y="967" text-anchor="middle">话题归属</text>
+      <rect x="240" y="936" width="150" height="54" rx="8" fill="#fff1f2" stroke="#e11d48" stroke-width="2"/>
+      <text x="315" y="967" text-anchor="middle">B01 体检</text>
+      <rect x="420" y="936" width="150" height="54" rx="8" fill="#fff1f2" stroke="#e11d48" stroke-width="2"/>
+      <text x="495" y="967" text-anchor="middle">B02 备份</text>
+      <rect x="600" y="936" width="150" height="54" rx="8" fill="#fff1f2" stroke="#e11d48" stroke-width="2"/>
+      <text x="675" y="967" text-anchor="middle">output 落盘</text>
+      <rect x="780" y="936" width="150" height="54" rx="8" fill="#fff1f2" stroke="#e11d48" stroke-width="2"/>
+      <text x="855" y="967" text-anchor="middle">B03 记忆</text>
+      <rect x="960" y="936" width="150" height="54" rx="8" fill="#fff1f2" stroke="#e11d48" stroke-width="2"/>
+      <text x="1035" y="967" text-anchor="middle">B08 任务</text>
+    </g>
+    <g stroke="#e11d48" stroke-width="2" marker-end="url(#ar)">
+      <line x1="210" y1="963" x2="238" y2="963"/>
+      <line x1="390" y1="963" x2="418" y2="963"/>
+      <line x1="570" y1="963" x2="598" y2="963"/>
+      <line x1="750" y1="963" x2="778" y2="963"/>
+      <line x1="930" y1="963" x2="958" y2="963"/>
+    </g>
+    <text x="560" y="1014" text-anchor="middle" font-size="12" fill="#be123c">缺任一环节则不允许落盘：话题归属 → 体检 → 改前备份 → 落盘 → 记忆 → 任务进度</text>
+
+    <!-- ===== G. 图例 ===== -->
+    <g transform="translate(40,1050)">
+      <rect x="0" y="0" width="1040" height="64" rx="10" fill="#f8fafc" stroke="#e2e8f0"/>
+      <text x="16" y="24" font-size="13" font-weight="700" fill="#334155">图例</text>
+      <g font-size="12.5" fill="#334155">
+        <g transform="translate(16,36)"><rect width="14" height="14" rx="3" fill="#7c3aed"/><text x="20" y="12">AI 接入层</text></g>
+        <g transform="translate(150,36)"><rect width="14" height="14" rx="3" fill="#4338ca"/><text x="20" y="12">SSOT 事实源</text></g>
+        <g transform="translate(300,36)"><rect width="14" height="14" rx="3" fill="#475569"/><text x="20" y="12">执行层 rules/skills</text></g>
+        <g transform="translate(490,36)"><rect width="14" height="14" rx="3" fill="#0d9488"/><text x="20" y="12">治理机制</text></g>
+        <g transform="translate(620,36)"><rect width="14" height="14" rx="3" fill="#d97706"/><text x="20" y="12">支撑门</text></g>
+        <g transform="translate(730,36)"><rect width="14" height="14" rx="3" fill="#0284c7"/><text x="20" y="12">数据存储区</text></g>
+        <g transform="translate(860,36)"><rect width="14" height="14" rx="3" fill="#e11d48"/><text x="20" y="12">强制门序列</text></g>
+      </g>
+    </g>
+
+    <!-- ===== H. 关键说明 ===== -->
+    <g transform="translate(40,1134)" font-size="12.5" fill="#475569">
+      <text x="0" y="0" font-weight="700" fill="#334155">读图要点：</text>
+      <text x="0" y="22">• SSOT 位于最顶层，是所有规范的事实源；执行层（rules/skills）与过程记录不得与之冲突，冲突以标准为准。</text>
+      <text x="0" y="44">• 五大机制本质是 .agents/skills 中 B 系列 Skill 的执行：B04→output/、B02→.history/、B03→.memory/、B08→.memory/任务进度。</text>
+      <text x="0" y="66">• 支撑门（话题归属 / B01 体检 / A00 超管）不独立产出文档，而是嵌入每次产出的执行链路。</text>
+      <text x="0" y="88">• input/ 为权威源（只读），output/ 为 AI 唯一输出；二者经子项目管理机制连接。</text>
+      <text x="0" y="110">• 三种 AI 接入（Codex / Claude Code / CodeBuddy）共用同一 .system/standards，保证规则一致。</text>
+    </g>
+  </svg>
+  </div>
+
+  <div class="notes">
+    <div class="card">
+      <h3>机制与存储的映射</h3>
+      <ul>
+        <li><b>SSOT 机制</b> → 权威在 <code>.system/standards/</code></li>
+        <li><b>B04 子项目管理</b> → 落点 <code>output/</code></li>
+        <li><b>B02 备份管理</b> → 落点 <code>.history/</code></li>
+        <li><b>B03 记忆管理</b> → 落点 <code>.memory/</code></li>
+        <li><b>B08 任务管理</b> → 落点 <code>.memory/任务进度</code></li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>强制门协同（不可跳步）</h3>
+      <ul>
+        <li>话题归属：先定子项目，再答</li>
+        <li>B01 体检：会话开始只读检查</li>
+        <li>B02 备份：改 live 文件前必做</li>
+        <li>output 落盘：唯一输出路径</li>
+        <li>B03 记忆：回复结束前必记</li>
+        <li>B08 任务：长任务运行态进度</li>
+      </ul>
+    </div>
+  </div>
+</div>
+</body>
+</html>

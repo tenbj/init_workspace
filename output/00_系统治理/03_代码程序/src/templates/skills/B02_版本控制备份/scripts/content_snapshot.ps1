@@ -72,7 +72,20 @@ function New-ContentSnapshot {
                 Copy-Item -LiteralPath $entry.Source -Destination $target -Force -ErrorAction Stop
             }
         }
-        [System.IO.Directory]::Move($pending, $destinationFull)
+        # Windows indexers can briefly hold the copied tree without delete sharing.
+        # Retry publication only; never recopy, overwrite, or advance live versions early.
+        for ($publishAttempt = 0; ; $publishAttempt++) {
+            try {
+                [System.IO.Directory]::Move($pending, $destinationFull)
+                break
+            } catch [System.UnauthorizedAccessException] {
+                if ($publishAttempt -ge 5) { throw }
+                Start-Sleep -Milliseconds 1000
+            } catch [System.IO.IOException] {
+                if ($publishAttempt -ge 5 -or (Test-Path -LiteralPath $destinationFull)) { throw }
+                Start-Sleep -Milliseconds 1000
+            }
+        }
     } catch {
         # Preserve diagnostic partial data; never publish success or mutate live versions.
         throw "Snapshot failed; incomplete data retained at '$pending': $($_.Exception.Message)"

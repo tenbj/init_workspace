@@ -4,6 +4,9 @@ from __future__ import annotations
 import json
 from pathlib import Path
 import sys
+import tempfile
+import subprocess
+from create_package import create_package
 
 from validate_package import validate_package
 
@@ -35,7 +38,13 @@ def main() -> int:
         for phrase in phrases:
             if phrase not in text:
                 errors.append(f"{relative} 缺少约束：{phrase}")
-    errors.extend(validate_package(SKILL_ROOT / "assets" / "prototype-package"))
+    # The template is a scaffold, not a completed package with fabricated browser evidence.
+    with tempfile.TemporaryDirectory(prefix="h01-contract-") as temporary:
+        package = create_package(Path(temporary) / "package", "验证通用原型模板")
+        checked = subprocess.run([sys.executable, str(SKILL_ROOT / "scripts/check_responsive.py"), str(package)])
+        if checked.returncode:
+            errors.append("新包真实浏览器响应式检查失败")
+        errors.extend(validate_package(package, require_responsive=True))
     for error in errors:
         print(f"error={error}")
     print(f"contract_tests={'ok' if not errors else 'failed'}")
