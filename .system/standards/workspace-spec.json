@@ -1,6 +1,6 @@
 {
   "$schema": "workspace-spec/1.0.0",
-  "version": "1.27.0",
+  "version": "1.28.0",
   "description": "工作区骨架规格 — 单一事实源（SSOT）。framework-check.ps1、normalize.ps1、init_workspace.py 均从此文件读取标准。",
 
   "rootDirectories": [
@@ -66,6 +66,7 @@
       "C05_1对1DWD单表SQL生成",
       "C06_DWD字段信息Excel生成",
       "C07_ODS-DWD-一键生成",
+      "D04_架构图生成",
       "E01_模型设计标准化",
       "E02_模型评审编排",
       "E03_模型命名建议",

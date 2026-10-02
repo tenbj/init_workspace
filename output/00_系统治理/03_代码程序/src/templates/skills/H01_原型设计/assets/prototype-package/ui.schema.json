@@ -2,15 +2,70 @@
   "schema_version": "1.0.0",
   "page": {
     "id": "prototype_home",
-    "states": ["ready", "completed"]
+    "states": [
+      "ready",
+      "completed"
+    ]
   },
   "components": [
     {
       "id": "primary_button",
       "type": "button",
-      "states": ["enabled", "disabled"],
-      "events": ["primary_action"],
-      "requirement_ids": ["REQ-001"]
+      "states": [
+        "enabled",
+        "disabled"
+      ],
+      "events": [
+        "primary_action"
+      ],
+      "requirement_ids": [
+        "REQ-001"
+      ]
     }
-  ]
+  ],
+  "responsive": {
+    "mode": "adaptive",
+    "mobile_breakpoint": 700,
+    "layouts": {
+      "mobile": "单列任务与主要操作；按实际产品补导航、列表和详情",
+      "desktop": "居中任务面板；按实际产品补多栏布局"
+    },
+    "viewports": [
+      {
+        "width": 360,
+        "height": 844
+      },
+      {
+        "width": 390,
+        "height": 844
+      },
+      {
+        "width": 430,
+        "height": 844
+      },
+      {
+        "width": 1440,
+        "height": 1000
+      }
+    ],
+    "scenarios": [
+      {
+        "id": "primary_flow",
+        "requirement_ids": [
+          "REQ-001"
+        ],
+        "steps": [
+          {
+            "action": "click",
+            "selector": "[data-event-id=\"primary_action\"]"
+          },
+          {
+            "action": "expect_text",
+            "selector": "#status",
+            "value": "completed"
+          }
+        ]
+      }
+    ]
+  }
 }

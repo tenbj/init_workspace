@@ -30,6 +30,16 @@ def create_package(output: Path, intent: str, input_payload: dict | None = None)
     manifest["intent"] = input_payload["intent"] if input_payload else intent
     if input_payload:
         manifest["input"] = input_payload
+    ui_path = output / "ui.schema.json"
+    ui = json.loads(ui_path.read_text(encoding="utf-8"))
+    policy = (input_payload or {}).get("responsive", {})
+    if policy.get("mode") == "desktop-only" and not policy.get("reason") and (input_payload or {}).get("target_platform") != "desktop":
+        raise ValueError("排除移动端必须给出用户约束reason")
+    if (input_payload or {}).get("target_platform") == "desktop" or policy.get("mode") == "desktop-only":
+        ui["responsive"]["mode"] = "desktop-only"
+        ui["responsive"]["reason"] = policy.get("reason") or "用户输入明确指定target_platform=desktop"
+        ui["responsive"]["viewports"] = [{"width": 1440, "height": 1000}]
+    ui_path.write_text(json.dumps(ui, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     manifest_path.write_text(
         json.dumps(manifest, ensure_ascii=False, indent=2) + "\n",
         encoding="utf-8",

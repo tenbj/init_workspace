@@ -10,7 +10,7 @@ steps:
     gate: 每条核心需求具有 REQ ID 与验收标准
   - id: design_experience
     output: [user-flow.md, ui.schema.json, interaction.json]
-    gate: 页面、组件、状态、事件形成闭环
+    gate: 页面、组件、状态、事件闭环；responsive定义手机/桌面布局、视口及核心操作场景
   - id: build_prototype
     output: prototype.html
     gate: 交互元素可操作且事件 ID 可追踪
@@ -18,8 +18,8 @@ steps:
     output: [api.yaml, database.sql]
     gate: 接口含错误响应，数据模型支撑状态变化
   - id: evaluate
-    output: evaluation/report.json
-    gate: validate_package 返回零错误
+    output: [evaluation/responsive-report.json, evaluation/report.json]
+    gate: check_responsive通过且validate_package --require-responsive返回零错误；缺浏览器如实记未验收
 failure_policy:
   missing_input: 写入显式假设；若假设会改变产品范围则暂停等待确认
   not_applicable: 保留对应文件并使用 ASOC-NOT-APPLICABLE 标记说明理由

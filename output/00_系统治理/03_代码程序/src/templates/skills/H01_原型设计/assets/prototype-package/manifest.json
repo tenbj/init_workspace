@@ -3,13 +3,53 @@
   "skill": "H01_原型设计",
   "intent": "待补充产品意图",
   "artifacts": [
-    {"id": "prd", "path": "prd.md", "layer": "human"},
-    {"id": "prototype", "path": "prototype.html", "layer": "human"},
-    {"id": "ui", "path": "ui.schema.json", "layer": "machine"},
-    {"id": "interaction", "path": "interaction.json", "layer": "machine"},
-    {"id": "flow", "path": "user-flow.md", "layer": "human"},
-    {"id": "api", "path": "api.yaml", "layer": "machine"},
-    {"id": "database", "path": "database.sql", "layer": "machine"},
-    {"id": "evaluation", "path": "evaluation/report.json", "layer": "evaluation"}
+    {
+      "id": "prd",
+      "path": "prd.md",
+      "layer": "human"
+    },
+    {
+      "id": "prototype",
+      "path": "prototype.html",
+      "layer": "human"
+    },
+    {
+      "id": "ui",
+      "path": "ui.schema.json",
+      "layer": "machine"
+    },
+    {
+      "id": "interaction",
+      "path": "interaction.json",
+      "layer": "machine"
+    },
+    {
+      "id": "flow",
+      "path": "user-flow.md",
+      "layer": "human"
+    },
+    {
+      "id": "api",
+      "path": "api.yaml",
+      "layer": "machine"
+    },
+    {
+      "id": "database",
+      "path": "database.sql",
+      "layer": "machine"
+    },
+    {
+      "id": "evaluation",
+      "path": "evaluation/report.json",
+      "layer": "evaluation"
+    },
+    {
+      "id": "responsive_evaluation",
+      "path": "evaluation/responsive-report.json",
+      "layer": "evaluation"
+    }
+  ],
+  "capabilities": [
+    "responsive-web-v1"
   ]
 }

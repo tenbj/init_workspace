@@ -1,9 +1,9 @@
 {
     "schema":  "b09.init_program_update.v1",
-    "updated_at":  "2026-10-02 05:39:45",
+    "updated_at":  "2026-10-02 20:26:01",
     "program_src":  "output/00_系统治理/03_代码程序/src",
-    "version":  "2.16.0",
-    "spec_version":  "1.27.0",
+    "version":  "2.17.0",
+    "spec_version":  "1.28.0",
     "copied":  [
                    {
                        "kind":  "file",
@@ -27,7 +27,7 @@
                        "kind":  "dir",
                        "source":  ".agents/skills",
                        "destination":  "output/00_系统治理/03_代码程序/src/templates/skills",
-                       "files":  281
+                       "files":  296
                    },
                    {
                        "kind":  "dir",

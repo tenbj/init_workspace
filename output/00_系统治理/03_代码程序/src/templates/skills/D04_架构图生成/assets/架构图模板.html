@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>架构图模板（克隆后改名）</title>
+<style>
+  /* ===== 语义色板：每个水平带一种主色 ===== */
+  :root{
+    --ai:#7c3aed;     /* 接入层 */
+    --ssot:#4338ca;   /* 事实源 */
+    --exec:#475569;   /* 执行层 */
+    --mech:#0d9488;   /* 治理机制 */
+    --gate:#d97706;   /* 支撑门 */
+    --store:#0284c7;  /* 数据存储区 */
+    --seq:#e11d48;    /* 强制门序列 */
+    --ink:#1e293b;
+    --muted:#64748b;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;background:#f8fafc;color:var(--ink);
+    font-family:-apple-system,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;}
+  .wrap{max-width:1180px;margin:0 auto;padding:28px 20px 48px;}
+  h1{font-size:24px;margin:0 0 4px;}
+  .sub{color:var(--muted);font-size:14px;margin-bottom:18px;}
+  .card{background:#fff;border:1px solid #e2e8f0;border-radius:14px;padding:14px;
+    box-shadow:0 1px 3px rgba(15,23,42,.06);}
+  svg{width:100%;height:auto;display:block;}
+  .notes{margin-top:20px;display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+  .notes h3{font-size:15px;margin:0 0 8px;}
+  .notes ul{margin:0;padding-left:18px;font-size:13.5px;line-height:1.7;color:#334155;}
+  .legend{display:flex;flex-wrap:wrap;gap:10px 18px;margin-top:14px;font-size:13px;color:#334155;}
+  .legend span{display:inline-flex;align-items:center;gap:6px;}
+  .sw{width:14px;height:14px;border-radius:4px;display:inline-block;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <!-- ===== 改这里：标题 + 副标题（含生成时间） ===== -->
+  <h1>【系统名】整体架构图</h1>
+  <div class="sub">【一句话定位】 · 生成于 YYYY-MM-DD</div>
+
+  <div class="card">
+  <svg viewBox="0 0 1120 900" xmlns="http://www.w3.org/2000/svg" font-family="-apple-system,Segoe UI,PingFang SC,Microsoft YaHei,sans-serif">
+    <defs>
+      <!-- 箭头：实线强依赖 / 虚线参考 -->
+      <marker id="ar" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth">
+        <path d="M0,0 L8,3 L0,6 Z" fill="#64748b"/>
+      </marker>
+      <marker id="ard" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth">
+        <path d="M0,0 L8,3 L0,6 Z" fill="#94a3b8"/>
+      </marker>
+    </defs>
+
+    <!-- ============================================================
+         带 ①：示例接入层（按实体数量复制卡片，列锚点 x=40/400/760）
+         ============================================================ -->
+    <text x="40" y="34" font-size="15" font-weight="700" fill="var(--ai)">① 【带标题】</text>
+    <g>
+      <rect x="40"  y="48" width="320" height="62" rx="9" fill="#f5f3ff" stroke="var(--ai)" stroke-width="2"/>
+      <text x="200" y="74"  text-anchor="middle" font-size="14" font-weight="700" fill="#5b21b6">实体 A</text>
+      <text x="200" y="95"  text-anchor="middle" font-size="12" fill="#6d28d9">副标题/落点</text>
+      <!-- 复制上面 rect+text 块，x 改为 400 / 760 -->
+    </g>
+    <!-- 带间箭头：<line x1 y1 x2 y2 stroke marker-end> -->
+
+    <!-- ============================================================
+         带 ②：示例事实源（整条横幅）
+         ============================================================ -->
+    <rect x="40" y="150" width="1040" height="80" rx="10" fill="#eef2ff" stroke="var(--ssot)" stroke-width="2.5"/>
+    <text x="60" y="182" font-size="16" font-weight="800" fill="#3730a3">② 【带标题】</text>
+    <text x="60" y="208" font-size="13" fill="#4338ca">【一句话说明这一层是什么】</text>
+
+    <!-- ============================================================
+         带 ③：示例实体卡片网格（列锚点 x=40/249/458/667/876，宽196）
+         ============================================================ -->
+    <text x="40" y="280" font-size="15" font-weight="700" fill="var(--mech)">③ 【带标题】</text>
+    <!-- 复制下面卡片块，x 改为 249/458/667/876；中心x = x+98 -->
+    <rect x="40" y="290" width="196" height="138" rx="9" fill="#f0fdfa" stroke="var(--mech)" stroke-width="2"/>
+    <text x="138" y="316" text-anchor="middle" font-size="14" font-weight="800" fill="#0f766e">实体 1</text>
+    <text x="138" y="340" text-anchor="middle" font-size="12" fill="#115e59">要点一行</text>
+    <text x="138" y="372" text-anchor="middle" font-size="12" fill="#0d9488">↳ 落点</text>
+
+    <!-- 带间箭头：把上一层指向本层实体（x=中心x，y 从上层底到本层顶） -->
+
+    <!-- ============================================================
+         带 ④：示例存储区（列锚点同③，宽196 高100）
+         ============================================================ -->
+    <text x="40" y="470" font-size="15" font-weight="700" fill="var(--store)">④ 【带标题】</text>
+    <rect x="40" y="480" width="196" height="100" rx="9" fill="#f0f9ff" stroke="var(--store)" stroke-width="2"/>
+    <text x="138" y="512" text-anchor="middle" font-size="14" font-weight="800" fill="#0369a1">存储 A</text>
+    <text x="138" y="536" text-anchor="middle" font-size="12" fill="#075985">用途说明</text>
+    <text x="138" y="560" text-anchor="middle" font-size="12" fill="#075985">只读/可写</text>
+
+    <!-- ============================================================
+         带 ⑤：示例强制门时序（步骤卡 x=60/240/420/600/780/960，宽150）
+         ============================================================ -->
+    <text x="40" y="630" font-size="15" font-weight="700" fill="var(--seq)">⑤ 【带标题】（串行步骤）</text>
+    <g font-size="13" font-weight="700" fill="#9f1239">
+      <rect x="60"  y="648" width="150" height="54" rx="8" fill="#fff1f2" stroke="var(--seq)" stroke-width="2"/>
+      <text x="135" y="679" text-anchor="middle">步骤 1</text>
+      <!-- 复制并改 x=240/420/600/780/960；用 line 连接相邻卡 -->
+    </g>
+
+    <!-- ============================================================
+         图例（必带）：每种颜色一行含义
+         ============================================================ -->
+    <g transform="translate(40,740)">
+      <rect x="0" y="0" width="1040" height="64" rx="10" fill="#f8fafc" stroke="#e2e8f0"/>
+      <text x="16" y="24" font-size="13" font-weight="700" fill="#334155">图例</text>
+      <g font-size="12.5" fill="#334155">
+        <g transform="translate(16,36)"><rect width="14" height="14" rx="3" fill="var(--ai)"/><text x="20" y="12">【含义1】</text></g>
+        <g transform="translate(180,36)"><rect width="14" height="14" rx="3" fill="var(--ssot)"/><text x="20" y="12">【含义2】</text></g>
+        <g transform="translate(360,36)"><rect width="14" height="14" rx="3" fill="var(--mech)"/><text x="20" y="12">【含义3】</text></g>
+        <g transform="translate(540,36)"><rect width="14" height="14" rx="3" fill="var(--store)"/><text x="20" y="12">【含义4】</text></g>
+        <g transform="translate(720,36)"><rect width="14" height="14" rx="3" fill="var(--seq)"/><text x="20" y="12">【含义5】</text></g>
+      </g>
+    </g>
+
+    <!-- ============================================================
+         读图要点（可选，写几条关键说明）
+         ============================================================ -->
+    <g transform="translate(40,820)" font-size="12.5" fill="#475569">
+      <text x="0" y="0" font-weight="700" fill="#334155">读图要点：</text>
+      <text x="0" y="22">• 【要点 1】</text>
+      <text x="0" y="44">• 【要点 2】</text>
+    </g>
+  </svg>
+  </div>
+
+  <!-- 侧边说明卡：补充图内放不下的解释性内容 -->
+  <div class="notes">
+    <div class="card">
+      <h3>【说明卡标题 1】</h3>
+      <ul>
+        <li><b>【实体】</b> → 【落点/说明】</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>【说明卡标题 2】</h3>
+      <ul>
+        <li>【步骤/关系说明】</li>
+      </ul>
+    </div>
+  </div>
+</div>
+</body>
+</html>
