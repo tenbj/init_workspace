@@ -9,6 +9,8 @@ import re
 
 import jsonschema
 import yaml
+import hashlib
+from responsive_contract import CAPABILITY, REPORT, fingerprint, validate_config, engine_fingerprint
 
 
 REQUIRED_FILES = [
@@ -32,7 +34,7 @@ def load_json(path: Path, errors: list[str]) -> object | None:
         return None
 
 
-def validate_package(root: Path) -> list[str]:
+def validate_package(root: Path, require_responsive: bool = False) -> list[str]:
     errors: list[str] = []
     for relative in REQUIRED_FILES:
         if not (root / relative).is_file():
@@ -48,6 +50,31 @@ def validate_package(root: Path) -> list[str]:
 
     if not isinstance(manifest, dict) or not manifest.get("intent"):
         errors.append("manifest.json: intent 不能为空")
+    require_responsive = require_responsive or (isinstance(manifest, dict) and isinstance(manifest.get("capabilities"), list) and CAPABILITY in manifest["capabilities"])
+    if require_responsive:
+        config = ui.get("responsive") if isinstance(ui, dict) else None
+        config_errors = validate_config(config)
+        errors.extend(config_errors)
+        if not config_errors:
+            try:
+                evidence = json.loads((root / REPORT).read_text(encoding="utf-8"))
+                if not isinstance(evidence, dict) or evidence.get("passed") is not True or evidence.get("status") != "passed" or evidence.get("errors"):
+                    raise ValueError("浏览器验收未通过")
+                if evidence.get("prototype_sha256") != hashlib.sha256((root / "prototype.html").read_bytes()).hexdigest() or evidence.get("config_sha256") != fingerprint(config):
+                    raise ValueError("HTML或场景已变化，响应式报告过期")
+                if evidence.get("engine_sha256") != engine_fingerprint():
+                    raise ValueError("验收脚本已变化，响应式报告过期")
+                results = evidence.get("results", [])
+                expected = {(v["width"], v["height"]) for v in config["viewports"]}
+                actual = {(r.get("width"), r.get("height")) for r in results if isinstance(r, dict)}
+                scenario_ids = {s["id"] for s in config["scenarios"]}
+                if actual != expected or len(results) != len(config["viewports"]):
+                    raise ValueError("视口验收证据不完整")
+                for result in results:
+                    if result.get("passed") is not True or result.get("errors") or {s.get("id") for s in result.get("scenarios", []) if s.get("passed") is True} != scenario_ids:
+                        raise ValueError("核心操作场景验收不完整或失败")
+            except (OSError, ValueError, TypeError, AttributeError) as exc:
+                errors.append(f"{REPORT}: {exc}")
     manifest_paths = {
         item.get("path")
         for item in manifest.get("artifacts", [])
@@ -56,10 +83,18 @@ def validate_package(root: Path) -> list[str]:
     for relative in [*REQUIRED_FILES[1:], "evaluation/report.json"]:
         if relative not in manifest_paths:
             errors.append(f"manifest.json: 未登记 {relative}")
+    if require_responsive and REPORT not in manifest_paths:
+        errors.append(f"manifest.json: 未登记 {REPORT}")
 
     prd = (root / "prd.md").read_text(encoding="utf-8")
     if not re.search(r"\bREQ-\d{3,}\b", prd):
         errors.append("prd.md: 至少需要一个 REQ-xxx 需求 ID")
+    if require_responsive and isinstance(ui, dict) and isinstance(ui.get("responsive"), dict) and not config_errors:
+        for scenario in ui["responsive"].get("scenarios", []):
+            if isinstance(scenario, dict):
+                for req in scenario.get("requirement_ids", []):
+                    if req not in set(re.findall(r"\bREQ-\d{3,}\b", prd)):
+                        errors.append(f"responsive.scenarios: 未定义需求 {req}")
 
     components = ui.get("components", []) if isinstance(ui, dict) else []
     page_states = set(ui.get("page", {}).get("states", [])) if isinstance(ui, dict) else set()
@@ -180,9 +215,10 @@ def main() -> int:
     parser = argparse.ArgumentParser(description="验证 H01 原型能力包。")
     parser.add_argument("package_dir", help="待验证的原型能力包目录")
     parser.add_argument("--report", help="验证报告路径")
+    parser.add_argument("--require-responsive", action="store_true", help="旧能力包也要求响应式合同与最新浏览器证据")
     args = parser.parse_args()
     root = Path(args.package_dir).resolve()
-    errors = validate_package(root)
+    errors = validate_package(root, args.require_responsive)
     report = Path(args.report).resolve() if args.report else root / "evaluation" / "report.json"
     write_report(report, errors)
     for error in errors:

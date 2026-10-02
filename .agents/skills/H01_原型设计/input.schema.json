@@ -21,7 +21,8 @@
         }
       }
     },
-    "target_platform": {"enum": ["web", "mobile-web", "desktop", "cross-platform"]},
+    "target_platform": {"enum": ["web", "mobile-web", "desktop", "cross-platform"], "default": "web", "description": "省略时按手机及桌面兼容的Web设计；仅desktop可按用户约束排除手机"},
+    "responsive": {"type": "object", "properties": {"mode": {"enum": ["adaptive", "desktop-only"]}, "reason": {"type": "string", "minLength": 1}}, "allOf": [{"if": {"properties": {"mode": {"const": "desktop-only"}}, "required": ["mode"]}, "then": {"required": ["reason"]}}]},
     "constraints": {"type": "array", "items": {"type": "string"}},
     "assumptions": {"type": "array", "items": {"type": "string"}}
   },
