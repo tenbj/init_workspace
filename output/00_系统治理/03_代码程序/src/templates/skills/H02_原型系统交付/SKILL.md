@@ -15,6 +15,7 @@ description: 当用户要将HTML原型落地或迭代为系统时，交付页面
 
 - 本地编号、来源与兼容边界见 `references/本地迁入说明.md`。
 
+- 按稳定编号解析 H01，读取其 `references/用户固定设计偏好.md` 与 `evaluation/checklist.md`，沿用同一份通用交互规则及适用边界，不另复制正文。
 - 先读 `references/执行流程.md`
 - 需要设计 API、数据库、MCP 或操作粒度时，读 `references/能力与接口设计.md`
 - 需要生成中文 API、HTML、Python 示例和 AI 接入说明时，读 `references/文档与AI接入.md`
