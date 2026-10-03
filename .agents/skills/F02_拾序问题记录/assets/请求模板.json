@@ -4,7 +4,12 @@
     "description": "",
     "tag": "<AI定义的分类>",
     "priority": "中",
-    "actor": "Codex",
+    "actor": "<实际调用工具名称>",
+    "creation": {
+      "identityId": "<实际AI身份ID>",
+      "initiatedByPersonId": null,
+      "modelInfo": {}
+    },
     "request_id": "<新UUID>",
     "expected_version": "<实际revision整数>"
   }

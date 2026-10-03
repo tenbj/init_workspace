@@ -4,6 +4,41 @@ All notable public changes to this project are documented here.
 
 ## [Unreleased]
 
+## [v2.19.0] - 2026-10-03
+
+### Highlights
+
+- F02拾序问题记录升级为v1.1.0，配套拾序2.3.0，区分人类发起者、实际录入AI、工具及每次模型信息。
+- 初始化程序全量刷新33个注册技能，保留workspace-spec v1.29.0，并重新构建Windows程序。
+
+### Changed
+
+- 新增身份查询与必要身份创建，模型信息按次显式保存，避免继承过时的档案默认值。
+- 保存后核对六项创建来源快照；普通编辑保留历史创建来源，旧请求可按原文恢复，避免重复建单。
+- 支持Claude Code、WorkBuddy、Codex和deepseek-harness；姓名和模型来自已确认上下文，不写死人员称谓。
+
+### Verification
+
+- F02七项隔离测试通过，包含真实stdio MCP、临时SQLite、四工具来源、代录、模型覆盖与幂等重试。
+- 初始化及升级隔离验证、注册技能模板一致性和发布敏感信息检查通过。
+
+### Upgrade Notes
+
+- F02需要拾序2.3.0服务及MCP Python依赖；初始化程序不包含拾序服务或数据库。
+- 无法确认的模型显式留空；升级前已发送且缺少来源的原请求可用legacy-retry恢复，不用于新记录。
+- 升级保留私人配置、输入、记忆和业务成果；exe作为Release附件提供。
+
+### Assets
+
+- init_workspace_v2.19.0.exe
+- Platform: Windows
+- Size: 11954405 bytes (11.4 MB)
+- SHA256: 8C16CF17B8F9E28F58F69448CF36D5A867328D4257FB9E63A529DC586D48A9D6
+
+### Full Diff
+
+- https://github.com/tenbj/init_workspace/compare/v2.18.0...v2.19.0
+
 ## [v2.18.0] - 2026-10-03
 
 ### Highlights
