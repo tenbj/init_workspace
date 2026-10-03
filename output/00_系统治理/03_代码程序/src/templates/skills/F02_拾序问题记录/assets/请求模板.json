@@ -1,0 +1,11 @@
+{
+  "body": {
+    "title": "<问题标题>",
+    "description": "",
+    "tag": "<AI定义的分类>",
+    "priority": "中",
+    "actor": "Codex",
+    "request_id": "<新UUID>",
+    "expected_version": "<实际revision整数>"
+  }
+}

@@ -1,0 +1,4 @@
+interface:
+  display_name: "F02_拾序问题记录_v1.0.0"
+  short_description: "向拾序记录问题，由AI定义分类并核对保存结果"
+  default_prompt: "使用 $F02 把我的问题整理、分类并记录到拾序。"
