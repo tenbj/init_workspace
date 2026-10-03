@@ -1,11 +1,11 @@
 {
-  "schema": "b09.init_exe_build.v1",
-  "built_at": "2026-10-03 12:52:37",
-  "program_src": "output/00_系统治理/03_代码程序/src",
-  "version": "2.18.0",
-  "asset": "output/00_系统治理/03_代码程序/dist/init_workspace_v2.18.0.exe",
-  "size_bytes": 11945720,
-  "size_mb": 11.39,
-  "sha256": "F068B7F85454B4DE9F2F8DB9BEB479C9BB30B853029029F573A0DA6BA06F31C8",
-  "update_manifest": "output/00_系统治理/03_代码程序/src/.b09_update_manifest.json"
+    "schema":  "b09.init_exe_build.v1",
+    "built_at":  "2026-10-03 16:23:46",
+    "program_src":  "output/00_系统治理/03_代码程序/src",
+    "version":  "2.19.0",
+    "asset":  "output/00_系统治理/03_代码程序/dist/init_workspace_v2.19.0.exe",
+    "size_bytes":  11954405,
+    "size_mb":  11.4,
+    "sha256":  "8C16CF17B8F9E28F58F69448CF36D5A867328D4257FB9E63A529DC586D48A9D6",
+    "update_manifest":  "output/00_系统治理/03_代码程序/src/.b09_update_manifest.json"
 }

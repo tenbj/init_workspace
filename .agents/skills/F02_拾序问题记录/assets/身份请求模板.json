@@ -1,0 +1,12 @@
+{
+  "body": {
+    "name": "<已确认的身份名称>",
+    "kind": "agent",
+    "via": "<claude_code|workbuddy|codex|deepseek_harness之一>",
+    "modelName": "",
+    "modelProvider": "",
+    "actor": "<实际调用工具名称>",
+    "request_id": "<新UUID>",
+    "expected_version": "<实际revision整数>"
+  }
+}
