@@ -1,6 +1,6 @@
 {
   "$schema": "workspace-spec/1.0.0",
-  "version": "1.29.0",
+  "version": "1.30.0",
   "description": "工作区骨架规格 — 单一事实源（SSOT）。framework-check.ps1、normalize.ps1、init_workspace.py 均从此文件读取标准。",
 
   "rootDirectories": [
@@ -76,7 +76,8 @@
       "G02_单画布ER图生成",
       "H01_原型设计",
       "H02_原型系统交付",
-      "I01_内网穿透"
+      "I01_内网穿透",
+      "I02_系统部署升级"
     ]
   },
 

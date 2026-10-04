@@ -1,0 +1,4 @@
+interface:
+  display_name: "I02_系统部署升级_v1.0.0"
+  short_description: "系统更新后完成备份迁移重启和实际运行验收"
+  default_prompt: "请使用 $I02 完成本次系统更新后的部署：确认目标，备份，停写迁移，重启并验证本地、公网、业务及MCP，失败保留现场并记录恢复状态。"

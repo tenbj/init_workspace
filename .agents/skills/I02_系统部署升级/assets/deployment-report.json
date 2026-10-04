@@ -1,0 +1,26 @@
+{
+  "status": "pending",
+  "project": "",
+  "environment": "",
+  "authorization": "",
+  "targetCommit": "",
+  "previousVersion": "",
+  "expectedVersion": "",
+  "startedAt": "",
+  "finishedAt": "",
+  "stages": {
+    "preflight": {"status": "pending", "evidence": []},
+    "fileBackup": {"status": "pending", "evidence": []},
+    "quiesceWriters": {"status": "pending", "evidence": []},
+    "dataBackup": {"status": "pending", "evidence": []},
+    "migration": {"status": "pending", "evidence": []},
+    "dataPreservation": {"status": "pending", "evidence": []},
+    "restart": {"status": "pending", "evidence": []},
+    "httpAndUi": {"status": "pending", "evidence": []},
+    "authenticatedBusinessAndMcp": {"status": "pending", "evidence": []},
+    "clientDistribution": {"status": "pending", "evidence": []}
+  },
+  "recovery": {"backupReferences": [], "compatibility": "unverified", "nextStep": ""},
+  "deviceUpdates": "not_verified",
+  "limitations": []
+}
