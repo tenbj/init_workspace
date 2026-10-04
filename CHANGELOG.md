@@ -4,6 +4,22 @@ All notable public changes to this project are documented here.
 
 ## [Unreleased]
 
+## [v2.21.0] - 2026-10-04
+
+### 拾序 Skill 与新设备接入
+
+- F02 升级为 v1.4.0：公开接入指引、连接上下文核对和账号数据归属，配合拾序系统 v3.1.0。
+- 新机器从 HTTPS 接入页复制提示词给 AI；独立 shixu-issues Skill 包不依赖本工作区目录或治理技能。
+- MCP 优先 HTTPS，保留已有 HTTP/PAT 和本机 stdio 兼容路径；记录实际 runtime、模型与人类发起者，不推测未知信息。
+- 新增独立包构建脚本，更新 MCP 流程及真实生命周期测试。7 项 F02 测试通过；系统端 26 个 MCP 工具验证由拾序仓库记录。
+
+### 初始化器与附件
+
+- 全量刷新 33 个注册 Skill 模板，初始化器升级 v2.21.0；workspace-spec 仍为 v1.29.0。
+- 重新构建 Windows 初始化器；附件提供 init_workspace_v2.21.0.exe、shixu-issues-1.4.0.zip 和 SHA256SUMS.txt。
+- 未宣称所有 runtime 安装/授权端到端测试；独立 Skill 仅包含业务说明，凭据由用户在登录授权流程中提供。
+
+
 ## [v2.20.0] - 2026-10-03
 
 ### Highlights

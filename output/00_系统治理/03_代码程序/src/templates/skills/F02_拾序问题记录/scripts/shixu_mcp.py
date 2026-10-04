@@ -6,7 +6,7 @@ import os
 from pathlib import Path
 import sys
 
-READ = {'get_system_status', 'list_identities', 'list_issues', 'get_issue'}
+READ = {'get_connection_context', 'get_system_status', 'list_identities', 'list_issues', 'get_issue'}
 WRITE = {'create_identity', 'create_issue', 'update_issue'}
 SNAPSHOT = ('createdByActorId', 'initiatedByPersonId', 'creatorName',
             'createdVia', 'createdAt', 'modelInfo')
@@ -133,10 +133,39 @@ async def run(application, url, tool, arguments):
         return await execute(call, tool, arguments)
 
 
+async def run_http(config, url, tool, arguments):
+    from urllib.parse import urlparse
+    import httpx2
+    from mcp import Client
+    from mcp.client.streamable_http import streamable_http_client
+    settings = json.loads(Path(config).read_text(encoding='utf-8-sig'))['mcpServers']['shixu'] if config else {
+        'url': url.rstrip('/') + '/mcp',
+        'headers': {'Authorization': 'Bearer ' + os.environ.get('SHIXU_MCP_TOKEN', '')}}
+    target = urlparse(settings['url'])
+    if target.scheme not in {'http', 'https'} or not target.hostname or target.username or target.password or target.fragment:
+        raise ValueError('MCP地址须为有效HTTP或HTTPS地址，不得包含用户名、密码或片段')
+    if target.scheme == 'http' and target.hostname not in {'127.0.0.1', 'localhost', '::1'}:
+        print('提示：当前使用HTTP，访问令牌与业务数据未经TLS加密。', file=sys.stderr)
+    authorization = settings.get('headers', {}).get('Authorization', '')
+    if not authorization.startswith('Bearer ') or not authorization[7:].strip():
+        raise ValueError('请在网页生成账号令牌，通过私有配置或SHIXU_MCP_TOKEN提供')
+    async with httpx2.AsyncClient(headers={'Authorization': authorization}, trust_env=False, follow_redirects=False, timeout=30) as http:
+        async with Client(streamable_http_client(settings['url'], http_client=http)) as client:
+            async def call(name, values):
+                response = await client.call_tool(name, values)
+                if response.is_error:
+                    raise RuntimeError(str(response.content))
+                return response.structured_content or json.loads(response.content[0].text)
+            return await execute(call, tool, arguments)
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--application')
-    parser.add_argument('--url', default='http://127.0.0.1:8765')
+    parser.add_argument('--transport', choices=['http', 'stdio'], default='http')
+    parser.add_argument('--config', help='网页下载的私有MCP配置')
+    parser.add_argument('--url', default=os.environ.get('SHIXU_MCP_BASE_URL', 'https://shixu.eliasliu.cc'),
+                        help='默认拾序HTTPS入口；可用SHIXU_MCP_BASE_URL或显式--url覆盖，保留HTTP兼容')
     parser.add_argument('--tool', required=True, choices=sorted(READ | WRITE))
     parser.add_argument('--input', help='MCP arguments JSON文件；写工具必填，重试复用原文件')
     parser.add_argument('--output', help='可选结果JSON；使用子项目03_代码程序下任务目录')
@@ -147,7 +176,12 @@ def main():
             raise ValueError('写入必须提供 --input，先落盘请求再执行')
         values = json.loads(Path(args.input).read_text(encoding='utf-8-sig')) if args.input else {}
         validate(args.tool, values, args.legacy_retry)
-        result = asyncio.run(run(locate(args.application), args.url, args.tool, values))
+        if args.transport == 'http':
+            result = asyncio.run(run_http(args.config, args.url, args.tool, values))
+        else:
+            if not os.environ.get('SHIXU_MCP_TOKEN'):
+                raise ValueError('stdio同样需要私有环境SHIXU_MCP_TOKEN')
+            result = asyncio.run(run(locate(args.application), args.url, args.tool, values))
         rendered = json.dumps(result, ensure_ascii=False, indent=2)
         if args.output:
             Path(args.output).write_text(rendered, encoding='utf-8')

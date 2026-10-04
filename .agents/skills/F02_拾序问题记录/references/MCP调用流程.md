@@ -2,9 +2,13 @@
 
 ## 环境定位
 
-若已连接拾序MCP，直接使用对应工具。否则使用已安装MCP SDK的Python执行本技能scripts/shixu_mcp.py；本工作区配套环境为.temp/shixu-venv/Scripts/python.exe，系统Python可能没有MCP包。先核对环境存在，不自动安装或修改Codex配置。
+若已连接拾序MCP，直接使用对应工具。否则使用已安装MCP SDK的Python执行本技能scripts/shixu_mcp.py；本工作区配套环境为.temp/shixu-venv/Scripts/python.exe，系统Python可能没有MCP包。先核对环境存在，日常录入不自动安装；用户明确要求首次接入时按独立技能入口执行目标客户端配置。
 
-脚本从当前工作区output/*/03_代码程序/*/application/mcp_server.py定位唯一应用；多个候选或迁移后传--application明确目录。默认URL为http://127.0.0.1:8765，可传--url；现有服务只接受回环地址。MCP进程不自动启动API。
+默认使用Streamable HTTP传输，首选HTTPS基地址 `https://shixu.eliasliu.cc`，MCP端点为 `/mcp`。可通过 `SHIXU_MCP_BASE_URL` 或显式 `--url` 覆盖，`--config`中的地址优先，保留HTTP兼容；不自动修改已有私有配置。网页账号菜单 → AI接入 → 手动配置下载私有JSON，调用时提供 `--config <私有配置>`；也可使用 `--url <服务基地址>` 和私有环境变量 `SHIXU_MCP_TOKEN`。支持HTTP和HTTPS；HTTP会输出明文传输提示，服务端须启用SHIXU_ALLOW_HTTP_AUTH=true。配置地址保留实际协议和端口，不自动降级HTTPS或跟随重定向。新设备不需要应用源码，不自动启动服务。
+
+仅显式 `--transport stdio` 时定位output下唯一mcp_server.py，多候选需传--application；stdio同样需要私有令牌。旧全局密钥不接受。支持OAuth的客户端可在HTTPS入口网页登录授权；公网HTTP使用账号PAT。
+
+以下示例命令须补--config或事先设置环境令牌。请求/结果按目标工作台分别保存，不得换账号重放待确认请求。401重新授权；403检查只读范围，不能切账号绕过。
 
 ## 调用和请求落盘
 
@@ -20,7 +24,7 @@
 
 按[创建身份与模型规则](创建身份与模型规则.md)确定人员、AI身份和实际模型。没有所需身份时，使用assets/身份请求模板.json准备独立create_identity请求；人员模板应改为kind=person、via=manual、模型空字符串。脚本自动list_identities回读，确认后取真实ID。不要自动更新已有档案。
 
-每次写入前从list_identities或list_issues等读取最新revision；身份创建也会增加全局revision。按 B02 保护将写入的子项目工作文件，完整请求保存至对应子项目03_代码程序下独立任务目录。中间件为请求JSON，最终件为回读结果JSON，错误保留在任务记录；不直写output根目录。请求含新UUID request_id、读取到的expected_version、actor审计标签和AI定义的tag。以下仅为已确认Elias委托Codex且明确使用该模型时的示例：
+每次写入前从list_identities或list_issues等读取最新revision；身份创建也会增加当前账号revision。按 B02 保护将写入的子项目工作文件，完整请求保存至对应子项目03_代码程序下独立任务目录。中间件为请求JSON，最终件为回读结果JSON，错误保留在任务记录；不直写output根目录。请求含新UUID request_id、读取到的expected_version、actor审计标签和AI定义的tag。以下仅为已确认Elias委托Codex且明确使用该模型时的示例：
 
 ```json
 {"body":{"title":"用户的问题","description":"用户已提供的背景","tag":"AI定义的分类","priority":"中","actor":"Codex","creation":{"identityId":"<实际AI身份ID>","initiatedByPersonId":"<实际人员ID>","modelInfo":{"name":"GPT-6.1 Sol","provider":"OpenAI"}},"request_id":"新UUID","expected_version":0}}
@@ -32,7 +36,7 @@
 & '.temp/shixu-venv/Scripts/python.exe' '.agents/skills/F02_拾序问题记录/scripts/shixu_mcp.py' --tool create_issue --input '<任务目录>/request.json' --output '<任务目录>/result.json'
 ```
 
-更新请求为 {"issue_id":"真实ID","body":{"tag":"新分类","request_id":"新UUID","expected_version":最新版本,"actor":"Codex"}}。仅传要修改的业务字段，不传creation。脚本允许get_system_status、list_identities、create_identity、list_issues、get_issue、create_issue、update_issue七个工具，不开放身份修改、删除和状态流转。
+更新请求为 {"issue_id":"真实ID","body":{"tag":"新分类","request_id":"新UUID","expected_version":最新版本,"actor":"Codex"}}。仅传要修改的业务字段，不传creation。脚本允许get_connection_context、get_system_status、list_identities、create_identity、list_issues、get_issue、create_issue、update_issue八个工具，不开放身份修改、删除和状态流转。
 
 ## 回读、并发与失败
 

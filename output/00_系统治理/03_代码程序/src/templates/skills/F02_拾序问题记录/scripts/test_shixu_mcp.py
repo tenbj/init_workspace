@@ -84,7 +84,7 @@ class Guards(unittest.TestCase):
 
 class RealMCP(unittest.TestCase):
     def test_full_source_lifecycle(self):
-        app = subject.locate()
+        app = subject.locate(os.environ.get('SHIXU_TEST_APPLICATION'))
         with tempfile.TemporaryDirectory(prefix='f02-source-') as directory:
             root = Path(directory)
             with socket.socket() as sock:
@@ -109,6 +109,12 @@ class RealMCP(unittest.TestCase):
                     else:
                         self.fail('临时服务未启动')
                     self.assertEqual(health['backend'], 'sqlite-test')
+                    auth = http.post('/api/auth/register', json={'username': 'skill_fixture',
+                        'password': uuid4().hex}).raise_for_status().json()
+                    http.headers['X-CSRF-Token'] = auth['csrf']
+                    access = http.post('/api/account/mcp-access', json={'name': 'F02 fixture',
+                        'scope': 'write'}).raise_for_status().json()
+                    env['SHIXU_MCP_TOKEN'] = access['token']
 
                     def body(**values):
                         revision = http.get('/api/workspace').raise_for_status().json()['revision']
