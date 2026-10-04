@@ -1,4 +1,4 @@
 interface:
-  display_name: "H02_原型系统交付_v1.2.0"
-  short_description: "从原型交付系统、API、MCP并持续维护架构与ER页面"
-  default_prompt: "请使用 $H02 将原型交付为可运行系统，首次通过 D04 和 G02 生成架构与 ER 两个独立 HTML 页面，每次更新同步维护页面、API、MCP、文档与完整项目包。"
+  display_name: "H02_原型系统交付_v1.3.0"
+  short_description: "从原型交付系统并在更新完成后调用I02部署验收"
+  default_prompt: "请使用 $H02 将原型交付为可运行系统，维护页面、API、MCP、架构与ER、文档和项目包；实现验证完成后调用 I02，在本轮授权范围内完成备份迁移重启和运行验收。"
