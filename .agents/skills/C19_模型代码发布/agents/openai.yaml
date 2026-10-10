@@ -1,0 +1,4 @@
+interface:
+  display_name: "C19_模型代码发布_v1.0.2"
+  short_description: "发布模型加工SQL并通过钉钉CLI通知合并"
+  default_prompt: "使用 $C19 将已确认模型SQL提交到GitLab并通知合并。"

@@ -21,17 +21,25 @@ import pathlib
 import importlib.util
 import datetime
 import argparse
+import json
 
 sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding="utf-8", errors="replace")
 sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding="utf-8", errors="replace")
 
 SCRIPT_DIR   = pathlib.Path(__file__).parent.resolve()
-PROJECT_ROOT = SCRIPT_DIR.parents[3]  # .agents/skills/C03_Doris建表语句查询/scripts/ → 上4级
+PROJECT_ROOT = next((parent for parent in SCRIPT_DIR.parents
+                     if (parent / ".system/standards/workspace-spec.json").is_file()), None)
+if PROJECT_ROOT is None:
+    raise RuntimeError("找不到当前工作区注册表")
 # DEFAULT_OUT 不再提供默认值，必须通过 --output-dir 参数指定
 # 避免绕过子项目管理 Skill 在 output/ 下创建不合规文件夹
 DEFAULT_DB   = "cbebg"
 
-DORIS_CLIENT = PROJECT_ROOT / ".agents" / "skills" / "数仓生产库查询" / "scripts" / "doris_query_client.py"
+_registry = json.loads((PROJECT_ROOT / ".system/standards/workspace-spec.json").read_text(encoding="utf-8-sig"))["skillsManagement"]["registeredSkills"]
+_matches = [name for name in _registry if name.startswith("C02_")]
+if len(_matches) != 1:
+    raise RuntimeError("C02 注册表解析失败：必须唯一匹配")
+DORIS_CLIENT = PROJECT_ROOT / ".agents" / "skills" / _matches[0] / "scripts" / "doris_query_client.py"
 
 
 def load_client():

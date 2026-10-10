@@ -1,0 +1,4 @@
+interface:
+  display_name: "F03_报表使用说明生成_v1.0.2"
+  short_description: "按实际报表功能生成可离线阅读的使用说明"
+  default_prompt: "请使用 $F03 根据我提供的报表截图和口径资料，生成报表使用说明HTML与Markdown。"

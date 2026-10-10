@@ -1,0 +1,3 @@
+interface:
+  display_name: "F04_汇报表格制作_v1.7.2"
+  short_description: "先设计分类层级与证据结构，通过独立内容数据和统一引擎制作中文Excel汇报表"

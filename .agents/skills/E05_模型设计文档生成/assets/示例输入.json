@@ -1,0 +1,141 @@
+{
+  "title": "每日店铺销售设计草案（虚构示例）",
+  "version": "1.0.0",
+  "mode": "requirements",
+  "evidence": [
+    {
+      "id": "R1",
+      "state": "已确认",
+      "source": "示例需求（虚构）",
+      "locator": "需求1",
+      "claim": "按日期和店铺统计销售额；示例仅用于演示合同。",
+      "limitation": "不是生产需求"
+    },
+    {
+      "id": "P1",
+      "state": "设计建议",
+      "source": "AI示例提案",
+      "locator": "方案1",
+      "claim": "建议DWS按日期和店铺聚合，源表、调度未确认。",
+      "limitation": "未开发、未查询数据库"
+    }
+  ],
+  "models": [
+    {
+      "name": "店铺销售日汇总",
+      "table": "cbebg.dws_trd_shop_sales_ilu_dd",
+      "schema": "cbebg",
+      "layer": "DWS",
+      "domain": "交易域",
+      "state": "设计建议",
+      "evidence": [
+        "R1",
+        "P1"
+      ],
+      "development_status": "待评审",
+      "summary": "示例设计建议，来源和调度待确认",
+      "design": {
+        "grain": "一行=一个业务日期、一个店铺",
+        "business_keys": [
+          "biz_dt",
+          "shop_id"
+        ],
+        "technical_keys": null,
+        "partition": "建议biz_dt",
+        "incremental_field": null,
+        "update_strategy": "建议按业务日期幂等重算",
+        "frequency": "每日（建议）",
+        "schedule": null,
+        "joins": "待确认来源后定义",
+        "filters": "有效销售范围待确认",
+        "deduplication": "按来源订单明细键去重（建议）",
+        "metric_rules": "同一币种销售额求和，币种和退款口径待确认",
+        "null_rules": "缺失金额不得直接按0填充；待确认",
+        "history_policy": "保存日历史；迟到数据窗口待确认"
+      },
+      "fields": [
+        {
+          "category": "维度",
+          "subcategory": "日汇总",
+          "name": "biz_dt",
+          "type": "date",
+          "description": "业务日期",
+          "technical_key": "待确认",
+          "business_key": "是",
+          "state": "设计建议",
+          "evidence": [
+            "P1"
+          ],
+          "note": "虚构示例，待来源及口径确认",
+          "mappings": [
+            {
+              "branch": "候选来源",
+              "source_table": null,
+              "source_field": null,
+              "expression": null,
+              "condition": "待确认",
+              "state": "待确认",
+              "evidence": [
+                "P1"
+              ]
+            }
+          ]
+        },
+        {
+          "category": "维度",
+          "subcategory": "日汇总",
+          "name": "shop_id",
+          "type": "bigint",
+          "description": "店铺ID",
+          "technical_key": "待确认",
+          "business_key": "是",
+          "state": "设计建议",
+          "evidence": [
+            "P1"
+          ],
+          "note": "虚构示例，待来源及口径确认",
+          "mappings": [
+            {
+              "branch": "候选来源",
+              "source_table": null,
+              "source_field": null,
+              "expression": null,
+              "condition": "待确认",
+              "state": "待确认",
+              "evidence": [
+                "P1"
+              ]
+            }
+          ]
+        },
+        {
+          "category": "指标",
+          "subcategory": "日汇总",
+          "name": "sales_amt",
+          "type": "decimal(18,6)",
+          "description": "销售额（币种待确认）",
+          "technical_key": "待确认",
+          "business_key": "否",
+          "state": "设计建议",
+          "evidence": [
+            "P1"
+          ],
+          "note": "虚构示例，待来源及口径确认",
+          "mappings": [
+            {
+              "branch": "候选来源",
+              "source_table": null,
+              "source_field": null,
+              "expression": null,
+              "condition": "待确认",
+              "state": "待确认",
+              "evidence": [
+                "P1"
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -33,7 +33,7 @@ output/<DWD开发产物子项目>/03_代码程序/<dwd_name>/
    - 扫描 `output/` 下是否存在名称含 `DWD开发产物` 的子项目文件夹
    - 若不存在 → 调用 `B04` Skill 创建 `DWD开发产物` 子项目
    - 对子项目执行版本控制备份（MINOR），获取新版本路径
-   - 读取 `1对1DWD单表SQL生成/references/DWD命名规则.md`，从 ODS 表名推导 DWD 表名
+   - 按注册表解析 C05，读取其 `references/DWD命名规则.md`，从 ODS 表名推导 DWD 表名
    ```
    OUTPUT_DIR = <DWD开发产物子项目>/03_代码程序/<dwd_name>/
    ```

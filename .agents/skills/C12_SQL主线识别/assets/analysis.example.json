@@ -1,0 +1,33 @@
+{
+  "source_sha256": "替换为源文件SHA256",
+  "analyses": [
+    {
+      "name": "主查询",
+      "flow": "读取明细 → 条件筛选",
+      "nodes": [
+        {
+          "node": "读取明细",
+          "action": "读取orders记录",
+          "evidence": [
+            {
+              "start_line": 1,
+              "end_line": 3,
+              "excerpt": "FROM orders"
+            }
+          ]
+        },
+        {
+          "node": "条件筛选",
+          "action": "保留已支付订单",
+          "evidence": [
+            {
+              "start_line": 1,
+              "end_line": 3,
+              "excerpt": "WHERE status = 'paid'"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

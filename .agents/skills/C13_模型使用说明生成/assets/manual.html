@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>@@TITLE@@</title>
+<style>
+:root{--blue:#164bb8;--ink:#17283d;--muted:#66758a;--line:#dce4ee;--pale:#edf4ff}
+*{box-sizing:border-box}html{scroll-behavior:smooth;scroll-padding-top:90px}
+body{margin:0;color:var(--ink);background:#f4f7fb;font:15px/1.85 system-ui,-apple-system,"Segoe UI","Microsoft YaHei",sans-serif;overflow-wrap:anywhere}
+a{color:var(--blue);text-underline-offset:3px}a:focus-visible,button:focus-visible,[tabindex]:focus-visible{outline:3px solid #f0a326;outline-offset:3px}
+.skip{position:absolute;left:16px;top:-80px;background:white;padding:10px;z-index:10}.skip:focus{top:10px}
+.topbar{position:sticky;top:0;z-index:3;height:64px;background:#fff;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:14px;padding:0 30px}
+.brand{font-weight:750;white-space:nowrap;color:var(--blue)}.top-title{min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:13px;color:var(--muted)}
+.status{white-space:nowrap;font-size:12px;padding:2px 10px;border-radius:20px;background:var(--pale);color:var(--blue)}.status.limited{background:#e5f4f1;color:#17665b}.status.draft{background:#fff2d9;color:#795200}
+button{cursor:pointer;background:#fff;color:var(--ink);border:1px solid var(--line);border-radius:7px;padding:7px 13px;font:inherit;font-size:13px;white-space:nowrap}.print{margin-left:auto}button:hover{background:var(--pale)}
+.layout{max-width:1480px;margin:0 auto;display:grid;grid-template-columns:260px minmax(0,1fr);gap:26px;padding:26px}
+aside{position:sticky;top:90px;height:calc(100vh - 116px);overflow:auto;padding:8px 8px 24px 0}
+.toc-title{font-size:12px;font-weight:750;letter-spacing:.13em;color:var(--muted);margin:0 12px 14px}
+nav a{display:block;border-radius:7px;text-decoration:none;color:#536279;padding:6px 12px;margin:2px 0;font-size:13px;line-height:1.6;border-left:3px solid transparent}
+nav a.level-3{padding-left:26px;font-size:12px}nav a:hover{background:#e7edf7}nav a[aria-current="location"]{background:#e4eeff;color:var(--blue);border-left-color:var(--blue);font-weight:650}
+main{min-width:0;background:#fff;border:1px solid var(--line);border-radius:12px;padding:48px 56px 72px;box-shadow:0 5px 22px #29446906}
+article{max-width:960px;margin:auto}h1{font-size:32px;line-height:1.35;color:#073d86;margin:0 0 28px;letter-spacing:-.025em;padding-bottom:25px;border-bottom:3px solid #ccd8e9}
+h2{font-size:22px;line-height:1.5;margin:38px 0 16px;padding-bottom:9px;border-bottom:1px solid var(--line)}
+h3{font-size:17px;margin:24px 0 10px;color:#234f87}p{margin:12px 0}strong{font-weight:700}li{padding-left:3px;margin:5px 0}
+blockquote{margin:22px 0;padding:14px 19px;border-left:4px solid var(--blue);background:var(--pale);border-radius:0 7px 7px 0;color:#28507e}blockquote p{margin:3px 0}
+.table-scroll{max-width:100%;overflow:auto;margin:20px 0;border:1px solid var(--line);border-radius:7px}table{width:100%;border-collapse:collapse;font-size:13px;line-height:1.65}th{text-align:left;background:#edf3fc;color:#173b70;font-weight:650}td,th{padding:11px 13px;border-bottom:1px solid var(--line);vertical-align:top;min-width:90px}tbody tr:last-child td{border-bottom:0}tbody tr:nth-child(even){background:#f8faff}
+img{max-width:100%;height:auto;border:1px solid var(--line);border-radius:7px}code{font-family:Consolas,monospace;font-size:.92em;background:#f0f3f8;padding:2px 5px;border-radius:3px}pre{overflow:auto;background:#f0f3f8;padding:16px;border-radius:7px}pre code{padding:0}hr{border:0;border-top:1px solid var(--line);margin:28px 0}
+.footer{margin-top:42px;border-top:1px solid var(--line);padding-top:18px;font-size:12px;color:var(--muted)}.menu{display:none}
+@media(max-width:1050px){.layout{grid-template-columns:215px minmax(0,1fr);gap:16px;padding:18px}main{padding:34px 28px}}
+@media(max-width:760px){html{scroll-padding-top:80px}.topbar{padding:0 14px;gap:8px}.top-title{display:none}.brand{font-size:14px}.menu{display:inline-block}.layout{display:block;padding:12px}aside{position:static;height:auto;max-height:42vh;display:none;padding:12px;background:#fff;border:1px solid var(--line);border-radius:8px;margin-bottom:12px}aside.open{display:block}main{padding:27px 19px 40px;border-radius:9px}h1{font-size:26px}h2{font-size:20px}.print{padding:7px 9px}.status{font-size:11px}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+@media print{@page{margin:16mm}html{scroll-behavior:auto}body{background:#fff;font-size:11pt;line-height:1.65}.topbar,aside,.skip,.footer{display:none!important}.layout{display:block;padding:0;max-width:none}main{border:0;box-shadow:none;padding:0}h1{font-size:24pt}h2{font-size:17pt;break-after:avoid}h3{break-after:avoid}a{color:inherit;text-decoration:none}.table-scroll{overflow:visible;border-radius:0}table{font-size:9pt;table-layout:fixed}td,th{min-width:0;padding:7px;overflow-wrap:anywhere}thead{display:table-header-group}tr,img,blockquote{break-inside:avoid}pre{white-space:pre-wrap}}
+</style>
+</head>
+<body>
+<a class="skip" href="#content">跳到正文</a>
+<header class="topbar"><span class="brand">模型使用指南</span><span class="top-title">@@TITLE@@</span><span class="status @@STATUS_CLASS@@">@@STATUS@@</span><button class="menu" aria-expanded="false" aria-controls="sidebar">目录</button><button class="print">打印 / PDF</button></header>
+<div class="layout"><aside id="sidebar"><p class="toc-title">内容大纲</p><nav aria-label="文档章节">@@TOC@@</nav></aside><main id="content" tabindex="-1"><article>@@BODY@@</article><div class="footer">使用说明 · 可通过左侧目录定位章节，或打印留存。</div></main></div>
+<script>
+(() => {
+  const sidebar=document.getElementById('sidebar'), menu=document.querySelector('.menu');
+  menu.addEventListener('click',()=>{const open=sidebar.classList.toggle('open');menu.setAttribute('aria-expanded',String(open));});
+  document.querySelector('.print').addEventListener('click',()=>window.print());
+  const links=[...document.querySelectorAll('nav a')], headings=[...document.querySelectorAll('article h2,article h3')];
+  function highlight(id){links.forEach(a=>{if(a.hash==='#'+id)a.setAttribute('aria-current','location');else a.removeAttribute('aria-current');});}
+  let scheduled=false;
+  function update(){scheduled=false;let current=headings[0];for(const h of headings){if(h.getBoundingClientRect().top<=135)current=h;else break;}if(current)highlight(current.id);}
+  window.addEventListener('scroll',()=>{if(!scheduled){scheduled=true;requestAnimationFrame(update);}},{passive:true});
+  links.forEach(a=>a.addEventListener('click',()=>{sidebar.classList.remove('open');menu.setAttribute('aria-expanded','false');highlight(a.hash.slice(1));}));
+  update();
+})();
+</script>
+</body>
+</html>

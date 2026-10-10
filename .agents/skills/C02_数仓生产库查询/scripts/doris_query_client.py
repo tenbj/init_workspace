@@ -1,5 +1,6 @@
 import os
 import re
+from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
 
 try:
@@ -8,12 +9,49 @@ except ImportError:
     raise ImportError("缺少依赖：请先运行 `pip install pymysql` 再重试")
 
 _WRITE_OPS = re.compile(
-    r"\b(INSERT|UPDATE|DELETE|DROP|CREATE|ALTER|TRUNCATE|REPLACE|GRANT|REVOKE|LOAD\s+DATA)\b",
+    # REPLACE(...) is a scalar string function; REPLACE INTO/table remains blocked.
+    r"\b(INSERT|UPDATE|DELETE|DROP|CREATE|ALTER|TRUNCATE|GRANT|REVOKE|LOAD\s+DATA)\b"
+    r"|\bREPLACE\b(?!\s*\()",
     re.IGNORECASE,
 )
 _DEFAULT_ROW_LIMIT = 500
 _CONNECT_TIMEOUT = 10
 _READ_TIMEOUT = 60
+_DORIS_ENV_NAMES = (
+    "DORIS_QUERY_HOST",
+    "DORIS_QUERY_PORT",
+    "DORIS_QUERY_USER",
+    "DORIS_QUERY_PASSWORD",
+    "DORIS_QUERY_DEFAULT_DB",
+)
+
+
+def _load_workspace_env_if_missing() -> None:
+    """缺少 Doris 进程变量时，从工作区 input/.env 安全补入当前进程。"""
+    if os.getenv("DORIS_QUERY_LOAD_WORKSPACE_ENV") != "1":
+        return
+    required = ("DORIS_QUERY_HOST", "DORIS_QUERY_USER", "DORIS_QUERY_PASSWORD")
+    if all(os.getenv(name) for name in required):
+        return
+
+    script_path = Path(__file__).resolve()
+    workspace = next((parent for parent in script_path.parents
+                      if (parent / ".system/standards/workspace-spec.json").is_file()), None)
+    if workspace is None:
+        return
+    env_path = workspace / "input" / ".env"
+    if not env_path.is_file():
+        return
+
+    for raw_line in env_path.read_text(encoding="utf-8-sig").splitlines():
+        line = raw_line.strip()
+        if not line or line.startswith("#") or "=" not in line:
+            continue
+        name, value = line.split("=", 1)
+        name = name.strip()
+        if name not in _DORIS_ENV_NAMES or os.getenv(name):
+            continue
+        os.environ[name] = value.strip().strip('"').strip("'")
 
 
 def _required_env(name: str) -> str:
@@ -46,6 +84,7 @@ class DorisQueryClient:
     """
 
     def __init__(self, database: Optional[str] = None, row_limit: int = _DEFAULT_ROW_LIMIT):
+        _load_workspace_env_if_missing()
         self.host = _required_env("DORIS_QUERY_HOST")
         self.port = _int_env("DORIS_QUERY_PORT", 9030)
         self.user = _required_env("DORIS_QUERY_USER")
