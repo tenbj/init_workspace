@@ -1,0 +1,3 @@
+interface:
+  display_name: "C15_数据平台质量指标配置_v1.3.6"
+  short_description: "配置并回读质量SQL，运行后保存截图证据"

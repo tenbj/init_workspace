@@ -1,0 +1,3 @@
+interface:
+  display_name: "C08_数据代理分析_v1.0.2"
+  short_description: "通过阿里云 Data Agent CLI 做自然语言数据库查询、文件分析和报告生成"

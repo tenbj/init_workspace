@@ -41,9 +41,9 @@ metadata:
 
 4. 处理时间戳字段（`⚠️ TIMESTAMP_FIELDS`）：
    - 按以下顺序查找 ODS CREATE TABLE SQL 文件：
-     1. 当前 `--output-dir` 指定的目录及其子目录（文件名含 `ods_`）
-     2. Doris 默认结果目录 `output/C03_Doris建表语句查询/结果/`（文件名含当前 ODS 表名）
-        **注意**：此 fallback 路径仅为兼容旧数据，新产出统一在子项目内
+     1. 当前任务由 C03 返回的 SQL 绝对路径；其次检查当前 `--output-dir` 指定的目录及其子目录（文件名含 `ods_`）
+     2. 仅兼容历史结果目录 `output/C03_Doris建表语句查询/结果/`（文件名含当前 ODS 表名）
+        **注意**：这不是 C03 当前默认目录。C03 必须传入当前任务的 `--output-dir`，新产出统一在子项目内；若需补查，调用 C03 并使用其返回路径。
    - **找到 ODS CREATE SQL**：逐一核查每个 TIMESTAMP_FIELDS 字段的 ODS 类型：
      - ODS 类型为 `text` 或 `varchar` 且字段注释/命名语义为 unix 毫秒戳 → 将 SELECT 表达式改为 `from_unixtime(cast(src.<field> as bigint) / 1000) as <field>`，同步更新 INSERT 字段列表
      - ODS 类型已为 `datetime` / `date` / `timestamp` → 保持 `src.<field>`，无需转换

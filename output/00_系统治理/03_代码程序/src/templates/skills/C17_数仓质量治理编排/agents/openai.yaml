@@ -1,0 +1,4 @@
+interface:
+  display_name: "C17_数仓质量治理编排_v1.6.5"
+  short_description: "按批次治理模型，推算监控时间并保存运行截图"
+  default_prompt: "请用 $C17 执行本批模型质量治理，默认展示最近批次，逐模型保存可点击查看的运行结果截图。"

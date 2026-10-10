@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>数仓质量治理 · 执行进度</title>
+<style>
+:root{--ink:#182b43;--muted:#55677c;--blue:#165bba;--line:#dbe3ed;--bg:#f3f6fa;--card:#fff;--green:#14764a;--orange:#a45806;--red:#b52b38;--radius:14px}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.6 "Microsoft YaHei",system-ui,sans-serif}main{max-width:1480px;margin:auto;padding:32px}header{display:flex;justify-content:space-between;gap:24px;align-items:flex-start}h1{font-size:30px;margin:4px 0 10px;letter-spacing:.02em}h2{font-size:19px;margin:0 0 14px}p{margin:6px 0;color:var(--muted)}.eyebrow{color:var(--blue);font-weight:700;font-size:12px;letter-spacing:.14em}.actions{display:flex;flex-wrap:wrap;gap:8px}button,.link,input,select{font:inherit;border:1px solid var(--line);border-radius:8px;padding:9px 13px;background:var(--card);color:var(--ink)}button,.link{cursor:pointer;text-decoration:none}button:hover,.link:hover{border-color:var(--blue);color:var(--blue)}:focus-visible{outline:3px solid #78aaf5;outline-offset:2px}.current{padding:16px 20px;background:#e7f0ff;border-left:4px solid var(--blue);margin:22px 0;border-radius:6px}.cards{display:grid;grid-template-columns:repeat(7,1fr);gap:12px;margin:20px 0}.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:16px}.card strong{display:block;font-size:29px}.card span{font-size:13px;color:var(--muted)}section{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:22px;margin:18px 0}.filters{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px}input{min-width:260px;flex:1}.table-wrap{overflow-x:auto}table{border-collapse:collapse;width:100%;font-size:13px}th{text-align:left;white-space:nowrap;background:#f6f8fb;color:var(--muted)}td,th{padding:12px;border-bottom:1px solid var(--line);vertical-align:top}td small{display:block;color:var(--muted);overflow-wrap:anywhere}.pill{display:inline-block;white-space:nowrap;background:#edf1f6;border-radius:6px;padding:2px 7px;font-size:12px}.good{color:var(--green);background:#e6f4ec}.warn{color:var(--orange);background:#fff0d8}.bad{color:var(--red);background:#fbe9eb}.empty{text-align:center;padding:48px 15px;color:var(--muted)}.empty strong{display:block;font-size:19px;color:var(--ink);margin-bottom:7px}.muted{color:var(--muted);font-size:13px}.question{padding:15px 0;border-bottom:1px solid var(--line)}.question p{color:var(--ink)}details{margin:10px 0;border:1px solid var(--line);border-radius:8px;padding:12px}summary{cursor:pointer}pre{white-space:pre-wrap;word-break:break-word;font-size:12px;background:#f5f7fb;padding:14px;border-radius:8px}.pager{display:flex;justify-content:flex-end;align-items:center;gap:12px;margin-top:12px}footer{font-size:12px;color:var(--muted);margin:24px 0}.split{display:grid;grid-template-columns:1fr 1fr;gap:18px}.split section{margin:0}.model-name{padding:0;border:0;color:var(--blue);background:none;text-align:left}#detail{scroll-margin-top:20px}a{color:var(--blue)}@media(max-width:900px){.cards{grid-template-columns:repeat(3,1fr)}.split{grid-template-columns:1fr}}@media(max-width:650px){main{padding:16px}header{display:block}.actions{margin-top:16px}.cards{grid-template-columns:repeat(2,1fr)}h1{font-size:25px}section{padding:14px}input{min-width:100%;width:100%}}@media print{body{background:white}main{padding:0}.actions,.filters,.pager{display:none}.table-wrap{overflow:visible}table{font-size:10px}th,td{padding:5px}.split{display:block}section,.card{break-inside:avoid}*{-webkit-print-color-adjust:exact;print-color-adjust:exact}}
+
+main{max-width:1920px}.grain-cell{min-width:270px;max-width:330px}.key-cell{min-width:255px;max-width:330px}.grain-title{font-weight:600;margin:0 0 5px;color:var(--ink)}.field-list{display:flex;flex-wrap:wrap;gap:4px;margin:7px 0}.field-list code{font:11px/1.5 Consolas,monospace;background:#eef3f9;border:1px solid #dce5ef;border-radius:4px;padding:2px 5px;overflow-wrap:anywhere}.grain-cell small,.key-cell small{margin-top:5px}.key-note{color:var(--orange)!important}.table-wrap td:first-child{min-width:200px;max-width:270px}.grain-legend{margin:0 0 14px}.detail-grain{display:grid;grid-template-columns:1fr 1fr;gap:16px;background:#f6f9fd;border:1px solid var(--line);border-radius:9px;padding:16px;margin:14px 0}.detail-grain .grain-cell,.detail-grain .key-cell{max-width:none;min-width:0}@media(max-width:650px){.detail-grain{grid-template-columns:1fr}}@media print{.grain-cell,.key-cell{min-width:0}.field-list code{font-size:9px}}
+.copy-controls{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin:8px 0}.copy-fields{padding:3px 8px;font-size:12px;color:var(--blue);background:#f7faff}.copy-fields:disabled{cursor:default;color:var(--muted);background:#f4f5f7;border-color:var(--line)}.copy-status{font-size:12px;color:var(--green)}.copy-manual{width:100%;min-width:0;font:12px/1.6 Consolas,monospace;resize:vertical}.copy-status.error{color:var(--red)}@media print{.copy-controls{display:none}}
+.batch-filter{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:14px}.batch-filter select{max-width:100%;min-width:280px}.batch-filter label{font-weight:600}.batch-note{margin:8px 0 16px}@media(max-width:650px){.batch-filter select{min-width:0;width:100%}}
+
+.shot-gallery{display:flex;gap:8px;flex-wrap:wrap;min-width:180px}.shot-thumb{padding:3px;border-radius:8px;line-height:0;background:#edf2f8;overflow:hidden}.shot-thumb img{display:block;width:180px;height:84px;object-fit:contain}.shot-thumb:hover{box-shadow:0 0 0 2px #8eb6ed}.shot-empty{color:#a5b0be}.shot-viewer{border:0;border-radius:12px;padding:0;width:min(96vw,1800px);max-width:96vw;max-height:94vh;background:#142033;box-shadow:0 15px 70px #0008}.shot-viewer::backdrop{background:#061020c9}.shot-toolbar{display:flex;justify-content:flex-end;gap:8px;padding:8px;background:#142033}.shot-toolbar button{color:#fff;background:#26354b;border-color:#42526b;min-width:42px;font-size:21px;line-height:1}.shot-scroll{overflow:auto;max-height:calc(94vh - 60px);text-align:center;padding:0 12px 12px}.shot-full{display:block;max-width:100%;max-height:calc(94vh - 80px);width:auto;height:auto;margin:auto;cursor:zoom-in}.shot-viewer.zoomed .shot-full{max-width:none;max-height:none;cursor:zoom-out}.shot-viewer.zoomed .shot-scroll{text-align:left}.shot-thumb.failed{min-width:180px;min-height:84px;line-height:1;color:#b52b38}.shot-thumb.failed::after{content:'!';font-size:24px}@media(max-width:650px){.shot-thumb img{width:150px;height:70px}.shot-gallery{min-width:150px}.shot-viewer{width:98vw;max-width:98vw}}@media print{.shot-viewer{display:none}}
+.handling-cell{min-width:230px;max-width:310px}.handling-item{margin:0 0 9px}.handling-item:last-child{margin-bottom:0}.handling-label{display:block;font-weight:600;margin-bottom:3px}.handling-created{color:#165bba;background:#e7f0ff}.handling-reused{color:#a45806;background:#fff0d8}.handling-cell small{margin-top:3px}.handling-detail{background:#f6f9fd;border:1px solid var(--line);border-radius:9px;padding:16px;margin:14px 0}.handling-detail .handling-item{margin-bottom:14px}.handling-detail small{display:block}
+</style></head><body><main>
+<header><div><div class="eyebrow">DATA QUALITY / C17 · 批次质量治理</div><h1>数仓质量治理 · 执行进度</h1><p>统一模型清单，逐项记录生成、配置与粒度核验。</p><p id="updated" class="muted"></p></div><div class="actions"><a class="link" href="../../02_课题研究/12_一致性指标治理AI执行编排.md">AI执行编排</a><button id="reload">刷新已保存进度</button><button id="export">导出筛选结果</button></div></header>
+<div class="current" id="current"></div><div class="cards" id="cards"></div>
+<section><h2>模型清单</h2><div class="batch-filter"><label for="batch">清单批次</label><select id="batch" aria-label="筛选清单批次"></select><button id="latest-batch">查看最近批次</button></div><p id="batch-summary" class="muted batch-note" aria-live="polite"></p><div class="filters"><input id="search" aria-label="搜索模型" placeholder="搜索技术表名、中文名或模型编号"><select id="status" aria-label="筛选执行状态"><option value="">全部执行状态</option><option>待开始</option><option>进行中</option><option>待处理</option><option value="执行完成">三阶段完成</option><option>用户指定跳过</option><option>移出范围</option></select><select id="line" aria-label="筛选业务线"><option value="">全部业务线</option><option>前端运营</option><option>市场&研发</option><option>后端供应链</option></select><button id="reset">清空其他筛选</button></div><p class="muted grain-legend">本批处理方式分别标注 DQC 指标和 ODS 统计节点的新建、沿用或未配置；沿用不代表已验证。点击模型查看证据。粒度与业务主键仍按本次核验结论展示。</p><p id="count" class="muted"></p><div class="table-wrap"><table><thead><tr><th>模型</th><th>本批处理方式</th><th>数据粒度</th><th>业务主键</th><th>业务线</th><th>C14 · SQL</th><th>C15 · 平台</th><th>钉钉通知</th><th>监控时间</th><th>最新质量结果</th><th>运行截图</th><th>C11 · 核验</th><th>当前动作</th></tr></thead><tbody id="rows"></tbody></table></div><div id="empty" class="empty" hidden><strong>待接收模型清单</strong>你可以在对话中发送表名，或提供清单文件。登记后会显示在这里。</div><div class="pager"><button id="prev">上一页</button><span id="page"></span><button id="next">下一页</button></div></section>
+<section id="detail" hidden><h2 id="detail-title"></h2><div id="detail-body"></div></section>
+<div class="split"><section><h2>全部待处理问题</h2><div id="questions"></div></section><section><h2>清单接收记录</h2><div id="batches"></div></section></div>
+<section><h2>全部执行过程</h2><p class="muted">最近50条操作；完整历史保存在明细台账和执行日志中。</p><div id="events"></div></section>
+<footer id="footer"></footer></main><dialog id="shot-viewer" class="shot-viewer" aria-label="运行结果截图预览"><div class="shot-toolbar"><button id="shot-zoom" type="button" aria-label="按原始尺寸放大" title="按原始尺寸放大">＋</button><button id="shot-close" type="button" aria-label="关闭截图" title="关闭截图">×</button></div><div class="shot-scroll"><img id="shot-full" class="shot-full" alt="运行结果截图"></div></dialog><script type="application/json" id="ledger">__LEDGER_JSON__</script>
+<script>
+const data=JSON.parse(document.getElementById('ledger').textContent),$=id=>document.getElementById(id);let page=0,filtered=[];const size=50;
+function el(tag,text,cls){const e=document.createElement(tag);if(text!==undefined)e.textContent=text;if(cls)e.className=cls;return e}
+function sortedBatches(){
+  return [...data.batches].sort((a,b)=>{
+    const ta=Date.parse(a.received_at),tb=Date.parse(b.received_at);
+    const byTime=(Number.isFinite(tb)?tb:-Infinity)-(Number.isFinite(ta)?ta:-Infinity);
+    return (Number.isNaN(byTime)?0:byTime)||String(b.id).localeCompare(String(a.id),undefined,{numeric:true});
+  });
+}
+function selectedBatchId(){return $('batch').value==='latest'?(sortedBatches()[0]?.id||null):$('batch').value==='all'?null:$('batch').value}
+function batchModels(){const id=selectedBatchId();return $('batch').value==='all'?data.models:data.models.filter(m=>(m.sources||[]).some(s=>s.batch_id===id)).map(m=>{const source=m.sources.find(s=>s.batch_id===id);return source?.skip?{...m,in_scope:false,scope_status:'用户指定跳过',current_action:source.note||'本批跳过'}:m})}
+function batchLabel(b){const date=String(b.received_at||'时间未记录').replace('T',' ').replace(/([+-]\d{2}:\d{2}|Z)$/,'');return [b.id,date,b.name||b.title||''].filter(Boolean).join(' · ')}
+function initBatchFilter(value='latest'){
+  const batches=sortedBatches(),select=$('batch');select.replaceChildren();
+  for(const [value,label] of [['latest',batches.length?'最近批次 · '+batchLabel(batches[0]):'最近批次 · 尚未接收清单'],['all','全部批次']]){const option=el('option',label);option.value=value;select.append(option)}
+  for(const b of batches){const option=el('option',batchLabel(b));option.value=b.id;select.append(option)}
+  select.value=['latest','all',...batches.map(b=>b.id)].includes(value)?value:'latest';
+}
+function renderBatchSummary(models){
+  const id=selectedBatchId(),b=data.batches.find(b=>b.id===id),all=$('batch').value==='all';
+  const label=all?'全部批次':b?batchLabel(b):'尚未接收批次';
+  $('current').textContent='当前清单：'+label+' · '+models.length+' 个模型';
+  $('batch-summary').textContent=(all?'按模型去重显示全部清单。':'仅显示所选批次的模型。')+' 状态与结果为模型最新记录；切换批次可查看不同清单。';
+  $('batches').replaceChildren();
+  const shown=all?sortedBatches():b?[b]:[];
+  if(!shown.length)$('batches').append(el('p','尚未接收正式清单。'));
+  for(const item of shown){const box=el('details');box.append(el('summary',batchLabel(item)),el('pre',JSON.stringify(item,null,2)));$('batches').append(box)}
+}
+function status(m){if(m.in_scope===false)return m.scope_status||'移出范围';const s=['C14','C15','C11'].map(k=>m.stages[k].status);if(s.every(x=>['已完成','已有跳过'].includes(x)))return '执行完成';if(s.includes('进行中'))return '进行中';if(s.some(x=>['待用户','待补齐','可重试错误','已取消'].includes(x)))return '待处理';if(s.every(x=>x==='未开始'))return '待开始';return '进行中'}
+function badge(text){return el('span',text||'未核验','pill '+(['已完成','正常','已确认'].includes(text)?'good':['异常','可重试错误','存在问题'].includes(text)?'bad':['待用户','待补齐','已有跳过','待确认'].includes(text)?'warn':''))}
+function safeLink(item){const a=el('a',item.label||item.path||'证据');try{const u=new URL(item.path,location.href);if(!['http:','https:','file:'].includes(u.protocol))throw Error('unsupported');a.href=u.href;a.target='_blank';a.rel='noopener'}catch{a.removeAttribute('href')}return a}
+
+function handlingRecord(m){
+  const records=m.handling_records||[],batch=selectedBatchId();
+  if(batch)return records.find(r=>r.batch_id===batch)||null;
+  for(const b of sortedBatches()){const record=records.find(r=>r.batch_id===b.id);if(record)return record}
+  return null;
+}
+function handlingCell(m,tag='td',detail=false){
+  const box=el(tag,undefined,detail?'handling-detail':'handling-cell'),record=handlingRecord(m);
+  if(detail)box.append(el('h3','本批处理方式'));
+  if(!record){box.append(badge('历史未标注'),el('small','尚无此批新建或沿用的明确记录'));return box}
+  if($('batch').value==='all')box.append(el('small','最近处理批次：'+record.batch_id));
+  const labels={created:'本轮新建',reused:'已有沿用',not_configured:'本轮未配置',not_applicable:'不适用',skipped:'用户跳过'};
+  for(const item of record.items){
+    const row=el('div',undefined,'handling-item');row.append(el('span',item.label,'handling-label'));
+    row.append(el('span',labels[item.action]||'未标注','pill '+(item.action==='created'?'handling-created':item.action==='reused'?'handling-reused':'')));
+    if(item.node_type)row.append(el('span',' · '+item.node_type));
+    if(item.note)row.append(el('small',item.note));
+    if(detail){
+      if(item.name)row.append(el('small','名称：'+item.name));
+      if(item.indicator_id)row.append(el('small','指标编号：'+item.indicator_id));
+      if(item.node_id)row.append(el('small','节点编号：'+item.node_id));
+      for(const evidence of item.evidence||[]){const p=el('p');p.append(safeLink(evidence));row.append(p)}
+    }
+    box.append(row);
+  }
+  if(detail)box.append(el('p','新建与沿用只说明本批操作，不代表质量正常或链路已验证。','muted'));
+  return box;
+}
+
+function grainView(m){return m.stages.C11.display||{grain_summary:'待核验',grain_fields:[],grain_labels:[],grain_kind:'尚无粒度结论',business_key_label:'待核验',business_key_tone:'',business_key_fields:[],business_key_note:'',evidence_scope:''}}
+function fieldList(fields){const box=el('div',undefined,'field-list');for(const f of fields||[])box.append(el('code',f));return box}
+function grainLabelValues(v){const fields=Array.isArray(v.grain_fields)?v.grain_fields:[],labels=Array.isArray(v.grain_labels)?v.grain_labels:[];return labels.length===fields.length&&labels.every(x=>String(x||'').trim())?labels:[]}
+async function copyText(text){
+  try{if(navigator.clipboard?.writeText){await navigator.clipboard.writeText(text);return}}catch{}
+  const previous=document.activeElement,selection=window.getSelection(),ranges=[];
+  if(selection)for(let i=0;i<selection.rangeCount;i++)ranges.push(selection.getRangeAt(i).cloneRange());
+  const area=el('textarea');area.value=text;area.readOnly=true;area.style.cssText='position:fixed;left:-9999px;top:0;opacity:0';document.body.append(area);
+  try{area.focus({preventScroll:true});area.select();if(!document.execCommand('copy'))throw Error('copy failed')}
+  finally{area.remove();previous?.focus({preventScroll:true});if(selection){selection.removeAllRanges();for(const range of ranges)selection.addRange(range)}}
+}
+function copyFields(fields,m,kind){
+  const values=fields||[],text=values.join('+'),box=el('div',undefined,'copy-controls'),button=el('button',values.length?'复制字段组合':'暂无可复制字段','copy-fields'),feedback=el('span','','copy-status');
+  button.type='button';button.disabled=!values.length;button.title=values.length?text:'尚无已确认的'+kind+'字段';button.setAttribute('aria-label',m.id+' · '+kind+' · '+button.textContent);feedback.setAttribute('role','status');feedback.setAttribute('aria-live','polite');box.append(button,feedback);
+  let timer,manual;
+  button.onclick=async()=>{clearTimeout(timer);button.disabled=true;feedback.textContent='';feedback.classList.remove('error');manual?.remove();
+    try{await copyText(text);feedback.textContent='已复制';timer=setTimeout(()=>{feedback.textContent=''},2000)}
+    catch{feedback.textContent='复制失败，请手动复制下方字段';feedback.classList.add('error');manual=el('textarea',undefined,'copy-manual');manual.value=text;manual.readOnly=true;manual.setAttribute('aria-label',kind+'字段组合');box.append(manual);manual.focus({preventScroll:true});manual.select()}
+    finally{button.disabled=false}
+  };return box
+}
+function grainCell(m,tag='td'){const v=grainView(m),cell=el(tag,undefined,'grain-cell');cell.append(el('div',v.grain_summary,'grain-title'),el('small',v.grain_kind),fieldList(v.grain_fields),copyFields(grainLabelValues(v),m,'数据粒度中文释义'));return cell}
+function keyCell(m,tag='td'){const v=grainView(m),cell=el(tag,undefined,'key-cell');cell.append(el('span',v.business_key_label,'pill '+v.business_key_tone));if(v.business_key_fields.length)cell.append(fieldList(v.business_key_fields));cell.append(copyFields(v.business_key_fields,m,'业务主键'));if(v.business_key_note)cell.append(el('small',v.business_key_note,'key-note'));if(Number.isFinite(v.duplicate_groups))cell.append(el('small','候选组合重复组：'+v.duplicate_groups.toLocaleString('zh-CN')));cell.append(el('small',v.evidence_scope));const report=(m.stages.C11.artifacts||[]).find(a=>a.path.endsWith('.md'));if(report){const p=el('small');p.append(safeLink({...report,label:'查看核验证据'}));cell.append(p)}return cell}
+
+function visibleShots(m){const id=selectedBatchId();return (m.screenshots||[]).filter(s=>s.display!==false&&($('batch').value==='all'||s.batch_id===id))}
+let shotTrigger=null;
+function closeShot(){const dialog=$('shot-viewer');if(dialog.open)dialog.close()}
+function openShot(src,label,trigger){const dialog=$('shot-viewer'),img=$('shot-full');shotTrigger=trigger;dialog.classList.remove('zoomed');$('shot-zoom').textContent='＋';$('shot-zoom').setAttribute('aria-label','按原始尺寸放大');img.src=src;img.alt=label;dialog.showModal();$('shot-close').focus();dialog.querySelector('.shot-scroll').scrollTo(0,0)}
+function zoomShot(){const dialog=$('shot-viewer'),zoomed=dialog.classList.toggle('zoomed');$('shot-zoom').textContent=zoomed?'−':'＋';$('shot-zoom').setAttribute('aria-label',zoomed?'缩小适应窗口':'按原始尺寸放大');$('shot-zoom').title=zoomed?'缩小适应窗口':'按原始尺寸放大'}
+$('shot-close').onclick=closeShot;$('shot-zoom').onclick=zoomShot;$('shot-full').onclick=zoomShot;
+$('shot-viewer').addEventListener('click',e=>{if(e.target===$('shot-viewer')){const r=e.target.getBoundingClientRect();if(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom)closeShot()}});
+$('shot-viewer').addEventListener('close',()=>{document.getElementById('shot-full').removeAttribute('src');shotTrigger?.focus({preventScroll:true});shotTrigger=null});
+function screenshotLinks(m){const box=el('div',undefined,'shot-gallery'),shots=visibleShots(m);if(!shots.length){const empty=el('span','—','shot-empty');empty.setAttribute('aria-label',m.in_scope===false?'跳过':(data.config.screenshot_policy?.no_backfill_batch_ids||[]).includes(selectedBatchId())?'未留图，历史不补':'待留图');box.append(empty);return box}for(const shot of shots){for(const [path,kind] of [[shot.path,shot.kind==='uniqueness'?'唯一性结果':'一致性结果'],...(shot.identity_context_path?[[shot.identity_context_path,'模型身份']]:[])]){const url=safeLink({path}).href;if(!url)continue;const label=(m.cn_name||m.table)+' · '+kind+' · '+shot.run_at;const button=el('button',undefined,'shot-thumb');button.type='button';button.title=label;button.setAttribute('aria-label','查看'+label);const img=el('img');img.src=url;img.alt=label;img.loading='lazy';img.onerror=()=>{button.classList.add('failed');img.hidden=true;button.disabled=true;button.setAttribute('aria-label','图片加载失败：'+label)};button.append(img);button.onclick=()=>openShot(url,label,button);box.append(button)}}return box}
+function showDetail(m){$('detail').hidden=false;$('detail-title').textContent=`${m.id} · ${m.cn_name||m.table}`;const body=$('detail-body');body.replaceChildren();body.append(el('p',`${m.connection||'连接待定'} / ${m.database||'库待定'} / ${m.table} · ${status(m)==='执行完成'?'三阶段完成':status(m)} · 治理结论：${m.governance_result||'待确认'}`));body.append(handlingCell(m,'div',true));const shotBox=el('details');shotBox.open=true;shotBox.append(el('summary','运行结果截图'),screenshotLinks(m));body.append(shotBox);const grainOverview=el('div',undefined,'detail-grain');grainOverview.append(grainCell(m,'div'),keyCell(m,'div'));body.append(grainOverview);for(const stage of ['C14','C15','C11']){const s=m.stages[stage],box=el('details');box.open=true;box.append(el('summary',`${stage} · ${s.status}`));box.append(el('p',s.current_action||s.conclusion||s.result||'尚未开始'));for(const artifact of s.artifacts||[]){const p=el('p');p.append(safeLink(artifact));box.append(p)}box.append(el('pre',JSON.stringify(s,null,2)));body.append(box)}const notifyBox=el('details');notifyBox.open=true;notifyBox.append(el('summary','钉钉通知 · '+(m.notification?.status||'未记录')),el('p',m.notification?.current_action||'独立于C15平台完成状态'),el('pre',JSON.stringify(m.notification||{},null,2)));body.append(notifyBox);const scheduleBox=el('details');scheduleBox.open=true;const sc=m.schedule||{};scheduleBox.append(el('summary','监控时间 · '+(sc.monitor_schedule||'未记录')),el('p','模型更新周期最后配置时间：'+(sc.model_last_scheduled_time||'未记录')+'；偏移：'+(sc.offset_minutes??'未记录')+' 分钟；监控配置状态：'+(sc.status||'未记录')));if(sc.source_enabled===false)scheduleBox.append(el('p','模型源更新周期处于停用状态；以上是配置时间。'));if(sc.observed_at)scheduleBox.append(el('p','抓取时间：'+sc.observed_at));if(sc.evidence_path)scheduleBox.append(safeLink({path:sc.evidence_path,label:'查看原始周期记录'}));body.append(scheduleBox);if(m.uniqueness){const ub=el('details');ub.open=true;ub.append(el('summary','唯一性 · '+m.uniqueness.status),el('p',m.uniqueness.reason||m.uniqueness.current_action||''));if(m.uniqueness.execution?.latest_at)ub.append(el('p',(m.uniqueness.execution.result||'')+' · '+m.uniqueness.execution.latest_at));for(const a of m.uniqueness.artifacts||[]){const p=el('p');p.append(safeLink(a));ub.append(p)}body.append(ub)}body.append(el('h3',$('batch').value==='all'?'接收来源':'本批接收来源'));const sources=$('batch').value==='all'?m.sources:(m.sources||[]).filter(s=>s.batch_id===selectedBatchId());body.append(el('pre',JSON.stringify(sources,null,2)));const events=data.events.filter(e=>e.model_id===m.id||(e.change?.models||[]).some(x=>x.id===m.id));body.append(el('h3','模型操作历史'));body.append(el('pre',JSON.stringify(events,null,2)));$('detail').scrollIntoView({behavior:'smooth'})}
+function render(){
+  const q=$('search').value.toLowerCase(),state=$('status').value,line=$('line').value,models=batchModels();
+  renderBatchSummary(models);
+  $('detail').hidden=true;$('detail-body').replaceChildren();
+  filtered=models.filter(m=>(!q||[m.id,m.table,m.cn_name,m.database].join(' ').toLowerCase().includes(q))&&(!state||status(m)===state)&&(!line||m.business_line===line));
+  page=Math.min(page,Math.max(0,Math.ceil(filtered.length/size)-1));$('rows').replaceChildren();
+  for(const m of filtered.slice(page*size,(page+1)*size)){
+    const row=el('tr'),cell=el('td'),b=el('button',m.cn_name||m.table,'model-name');b.onclick=()=>showDetail(m);
+    cell.append(b,el('small',m.id+' · '+m.table));if(m.in_scope===false)cell.append(badge(m.scope_status||'移出范围'));
+    row.append(cell,handlingCell(m),grainCell(m),keyCell(m),el('td',m.business_line||'待判断'));
+    for(const k of ['C14','C15']){const c=el('td');c.append(badge(m.scope_status==='用户指定跳过'&&m.stages[k].status==='已取消'?'用户指定跳过':m.stages[k].status));row.append(c)}
+    const notification=el('td');notification.append(badge(m.notification?.status||'未记录'));row.append(notification);const scell=el('td');scell.append(el('div',m.schedule?.monitor_schedule||(m.in_scope===false?'跳过':'未记录')));if(m.schedule?.model_last_scheduled_time)scell.append(el('small','模型 '+m.schedule.model_last_scheduled_time+' + '+m.schedule.offset_minutes+' 分钟'));if(m.schedule?.source_enabled===false)scell.append(el('small','源周期停用'));row.append(scell);
+    const result=el('td');result.append(badge(m.stages.C15.result||'未核验'),el('small',m.stages.C15.latest_at||''),el('small',m.stages.C15.result_origin||''));row.append(result);
+    const shotCell=el('td');shotCell.append(screenshotLinks(m));row.append(shotCell);
+    const grain=el('td');grain.append(badge(m.stages.C11.status));row.append(grain,el('td',m.current_action||status(m)));$('rows').append(row);
+  }
+  $('empty').hidden=filtered.length>0;
+  if(!models.length){$('empty').replaceChildren(el('strong',data.batches.length?'本批暂无模型':'待接收模型清单'),el('span','可切换批次，或在对话中提交新的清单。'))}
+  else if(!filtered.length){$('empty').replaceChildren(el('strong','没有匹配的模型'),el('span','请调整筛选条件。'))}
+  $('count').textContent=`筛选 ${filtered.length} / ${$('batch').value==='all'?'全部':'本批'} ${models.length} 个模型`;
+  $('page').textContent=`${filtered.length?page+1:0} / ${Math.ceil(filtered.length/size)} 页`;
+  $('prev').disabled=page===0;$('next').disabled=(page+1)*size>=filtered.length;
+  const active=filtered.filter(m=>m.in_scope!==false);
+  const cards=[['当前筛选有效模型',active.length],['三阶段完成',active.filter(m=>status(m)==='执行完成').length],['进行中',active.filter(m=>status(m)==='进行中').length],['待处理',active.filter(m=>status(m)==='待处理').length],['一致性异常',active.filter(m=>m.stages.C15.result==='异常').length],['已有指标跳过',active.filter(m=>m.stages.C15.status==='已有跳过').length],['通知待补齐',active.filter(m=>['待补齐','未开始','待用户'].includes(m.notification?.status)).length]];
+  $('cards').replaceChildren();for(const [label,value] of cards){const c=el('div',undefined,'card');c.append(el('strong',String(value)),el('span',label));$('cards').append(c)}
+  history.replaceState(null,'','#'+new URLSearchParams({batch:$('batch').value,q,state,line}).toString());
+}
+const initial=new URLSearchParams(location.hash.slice(1));initBatchFilter(initial.get('batch')||'latest');$('search').value=initial.get('q')||'';$('status').value=initial.get('state')||'';$('line').value=initial.get('line')||'';
+for(const id of ['batch','search','status','line'])$(id).oninput=()=>{page=0;render()};$('reset').onclick=()=>{for(const id of ['search','status','line'])$(id).value='';page=0;render()};$('prev').onclick=()=>{page--;render()};$('next').onclick=()=>{page++;render()};$('latest-batch').onclick=()=>{$('batch').value='latest';for(const id of ['search','status','line'])$(id).value='';page=0;render()};$('reload').onclick=()=>location.reload();$('export').onclick=()=>{const url=URL.createObjectURL(new Blob([JSON.stringify({revision:data.revision,exported_at:new Date().toISOString(),batch_selection:$('batch').value,batch_id:selectedBatchId(),result_scope:'模型最新记录',models:filtered},null,2)],{type:'application/json'})),a=el('a');a.href=url;a.download='一致性治理筛选结果.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000)};
+$('updated').textContent=`最近记录：${data.updated_at} · 台账版本 ${data.revision}`;$('current').textContent=data.config.current_action||'等待下一项任务';const pending=data.questions.filter(q=>q.status!=='已解决');if(!pending.length)$('questions').append(el('p','暂无待答问题'));for(const q of pending){const box=el('div',undefined,'question');box.append(badge(q.status),el('p',q.id+' · '+q.question),el('small','影响范围：'+q.scope));$('questions').append(box)}for(const e of data.events.slice(-50).reverse()){const box=el('details');box.append(el('summary',`${e.at} · ${e.kind} · ${e.message}`),el('pre',JSON.stringify(e,null,2)));$('events').append(box)}$('footer').textContent=`更新时间：${data.updated_at}。看板展示最近落盘记录；正在打开的页面请刷新查看更新。新增清单、调整优先级或回复问题，可在对话中说明，也可保存到输入文件后通知AI读取。`;render();
+</script></body></html>

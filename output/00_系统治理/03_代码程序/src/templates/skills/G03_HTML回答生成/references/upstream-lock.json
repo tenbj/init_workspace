@@ -1,0 +1,14 @@
+{
+  "repository": "https://github.com/QingYunA/answer-me-with-html",
+  "commit": "7b404ea1ec55c7c3abf37dd7a4099ee5b2579c40",
+  "upstream_path": "skills/answer-me-with-html",
+  "installed_date": "2026-10-09",
+  "files": {
+    "scripts/am.mjs": "1074159b593847d5cde3f2d081952bada18c40db31501ed6b2994ba99acda045",
+    "references/原始技能说明.md": "fc74013a03e27d1ddabecdedfe0e98e45398c66428ef4e430039bf39b7c710ef",
+    "references/settings.md": "507b3458ee883f4009bf5fdeaab73ae437c54cf6da7e9037d04eb6e6e984fe65",
+    "references/video.md": "3f77398b830944a5f876bde223dce8ec5724ccd95ef93691b56a7e0532e20425",
+    "references/LICENSE.txt": "752a1a34b40ae8e64e86f546ec699a691aff573179e1f96997e82757b2ee5d3f",
+    "references/upstream-package.json": "36f094647baa225bc700a9945e6eee44da5685a518a2f37ffabc971aab8d3859"
+  }
+}

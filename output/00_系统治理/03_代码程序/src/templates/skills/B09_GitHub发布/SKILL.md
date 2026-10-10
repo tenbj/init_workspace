@@ -27,7 +27,7 @@ description: 当用户需要把项目提交 GitHub、创建 tag、发布 Release
 4. 按 B02/B03/B08 处理备份、任务进度和记忆；仅用户明确要求框架体检时调用 B01。
 5. 汇总 Git 差异、内部版本记录和构建产物，整理 `CHANGELOG.md` 与 Release Notes。
 6. 执行发布前检查：工作区状态、敏感信息、忽略规则、构建产物、hash 和本次发布所需验证结果。
-7. 按用户授权执行 GitHub 推送、tag、Release 创建和附件上传；没有授权时只给可执行命令清单。
+7. 先按 B11 完成工作分支推送和 PR 合并，再对合并结果打 tag、更新 Release 和附件；用户要求保留分类提交时，发布前必须执行 `references/发布前检查.md` 中的 PR 合并检查。没有对应授权时停在已完成的阶段。
 8. 发布后记录 Release URL、tag、资产名、SHA256、验证结果和后续事项。
 
 ## 什么时候再读本 skill 的 references
