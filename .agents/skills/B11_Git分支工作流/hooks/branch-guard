@@ -1,0 +1,45 @@
+#!/bin/sh
+# B11 branch guard. Installed copies include an explicit hook name.
+
+deny() {
+    printf '%s\n' "B11 分支保护：$* 请先创建工作分支，按事项提交，并通过 PR 合并。" >&2
+    exit 1
+}
+
+protected_branch() {
+    case "$1" in main|master) return 0 ;; esac
+    remote_heads=$(git for-each-ref --format='%(symref)' 'refs/remotes/*/HEAD') ||
+        deny '无法核对远端默认分支。'
+    for remote_head in $remote_heads; do
+        remote_branch=${remote_head#refs/remotes/}
+        remote_branch=${remote_branch#*/}
+        if [ "$1" = "$remote_branch" ]; then
+            return 0
+        fi
+    done
+    return 1
+}
+
+case "${B11_GUARD_HOOK:-}" in
+    pre-commit|prepare-commit-msg|pre-merge-commit)
+        branch=$(git symbolic-ref --quiet --short HEAD) ||
+            deny '禁止在 detached HEAD 状态创建提交。'
+        if protected_branch "$branch"; then
+            deny "禁止直接在受保护分支 $branch 创建提交（包括 amend 和合并提交）。"
+        fi
+        ;;
+    pre-push)
+        while read -r local_ref local_oid remote_ref remote_oid; do
+            case "$remote_ref" in
+                refs/heads/*)
+                    branch=${remote_ref#refs/heads/}
+                    if protected_branch "$branch"; then
+                        deny "禁止直接推送或删除远端受保护分支 $branch。"
+                    fi
+                    ;;
+            esac
+        done
+        ;;
+    *) deny '钩子安装不完整，需先检查分支保护安装。' ;;
+esac
+exit 0

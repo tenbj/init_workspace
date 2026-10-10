@@ -21,6 +21,8 @@ description: 当用户需要把项目提交 GitHub、创建 tag、发布 Release
 
 ## 固定动作
 
+执行前先按 B11 核验当前工作分支与提交保护。**禁止在 main 上直接提交，包括发布准备提交。** 检查失败时先保留改动、切工作分支并恢复保护，再开始构建和提交；最终 tag 仍指向已核验的 PR 合并结果。
+
 1. 先运行 `scripts/update_init_program.ps1` 更新 `output/00_系统治理/03_代码程序/src` 内的初始化程序：按SSOT注册表全量刷新 `src/templates`，同步版本常量，并生成 `.b09_update_manifest.json`。
 2. 确认第 1 步成功后，再运行 `scripts/build_init_exe.ps1` 重封装 `dist/初始化工作区_v*.exe`；该脚本默认要求存在更新清单，否则停止构建。
 3. 确认发布目标：仓库、公开版本号、主要交付物、是否需要上传 Release 附件。
