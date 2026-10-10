@@ -1,0 +1,4 @@
+interface:
+  display_name: "C09_data-assets依赖Excel生成_v1.1.1"
+  short_description: "同步并解析 data-assets 脚本血缘，生成上下游依赖 Excel"
+  default_prompt: "$C09"

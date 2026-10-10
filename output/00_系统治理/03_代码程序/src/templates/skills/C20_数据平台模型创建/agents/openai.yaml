@@ -1,0 +1,4 @@
+interface:
+  display_name: "C20_数据平台模型创建_v1.0.2"
+  short_description: "按阶段接入平台建模，核验前置依赖、九项配置与保存结果"
+  default_prompt: "请使用 $C20 从当前阶段继续数据平台模型创建，先核实前置证据，全程不刷新。"

@@ -1,11 +1,15 @@
 ---
 name: A01_创建技能
-description: 当用户要新建、重写或薄化本地 Skill 时使用；生成标准骨架、薄入口、references 路由与校验结果。
+description: 当用户要新建、重写或薄化本地 Skill 时使用；生成基础骨架、薄入口、references 路由与校验结果。
 metadata:
   short-description: 新建、重写与薄化本地技能
 ---
 
 # 创建技能
+
+## 本地接入
+
+执行前先读 `references/本地接入.md`，确认本项目规则、输入及授权。来源案例不授予本项目权限。
 
 ## 这项技能解决什么问题
 
@@ -21,18 +25,21 @@ metadata:
 - 需要判断怎样把 skill 做成薄入口时，再读 `references/薄技能设计模式.md`
 - 需要完整创建步骤、命名和校验清单时，再读 `references/技能创建完整流程.md`
 - 需要生成或补 `agents/openai.yaml` 时，再读 `references/openai_yaml.md`
+- 需要确认本次必须交付哪些输出物、路径和失败边界时，再读 `references/输出契约.md`
 
 ## 固定动作
 
 1. 先判断本次是“新建 skill”“重写 skill”“薄化 skill”还是“补工作区本地 skill 骨架”
 2. 先拆清楚：哪些内容留在薄 `SKILL.md`，哪些下沉到 `references/`、`scripts/`、`assets/`
-3. 用 `scripts/init_skill.py` 按 `{域代码}{编号}_{技能名}` 生成或补齐标准骨架；版本通过 `--version` 写入 `agents/openai.yaml` 的 `display_name`
+3. 用 `scripts/init_skill.py` 按本项目 `{单字母域代码}{两位编号}_{中文技能名}` 生成或补齐标准骨架；版本通过 `--version` 写入 `agents/openai.yaml` 的 `display_name`
 4. 把 `SKILL.md` 收口成薄入口，只保留触发、动作骨架、references 路由和边界
-5. 用 `scripts/generate_openai_yaml.py` 生成或更新 `agents/openai.yaml`，其中 `display_name` 必须等于稳定标准 Skill 名加三段式版本号
+5. 用 `scripts/generate_openai_yaml.py` 生成或更新 `agents/openai.yaml`，`display_name` 必须为稳定 Skill 名加三段式版本号
 6. 用 `scripts/quick_validate.py` 校验产物是否仍是薄 skill
 
 ## 什么时候再读本 skill 的 references
 
+- 需要核对 11 段结构在本 Skill 中的落点时，读 `references/结构融合索引.md`。
+- 需要确认输出物是否必须存在、输出路径、最终回复和失败处理时，读 `references/输出契约.md`。
 - 需要判断主控场景下该不该新建独立 runtime skill 时，再读 `references/主控技能创建增量规则.md`
 - 需要补技能设计原则、自由度选择、适装自检时，再读 `references/通用技能设计原则.md`
 - 需要设计 references/scripts/assets 的分工，或把厚 `SKILL.md` 拆成薄入口时，再读 `references/薄技能设计模式.md`
@@ -45,4 +52,4 @@ metadata:
 - 不为了形式主义生成 README、CHANGELOG、安装说明等噪音文件
 - 不把偶发冷规则误做成新的 runtime skill
 - 不生成缺少 `agents/`、`references/`、`scripts/`、`assets/` 的半成品 skill
-- 不接受缺少域编号的 Skill 名称，也不接受在目录名或 `SKILL.md` YAML `name` 中写版本号
+- 不接受缺少单字母域编号的名称、非法路径字符或live名称中的版本号；name与目录名保持一致

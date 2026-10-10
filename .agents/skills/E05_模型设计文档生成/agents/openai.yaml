@@ -1,0 +1,4 @@
+interface:
+  display_name: "E05_模型设计文档生成_v1.0.2"
+  short_description: "从代码、需求或其他模板生成可追溯的模型设计Excel"
+  default_prompt: "使用 $E05，根据我提供的代码、需求或旧设计文档生成模型设计Excel，并列出待确认项。"

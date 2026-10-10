@@ -1,0 +1,21 @@
+{
+  "themeVersion": "1.0.0",
+  "font": "Microsoft YaHei",
+  "titleSize": 30,
+  "headerSize": 20,
+  "bodySize": 16,
+  "blue": "#3366CC",
+  "red": "#C00000",
+  "black": "#000000",
+  "white": "#FFFFFF",
+  "leftGutter": 10,
+  "rightGutter": 3,
+  "topHeight": 16.5,
+  "titleHeight": 68,
+  "headerHeight": 52,
+  "minRowHeight": 48,
+  "lineHeight": 23,
+  "verticalPadding": 14,
+  "freezeRows": 3,
+  "previewScale": 1
+}

@@ -1,0 +1,47 @@
+{
+  "action": "pending",
+  "expected": {
+    "indicator_name": null,
+    "model_key": null,
+    "model_cn": null,
+    "domain": null,
+    "layer": null,
+    "parent_path": null,
+    "connection": "跨境电商",
+    "rule": "自定义策略",
+    "condition": {
+      "field": "quality_value",
+      "operator": "大于",
+      "value": 0
+    },
+    "schedule": null,
+    "owner": null,
+    "role": null,
+    "enabled": true
+  },
+  "actual": {},
+  "model_identity_verified": false,
+  "existing_exact_count": null,
+  "business_line_reason": null,
+  "saved_readback": false,
+  "execution": {
+    "selected_rows": null,
+    "target_model_key": null,
+    "target_indicator_name": null,
+    "submitted": false,
+    "triggered_at": null,
+    "previous_at": null,
+    "latest_at": null,
+    "observed_at": null,
+    "latest_result": null,
+    "current_run_verified": false,
+    "linkage_evidence": null
+  },
+  "evidence_refs": [],
+  "blocker": null,
+  "completion_rule": "正确模型的指标SQL保存并回读一致；通知、周期、执行不作为平台完成条件",
+  "notification": {
+    "status": "未开始",
+    "required_instance": "钉钉-工作通知"
+  }
+}

@@ -1,0 +1,4 @@
+interface:
+  display_name: "C10_数仓交付文档生成_v1.0.2"
+  short_description: "生成数仓交付文档、六维DQC与生产自测报告"
+  default_prompt: "使用 $C10 根据目标SQL和模板生成完整交付文档并完成生产只读自测。"

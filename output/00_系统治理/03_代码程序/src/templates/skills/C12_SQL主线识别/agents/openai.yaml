@@ -1,0 +1,4 @@
+interface:
+  display_name: "C12_SQL主线识别_v1.0.2"
+  short_description: "识别真实SQL主线，输出注释SQL与两列对照Markdown"
+  default_prompt: "使用 $C12 识别这份SQL的加工主线，输出SQL脚本和Markdown；表格第一列主线节点，第二列代码动作。"

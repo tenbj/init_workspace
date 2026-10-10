@@ -1,0 +1,16 @@
+{
+  "date": "2026-10-10",
+  "sources": [
+    {
+      "source": "output/12_数据开发工作台/03_代码程序/platform_model_20261009/命名依据/数仓_01_命名规范手册.xlsx",
+      "copy": ".agents/skills/C20_数据平台模型创建/assets/数仓_01_命名规范手册.xlsx",
+      "sha256": "e72393e9525c62ca78619d12e99a0726a46de4f00e875db4f0468f74aeb4537c"
+    },
+    {
+      "source": "output/12_数据开发工作台/03_代码程序/platform_model_20261009/字段模板/平台导出原件.xlsx",
+      "copy": ".agents/skills/C18_数据模型SQL开发/assets/平台导出字段原件.xlsx",
+      "sha256": "3fa4b46d9e2eeb7802fcb1d2ec0d052e8808318d00ea2a129c61c1e59b976caa"
+    }
+  ],
+  "blank_template": "C18 assets/平台字段信息模板.xlsx；从原导出移除所有业务行保留表头和样式，不含示例记录"
+}

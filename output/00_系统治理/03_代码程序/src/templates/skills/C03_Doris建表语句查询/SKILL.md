@@ -7,9 +7,17 @@ metadata:
 
 # Doris建表语句查询
 
+## 本地接入
+
+执行前先读 `references/本地接入.md`，确认本项目规则、输入及授权。来源案例不授予本项目权限。
+
 ## 这项技能解决什么问题
 
 为上层 skill 提供标准化的 Doris 建表语句获取能力。输入库名.表名，运行脚本执行 `SHOW CREATE TABLE`，将结果保存为带时间戳的本地 SQL 文件，返回文件路径供调用方使用。
+
+## 先读哪些本地知识
+
+- 先读 `references/本地接入.md`；按当前注册表解析依赖。
 
 ## 固定动作
 
@@ -17,18 +25,19 @@ metadata:
 
 1. 在 skill 根目录下运行脚本：
    ```
-   chcp 65001 && set "PYTHONUTF8=1" && python scripts/get_create_table.py <库名.表名> --output-dir <目录>
+   $env:PYTHONUTF8 = "1"
+   python scripts/get_create_table.py <库名.表名> --output-dir <目录>
    ```
    - `--output-dir` 为必填参数，不指定时脚本报错退出
    - 调用方应传入 DWD 开发产物子项目的 `03_代码程序/<dwd_name>/` 路径
    - 目录不存在时脚本自动创建
    - skill 根目录 = 本 SKILL.md 所在目录（`.agents/skills/C03_Doris建表语句查询/`）
 
-2. 从脚本输出末行读取保存路径（格式：`[OK] 建表语句已保存：<path>`）
+2. 查找脚本输出中以 `[OK] 建表语句已保存：` 开头的行，读取保存路径（后面还会打印DDL，不按末行解析）（格式：`[OK] 建表语句已保存：<path>`）
 
 3. 将 SQL 文件绝对路径返回给调用方
 
-## 什么时候读 references
+## 什么时候再读本 skill 的 references
 
 - 脚本报错或连接失败 → `references/异常处理.md`
 

@@ -1,0 +1,4 @@
+interface:
+  display_name: "C18_数据模型SQL开发_v1.4.2"
+  short_description: "溯源开发模型SQL，交付可导入字段与完整平台建模合同"
+  default_prompt: "请使用 $C18 开发数据模型SQL，先溯源并对齐口径，完成八类验证与标准交付。"

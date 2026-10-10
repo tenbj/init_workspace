@@ -1,0 +1,7 @@
+{
+  "id": "B0004", "name": "示例，请替换为本批名称",
+  "models": [
+    {"connection": "跨境电商", "database": "cbebg", "table": "dwd_example_flu_dd"},
+    {"connection": "跨境电商", "database": "cbebg", "table": "ods_example_ilu_dd", "skip": true, "note": "仅当用户明确要求ODS备注跳过时使用"}
+  ]
+}

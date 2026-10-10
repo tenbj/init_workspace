@@ -1,0 +1,23 @@
+{
+  "schemaVersion": "1.0.0",
+  "id": "example",
+  "title": "方案讨论示例",
+  "filename": "方案讨论示例.xlsx",
+  "sheets": [{
+    "id": "discussion",
+    "name": "方案讨论",
+    "role": "detail",
+    "columns": [
+      {"key":"no","label":"编号","width":9},
+      {"key":"topic","label":"议题","width":22},
+      {"key":"content","label":"讨论要点","width":40},
+      {"key":"request","label":"待决事项","width":34},
+      {"key":"remarks","label":"备注","width":34}
+    ],
+    "rows": [{
+      "id":"scope",
+      "values":{"no":"一","topic":"范围确认","content":"示例：先明确本轮讨论范围。","request":"确认是否开展方案梳理。","remarks":"仅为演示，不代表已获批准。"},
+      "emphasis":["request"]
+    }]
+  }]
+}

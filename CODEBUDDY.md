@@ -29,7 +29,7 @@ Git任务执行 [Git版本控制标准.md](.system/standards/Git版本控制标�
 
 ## 当前桥接清单
 
-2026-10-09核对：注册技能34个，排除A00后有效桥接33个。以下是当前索引；注册表或源技能变更后应重新核对，不以本表覆盖SSOT。
+2026-10-09核对：注册技能50个，排除A00后有效桥接49个。以下是当前索引；注册表或源技能变更后应重新核对，不以本表覆盖SSOT。
 
 | 编号 | 桥接入口 |
 |------|----------|
@@ -54,18 +54,35 @@ Git任务执行 [Git版本控制标准.md](.system/standards/Git版本控制标�
 | C05 | [C05_1对1DWD单表SQL生成](.workbuddy/skills/C05_1对1DWD单表SQL生成/SKILL.md) |
 | C06 | [C06_DWD字段信息Excel生成](.workbuddy/skills/C06_DWD字段信息Excel生成/SKILL.md) |
 | C07 | [C07_ODS-DWD-一键生成](.workbuddy/skills/C07_ODS-DWD-一键生成/SKILL.md) |
+| C08 | [C08_数据代理分析](.workbuddy/skills/C08_数据代理分析/SKILL.md) |
+| C09 | [C09_data-assets依赖Excel生成](.workbuddy/skills/C09_data-assets依赖Excel生成/SKILL.md) |
+| C10 | [C10_数仓交付文档生成](.workbuddy/skills/C10_数仓交付文档生成/SKILL.md) |
+| C11 | [C11_ODS表粒度主键核验](.workbuddy/skills/C11_ODS表粒度主键核验/SKILL.md) |
+| C12 | [C12_SQL主线识别](.workbuddy/skills/C12_SQL主线识别/SKILL.md) |
+| C13 | [C13_模型使用说明生成](.workbuddy/skills/C13_模型使用说明生成/SKILL.md) |
+| C14 | [C14_上下游数量一致性核验](.workbuddy/skills/C14_上下游数量一致性核验/SKILL.md) |
+| C15 | [C15_数据平台质量指标配置](.workbuddy/skills/C15_数据平台质量指标配置/SKILL.md) |
+| C16 | [C16_SQL业务溯源与诊断](.workbuddy/skills/C16_SQL业务溯源与诊断/SKILL.md) |
+| C17 | [C17_数仓质量治理编排](.workbuddy/skills/C17_数仓质量治理编排/SKILL.md) |
+| C18 | [C18_数据模型SQL开发](.workbuddy/skills/C18_数据模型SQL开发/SKILL.md) |
 | D04 | [D04_架构图生成](.workbuddy/skills/D04_架构图生成/SKILL.md) |
 | E01 | [E01_模型设计标准化](.workbuddy/skills/E01_模型设计标准化/SKILL.md) |
 | E02 | [E02_模型评审编排](.workbuddy/skills/E02_模型评审编排/SKILL.md) |
 | E03 | [E03_模型命名建议](.workbuddy/skills/E03_模型命名建议/SKILL.md) |
+| E04 | [E04_模型设计运行归档](.workbuddy/skills/E04_模型设计运行归档/SKILL.md) |
+| E05 | [E05_模型设计文档生成](.workbuddy/skills/E05_模型设计文档生成/SKILL.md) |
 | F01 | [F01_钉钉文档下载](.workbuddy/skills/F01_钉钉文档下载/SKILL.md) |
 | F02 | [F02_拾序问题记录](.workbuddy/skills/F02_拾序问题记录/SKILL.md) |
+| F03 | [F03_报表使用说明生成](.workbuddy/skills/F03_报表使用说明生成/SKILL.md) |
+| F04 | [F04_汇报表格制作](.workbuddy/skills/F04_汇报表格制作/SKILL.md) |
 | G01 | [G01_HTML交互产物](.workbuddy/skills/G01_HTML交互产物/SKILL.md) |
 | G02 | [G02_单画布ER图生成](.workbuddy/skills/G02_单画布ER图生成/SKILL.md) |
+| G03 | [G03_HTML回答生成](.workbuddy/skills/G03_HTML回答生成/SKILL.md) |
 | H01 | [H01_原型设计](.workbuddy/skills/H01_原型设计/SKILL.md) |
 | H02 | [H02_原型系统交付](.workbuddy/skills/H02_原型系统交付/SKILL.md) |
 | I01 | [I01_内网穿透](.workbuddy/skills/I01_内网穿透/SKILL.md) |
 | I02 | [I02_系统部署升级](.workbuddy/skills/I02_系统部署升级/SKILL.md) |
+
 
 ## 验证范围
 

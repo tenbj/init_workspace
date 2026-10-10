@@ -1,0 +1,10 @@
+{
+  "model_id": "待填", "table": "待填", "batch_id": "待填", "kind": "consistency",
+  "indicator_id": "待填", "indicator_name": "待填",
+  "run_at": "待填带时区ISO时间", "captured_at": "待填带时区ISO时间",
+  "result": "待核实", "quality_value": null,
+  "path": "模型产物/待填/待填/C15/运行结果_时间.png",
+  "execution_evidence": "模型产物/待填/待填/C15/本次运行证据.json",
+  "source_url": "https://data-platform.example.invalid/dmp/quality/index",
+  "capture_method": "browser_screenshot", "identity_visible": false, "result_visible": false
+}

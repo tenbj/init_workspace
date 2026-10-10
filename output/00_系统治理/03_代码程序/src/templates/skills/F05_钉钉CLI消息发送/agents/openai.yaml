@@ -1,0 +1,4 @@
+interface:
+  display_name: "F05_钉钉CLI消息发送_v1.0.2"
+  short_description: "通过钉钉CLI核对联系人并可靠发送消息"
+  default_prompt: "使用 $F05 通过钉钉CLI发送消息并核对回执。"

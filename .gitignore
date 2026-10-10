@@ -10,9 +10,27 @@
 !/.memory/**/
 !/.memory/**/.gitkeep
 
-# Local project outputs; retain system governance sources.
+# Local project outputs; retain only governance skeleton and EXE builder sources.
 /output/*
 !/output/00_系统治理/
+/output/00_系统治理/*
+!/output/00_系统治理/目录.md
+!/output/00_系统治理/版本记录.md
+!/output/00_系统治理/01_问题答疑/
+/output/00_系统治理/01_问题答疑/*
+!/output/00_系统治理/01_问题答疑/.gitkeep
+# Public incident record explicitly requested for review and prevention.
+!/output/00_系统治理/01_问题答疑/22_PR发布流程误操作与防复发记录.md
+!/output/00_系统治理/02_课题研究/
+/output/00_系统治理/02_课题研究/*
+!/output/00_系统治理/02_课题研究/.gitkeep
+!/output/00_系统治理/03_代码程序/
+/output/00_系统治理/03_代码程序/*
+!/output/00_系统治理/03_代码程序/.gitkeep
+!/output/00_系统治理/03_代码程序/src/
+/output/00_系统治理/03_代码程序/src/.b09_*.json
+# Keep the initializer's tracked placeholder despite global local-settings ignores.
+!/output/00_系统治理/03_代码程序/src/templates/.claude/settings.local.json
 
 # Runtime input and temp contents
 /input/*

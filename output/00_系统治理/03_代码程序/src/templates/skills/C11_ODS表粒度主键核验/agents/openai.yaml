@@ -1,0 +1,3 @@
+interface:
+  display_name: "C11_ODS表粒度主键核验_v1.3.5"
+  short_description: "核验ODS粒度及业务与技术主键，输出唯一性检验SQL配置"

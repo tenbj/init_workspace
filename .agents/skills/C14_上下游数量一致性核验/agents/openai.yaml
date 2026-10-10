@@ -1,0 +1,4 @@
+interface:
+  display_name: "C14_上下游数量一致性核验_v1.3.3"
+  short_description: "按可用日期比较数量，全量表无时间时核对整表计数"
+  default_prompt: "请使用 $C14 核验指定模型的查询数据与实体数据逐日数量是否一致。"

@@ -1,0 +1,4 @@
+interface:
+  display_name: "E04_模型设计运行归档_v1.1.4"
+  short_description: "归档式运行 E03 模型命名建议"
+  default_prompt: "$E04"

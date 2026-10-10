@@ -58,7 +58,7 @@ def request(url: str) -> bytes:
 
 
 def temp_root() -> str:
-    base = os.path.join(tempfile.gettempdir(), "zqz_orchestrator_skill_install")
+    base = os.path.join(tempfile.gettempdir(), "当前工作区_skill_install")
     os.makedirs(base, exist_ok=True)
     return base
 
@@ -229,7 +229,7 @@ def validate_standard_skill_name(name: str) -> str:
     if any(sep in candidate for sep in ("/", "\\")):
         raise InstallError("本地 skill 标准名不能包含路径分隔符。")
     if not SKILL_NAME_PATTERN.match(candidate):
-        raise InstallError("本地 skill 名必须符合 {域代码}{编号}_{技能名}，例如 F01_原子拆解技能。版本号只写入 agents/openai.yaml display_name。")
+        raise InstallError("本地 skill 名必须符合 {域代码}{编号}_{技能名}，域代码为单个大写字母，例如 F01_原子拆解技能或 H01_原型设计。版本号只写入 agents/openai.yaml display_name。")
     if re.search(r"_v\d+\.\d+\.\d+$", candidate):
         raise InstallError("本地 skill live 文件夹名不得带版本号；版本号只写入 agents/openai.yaml display_name。")
     if not contains_chinese(candidate):
@@ -296,7 +296,7 @@ description: {description}
 
 ## 先读哪些本地知识
 
-- 如果这项 skill 依赖工作区业务真相，先读对应工作区 `knowledge/`
+- 如果这项 skill 依赖工作区业务真相，先读对应工作区 `input/` 权威资料与工作区标准
 - 需要回看原始说明时，再读 `references/原始技能说明.md`
 - 需要了解这次迁入时的本地化取舍时，再读 `references/迁移说明.md`
 

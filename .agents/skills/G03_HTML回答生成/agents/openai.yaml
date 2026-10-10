@@ -1,0 +1,4 @@
+interface:
+  display_name: "G03_HTML回答生成_v1.0.2"
+  short_description: "用Markdown生成离线HTML解释页与图表"
+  default_prompt: "使用$G03将这个问题解释为一页可离线阅读的HTML。"

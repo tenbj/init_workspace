@@ -1,0 +1,4 @@
+interface:
+  display_name: "C16_SQL业务溯源与诊断_v1.0.2"
+  short_description: "主动查完整取值链，用同一个案例讲清根因和改法"
+  default_prompt: "请用 $C16 结合已确认的业务口径，查清这条异常数据的相关取值链，用同一个案例说明根因、必要改法和验证结果。"

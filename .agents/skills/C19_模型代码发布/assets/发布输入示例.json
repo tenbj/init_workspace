@@ -1,0 +1,13 @@
+{
+  "repo": "<本任务已确认发布仓库绝对路径>",
+  "source_sql": "<正式交付目录>/dwd_ads_sqp_brand_view_ilu_dd/dwd_ads_sqp_brand_view_ilu_dd.sql",
+  "database": "cbebg",
+  "domain": "ads",
+  "layer": "DWD",
+  "table": "dwd_ads_sqp_brand_view_ilu_dd",
+  "model_name": "SQP品牌视图",
+  "change_type": "add",
+  "change_summary": "",
+  "remote": "<已确认远端名>",
+  "base_branch": "<已确认目标分支>"
+}
