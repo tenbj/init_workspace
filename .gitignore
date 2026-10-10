@@ -19,6 +19,8 @@
 !/output/00_系统治理/01_问题答疑/
 /output/00_系统治理/01_问题答疑/*
 !/output/00_系统治理/01_问题答疑/.gitkeep
+# Public incident record explicitly requested for review and prevention.
+!/output/00_系统治理/01_问题答疑/22_PR发布流程误操作与防复发记录.md
 !/output/00_系统治理/02_课题研究/
 /output/00_系统治理/02_课题研究/*
 !/output/00_系统治理/02_课题研究/.gitkeep
