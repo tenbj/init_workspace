@@ -19,6 +19,7 @@ class PageContractTests(unittest.TestCase):
         for name in REQUIRED:
             self.write(name, 'fixture')
         self.write('tests/sample.py', '# fixture')
+        self.write('requirements.txt', '# fixture')
         self.write('static/index.html', '<html>fixture</html>')
         self.write('docs/API中文说明.md', '/api/items')
         self.write_json('docs/openapi.json', {'paths': {'/api/items': {'get': {'summary': '读取条目'}}}})
@@ -28,6 +29,7 @@ class PageContractTests(unittest.TestCase):
             'prototype': {'sha256': 'a' * 64, 'source_modified': False},
             'operations': [{'method': 'GET', 'path': '/api/items', 'python_example': 'examples/api_client.py', 'mcp_tool': 'list_items'}],
             'checks': [], 'limits': [], 'diagrams': {},
+            'docker': {'required': False, 'exclusion': {'basis': 'user_instruction', 'instruction': '合成单测只测试双图合同', 'reason': 'Docker由独立测试覆盖'}},
         }
         for name in CHECKS:
             evidence = f'verification/{name}.json'

@@ -1,4 +1,4 @@
 interface:
-  display_name: "H02_原型系统交付_v1.3.0"
-  short_description: "从原型交付系统并在更新完成后调用I02部署验收"
-  default_prompt: "请使用 $H02 将原型交付为可运行系统，维护页面、API、MCP、架构与ER、文档和项目包；实现验证完成后调用 I02，在本轮授权范围内完成备份迁移重启和运行验收。"
+  display_name: "H02_原型系统交付_v1.5.1"
+  short_description: "交付页面、API、MCP、双图及经真实Docker验收的系统包"
+  default_prompt: "请使用 $H02 交付或迭代系统，维护页面、API、MCP、双图和Docker部署；先核查本机环境，再隔离验证构建、认证调用、持久化及升级恢复，绑定本轮源码和镜像证据。完成后调用 I02，在已有授权范围内部署验收；不把模板生成或容器启动等同交付成功。"

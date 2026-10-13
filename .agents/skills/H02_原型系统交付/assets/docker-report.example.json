@@ -1,0 +1,85 @@
+{
+  "passed": false,
+  "environment": "isolated",
+  "delivery_id": "填写本轮交付UUID",
+  "run_id": "填写本次真实执行UUID",
+  "started_at": "",
+  "finished_at": "",
+  "compose_project": "",
+  "mcp_mode": "embedded",
+  "inputs": [],
+  "images": [],
+  "checks": [
+    {
+      "name": "compose_config",
+      "status": "not_run",
+      "observations": {}
+    },
+    {
+      "name": "build",
+      "status": "not_run",
+      "observations": {}
+    },
+    {
+      "name": "startup",
+      "status": "not_run",
+      "observations": {}
+    },
+    {
+      "name": "api",
+      "status": "not_run",
+      "observations": {}
+    },
+    {
+      "name": "mcp",
+      "status": "not_run",
+      "observations": {}
+    },
+    {
+      "name": "auth",
+      "status": "not_run",
+      "observations": {}
+    },
+    {
+      "name": "diagrams",
+      "status": "not_run",
+      "observations": {}
+    },
+    {
+      "name": "recreate",
+      "status": "not_run",
+      "observations": {}
+    },
+    {
+      "name": "upgrade",
+      "status": "not_run",
+      "observations": {}
+    },
+    {
+      "name": "rollback",
+      "status": "not_run",
+      "observations": {}
+    },
+    {
+      "name": "backup_restore",
+      "status": "not_run",
+      "observations": {}
+    },
+    {
+      "name": "failure_recovery",
+      "status": "not_run",
+      "observations": {}
+    },
+    {
+      "name": "secrets",
+      "status": "not_run",
+      "observations": {}
+    },
+    {
+      "name": "cleanup",
+      "status": "not_run",
+      "observations": {}
+    }
+  ],
+  "note": "仅格式示例，不是通过证据。真实执行后记录输入指纹、镜像ID和各阶段观测。"
+}
