@@ -14,8 +14,6 @@
 /output/*
 !/output/00_系统治理/
 /output/00_系统治理/*
-!/output/00_系统治理/目录.md
-!/output/00_系统治理/版本记录.md
 !/output/00_系统治理/01_问题答疑/
 /output/00_系统治理/01_问题答疑/*
 !/output/00_系统治理/01_问题答疑/.gitkeep
@@ -84,3 +82,6 @@ __pycache__/
 Thumbs.db
 .idea/
 .vscode/
+
+# Local chat attachments; retain on this computer only.
+/.codex-remote-attachments/

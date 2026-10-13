@@ -15,14 +15,14 @@
 
 - 工作区骨架标准：`workspace-spec.json` v1.32.0
 - 系统治理子项目：`00_系统治理`
-- 初始化程序：v2.23.0
-- Windows 可执行文件：`init_workspace_v2.23.0.exe`
+- 初始化程序：v2.24.0
+- Windows 可执行文件：`init_workspace_v2.24.0.exe`
 
-GitHub Release 附件提供 `init_workspace_v2.23.0.exe`，大小 `14,095,958` bytes，SHA256 为 `e9ed96f48652c363eb114d1ffdd876cda9c07a6b34630ddcfba775e0f90b610e`。本版包含53项注册Skill，并同步依赖、初始化模板及模型归档质量门；下载时可使用随附校验文件核对。
+GitHub Release 附件提供 `init_workspace_v2.24.0.exe`，大小 `13,536,081` bytes，SHA256 为 `bd98bea3e5c7e4132ba9e6c22e0e881a9c006623af6dc31e7e94659528365219`。本版包含53项注册Skill，更新Docker交付约束、备份恢复和发布检查；下载时可使用随附校验文件核对。
 
 ## 快速使用
 
-1. 下载 Release 中的 `init_workspace_v2.23.0.exe`。
+1. 下载 Release 中的 `init_workspace_v2.24.0.exe`。
 2. 将 exe 放到目标工作区目录。
 3. 双击运行，选择初始化或升级。
 4. 工具会生成或更新 `.agents/`、`.system/`、`.memory/`、`.history/`、`input/`、`output/` 等目录。
