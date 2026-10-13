@@ -7,6 +7,7 @@ from pathlib import Path
 import re
 import shutil
 from uuid import uuid4
+from docker_contract import draft_docker
 
 
 def initialize(prototype: Path, project_name: str, output_dir: Path):
@@ -25,16 +26,17 @@ def initialize(prototype: Path, project_name: str, output_dir: Path):
     html=source.read_text(encoding='utf-8-sig')
     titles=re.findall(r'<title[^>]*>(.*?)</title>',html,re.I|re.S)
     contract={
-        'schema_version':'1.1','project_name':project_name,'status':'draft',
+        'schema_version':'1.2','project_name':project_name,'status':'draft',
+        'docker':draft_docker(),
         'delivery_id':str(uuid4()),
         'diagrams':{kind:dict(skill=skill,path=f'docs/diagrams/{kind}.html',sha256='',maintenance='not_run',change_note='',sources=[]) for kind,skill in [('architecture','D04'),('erd','G02')]},
         'prototype':{'sha256':hashlib.sha256(source.read_bytes()).hexdigest(),'title':titles[0].strip() if titles else '',
                      'private_copy':'private/prototype.html','source_modified':False},
         'operations':[],
         'checks':[{'name':name,'status':'not_run','evidence':''} for name in
-                  ['business','api','mcp','browser','persistence','portable','release_scan','architecture','erd','ai_task']],
+                  ['business','api','mcp','browser','persistence','portable','release_scan','architecture','erd','docker','ai_task']],
         'limits':[],
-        'next_action':'AI读取原型，完成业务映射与系统实现，首次调用D04/G02生成架构与ER两个HTML页面并完成本轮验收；骨架不代表功能完成。'}
+        'next_action':'AI读取原型，完成业务映射与系统实现，首次调用D04/G02生成架构与ER两个HTML页面；完成本轮Docker隔离实测和交付验收，骨架不代表功能完成。'}
     (target/'project-contract.json').write_text(json.dumps(contract,ensure_ascii=False,indent=2),encoding='utf-8')
     (target/'.gitignore').write_text('.env\n.env.*\n!.env.example\nprivate/\nruntime/\nverification/\n__pycache__/\n.pytest_cache/\n.venv/\nrelease/\n*.zip\n',encoding='utf-8')
     (target/'docs/需求与能力映射.md').write_text(

@@ -92,3 +92,117 @@ function New-ContentSnapshot {
     }
     Write-Host "[OK] Working-content snapshot; excluded $excluded Git metadata entries: $destinationFull"
 }
+
+
+# Only the official backup entrypoint selects PROJECT recovery destinations.
+function ConvertTo-SnapshotExtendedPath {
+    param([string]$Path)
+    $full = [IO.Path]::GetFullPath($Path).TrimEnd('\')
+    if ($full.StartsWith('\\?\')) { return $full }
+    if ($full.StartsWith('\\')) { return '\\?\UNC\' + $full.Substring(2) }
+    if ($env:OS -eq 'Windows_NT') { return '\\?\' + $full }
+    return $full
+}
+
+function Assert-RecoveryPlainPath {
+    param([string]$Path)
+    $cursor = [IO.Path]::GetFullPath($Path)
+    while ($cursor) {
+        $native = ConvertTo-SnapshotExtendedPath $cursor
+        if ([IO.Directory]::Exists($native) -or [IO.File]::Exists($native)) {
+            if ([IO.File]::GetAttributes($native) -band [IO.FileAttributes]::ReparsePoint) {
+                throw 'Snapshot recovery refuses symbolic links and junctions.'
+            }
+        }
+        $parent = [IO.Path]::GetDirectoryName($cursor.TrimEnd('\'))
+        if (-not $parent -or $parent -eq $cursor) { break }
+        $cursor = $parent
+    }
+}
+
+function Get-RecoverySnapshotManifest {
+    param([string]$Root, [switch]$ExcludeGit)
+    Assert-RecoveryPlainPath $Root
+    $nativeRoot = ConvertTo-SnapshotExtendedPath $Root
+    if (-not [IO.Directory]::Exists($nativeRoot)) { throw 'Recovery tree is missing.' }
+    $manifest = [Collections.Generic.Dictionary[string,string]]::new([StringComparer]::OrdinalIgnoreCase)
+    $queue = [Collections.Generic.Queue[string]]::new()
+    $queue.Enqueue($nativeRoot)
+    while ($queue.Count -gt 0) {
+        $directory = $queue.Dequeue()
+        foreach ($entry in [IO.Directory]::EnumerateFileSystemEntries($directory)) {
+            if ([IO.Path]::GetFileName($entry) -ieq '.git') {
+                if ($ExcludeGit) { continue }
+                throw 'Pending snapshot unexpectedly contains Git metadata.'
+            }
+            $attributes = [IO.File]::GetAttributes($entry)
+            if ($attributes -band [IO.FileAttributes]::ReparsePoint) {
+                throw 'Recovery tree contains a symbolic link or junction.'
+            }
+            $relative = $entry.Substring($nativeRoot.Length + 1)
+            if ($attributes -band [IO.FileAttributes]::Directory) {
+                $manifest.Add($relative, 'DIRECTORY')
+                $queue.Enqueue($entry)
+            } else {
+                # Deny new writers while this file is being hashed; never log contents.
+                $stream = [IO.File]::Open($entry, [IO.FileMode]::Open, [IO.FileAccess]::Read, [IO.FileShare]::Read)
+                try {
+                    $length = $stream.Length
+                    $sha = [Security.Cryptography.SHA256]::Create()
+                    try { $digest = [BitConverter]::ToString($sha.ComputeHash($stream)).Replace('-', '') }
+                    finally { $sha.Dispose() }
+                    $manifest.Add($relative, ('FILE:' + $length + ':' + $digest))
+                } finally { $stream.Dispose() }
+            }
+        }
+    }
+    return ,$manifest
+}
+
+function Assert-RecoveryManifestEqual {
+    param($Expected, $Actual)
+    if ($Expected.Count -ne $Actual.Count) { throw 'Recovery manifests differ in entry count.' }
+    foreach ($relative in $Expected.Keys) {
+        if (-not $Actual.ContainsKey($relative) -or $Expected[$relative] -cne $Actual[$relative]) {
+            throw 'Recovery manifests differ in path, entry type, length or SHA256.'
+        }
+    }
+}
+
+function Complete-ContentSnapshot {
+    param(
+        [Parameter(Mandatory=$true)][string]$Source,
+        [Parameter(Mandatory=$true)][string]$Pending,
+        [Parameter(Mandatory=$true)][string]$Destination
+    )
+    # Caller validates workspace/project/version/name. Recheck all traversed paths here.
+    Assert-RecoveryPlainPath $Source
+    Assert-RecoveryPlainPath $Pending
+    Assert-RecoveryPlainPath $Destination
+    $nativePending = ConvertTo-SnapshotExtendedPath $Pending
+    $nativeDestination = ConvertTo-SnapshotExtendedPath $Destination
+    if ([IO.Directory]::Exists($nativeDestination) -or [IO.File]::Exists($nativeDestination)) {
+        throw 'Recovery destination already exists; refusing to overwrite.'
+    }
+    $sourceBefore = Get-RecoverySnapshotManifest -Root $Source -ExcludeGit
+    $pendingManifest = Get-RecoverySnapshotManifest -Root $Pending
+    Assert-RecoveryManifestEqual $sourceBefore $pendingManifest
+    # Catch changes during the full hash pass. Callers must keep source writers quiescent.
+    $sourceAfter = Get-RecoverySnapshotManifest -Root $Source -ExcludeGit
+    Assert-RecoveryManifestEqual $sourceBefore $sourceAfter
+    Assert-RecoveryPlainPath $Pending
+    Assert-RecoveryPlainPath $Destination
+    for ($attempt = 0; ; $attempt++) {
+        try {
+            [IO.Directory]::Move($nativePending, $nativeDestination)
+            break
+        } catch [UnauthorizedAccessException] {
+            if ($attempt -ge 5) { throw }
+            Start-Sleep -Milliseconds 1000
+        } catch [IO.IOException] {
+            if ($attempt -ge 5 -or [IO.Directory]::Exists($nativeDestination) -or [IO.File]::Exists($nativeDestination)) { throw }
+            Start-Sleep -Milliseconds 1000
+        }
+    }
+    Write-Host ('[OK] Verified and published complete pending snapshot; entries: ' + $sourceBefore.Count)
+}

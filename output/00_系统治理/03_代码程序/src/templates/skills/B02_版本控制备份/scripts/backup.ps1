@@ -27,7 +27,10 @@ param(
 
     [Parameter(Mandatory = $false)]
     [ValidateSet("PROJECT", "FOLDER", "CONFIG", "MEMORY", "FILE", "AUTO")]
-    [string]$Mode = "AUTO"
+    [string]$Mode = "AUTO",
+
+    [Parameter(Mandatory = $false)]
+    [string]$ResumeSnapshotPath
 )
 
 chcp 65001 > $null
@@ -492,6 +495,10 @@ if ($Mode -eq "AUTO") {
     Write-Host "[INFO] Auto-detected mode: $Mode"
 }
 
+if ($ResumeSnapshotPath -and $Mode -ne "PROJECT") {
+    throw 'ResumeSnapshotPath is supported only for PROJECT mode.'
+}
+
 if ($Mode -eq "PROJECT") {
     if (-not $item.PSIsContainer) {
         Write-Error "PROJECT mode only supports folders (subproject root directory)."
@@ -529,7 +536,25 @@ if ($Mode -eq "PROJECT") {
     $historyTimestampDir = Join-Path $historyBaseDir "${projectFullName}_v${currentVersion}_${timestamp}"
 
     Ensure-Directory $historyBaseDir
-    New-ContentSnapshot -Source $TargetPath -Destination $historyTimestampDir
+    if ($ResumeSnapshotPath) {
+        $pendingPath = Resolve-ProjectPath -Path $ResumeSnapshotPath -WorkspaceRoot $workspaceRoot
+        $pendingParent = [IO.Path]::GetFullPath([IO.Path]::GetDirectoryName($pendingPath)).TrimEnd('\')
+        $expectedParent = [IO.Path]::GetFullPath($historyBaseDir).TrimEnd('\')
+        if (-not $pendingParent.Equals($expectedParent, [StringComparison]::OrdinalIgnoreCase)) {
+            throw 'Recovery snapshot must be directly under this workspace .history/output.'
+        }
+        $namePattern = '^(' + [regex]::Escape($projectFullName) + '_v' + [regex]::Escape($currentVersion) + '_(\d{14}))\.incomplete-[a-fA-F0-9]{32}$'
+        $pendingName = [IO.Path]::GetFileName($pendingPath)
+        $nameMatch = [regex]::Match($pendingName, $namePattern)
+        if (-not $nameMatch.Success) {
+            throw 'Recovery snapshot name must match the current project, current version, original timestamp and incomplete GUID.'
+        }
+        [void][datetime]::ParseExact($nameMatch.Groups[2].Value, 'yyyyMMddHHmmss', [Globalization.CultureInfo]::InvariantCulture)
+        $historyTimestampDir = Join-Path $historyBaseDir $nameMatch.Groups[1].Value
+        Complete-ContentSnapshot -Source $TargetPath -Pending $pendingPath -Destination $historyTimestampDir
+    } else {
+        New-ContentSnapshot -Source $TargetPath -Destination $historyTimestampDir
+    }
     Write-Host "[OK] History snapshot: $historyTimestampDir"
 
     Update-VersionRecord -VersionRecordPath $versionRecordPath -NewVersion $newVersion -ChangeType $ChangeType -DisplayTimestamp $displayTimestamp -ProjectTopic $projectTopic

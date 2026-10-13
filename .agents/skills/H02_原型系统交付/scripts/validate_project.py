@@ -5,9 +5,10 @@ import hashlib
 import json
 from pathlib import Path
 import re
+from docker_contract import validate_docker
 
 REQUIRED=['README.md','CHANGELOG.md','LICENSE','.gitignore','.env.example',
-          'requirements.txt','requirements-dev.txt','docs/API中文说明.md','docs/API中文说明.html',
+          'docs/API中文说明.md','docs/API中文说明.html',
           'docs/openapi.json','docs/AI接入与调用指南.md','docs/MCP工具目录.json',
           'examples/api_client.py','examples/mcp_client.py','scripts/configure_mcp.py',
           'scripts/build_release.py','.github/workflows/ci.yml']
@@ -117,6 +118,11 @@ def validate(root):
         if tools-mapped_tools:errors.append('未映射MCP工具：'+str(sorted(tools-mapped_tools)))
         checks={c['name']:c for c in contract.get('checks',[])}
         validate_pages(root, contract, checks, errors)
+        validate_docker(root, contract, errors)
+        if not any((root/p).is_file() for p in ['requirements.txt','pyproject.toml','package.json','go.mod','Cargo.toml','pom.xml','build.gradle','build.gradle.kts']) and not contract.get('dependency_manifest'):
+            errors.append('缺少运行依赖清单；其他技术栈用dependency_manifest登记')
+        if contract.get('dependency_manifest') and not safe_path(root,contract['dependency_manifest']).is_file():
+            errors.append('dependency_manifest文件不存在')
         for name in CHECKS:
             check=checks.get(name,{})
             if check.get('status')!='passed':errors.append('验收未通过：'+name)
@@ -127,7 +133,7 @@ def validate(root):
     except (ValueError,KeyError,TypeError,AttributeError,OSError) as exc:
         errors.append('合同格式错误：'+str(exc))
     return {'passed':not errors,'errors':errors,'warnings':warnings,
-            'scope':'结构、映射、双HTML页面、来源哈希和本轮证据一致性；不替代实际语义核对与浏览器验收'}
+            'scope':'结构、映射、双HTML页面、Docker及来源快照和本轮证据一致性；不替代实际运行、语义核对与浏览器验收'}
 
 
 if __name__=='__main__':

@@ -1,5 +1,5 @@
 {
-  "schema_version": "1.1",
+  "schema_version": "1.2",
   "project_name": "原型对应的业务系统",
   "status": "draft",
   "prototype": {
@@ -65,6 +65,11 @@
       "name": "erd",
       "status": "not_run",
       "evidence": "verification/erd.json"
+    },
+    {
+      "name": "docker",
+      "status": "not_run",
+      "evidence": "verification/docker-report.json"
     }
   ],
   "limits": [
@@ -88,5 +93,23 @@
       "change_note": "",
       "sources": []
     }
+  },
+  "docker": {
+    "required": true,
+    "mcp_mode": "embedded",
+    "stateful": true,
+    "compose_files": [
+      "compose.yaml"
+    ],
+    "dockerfiles": [
+      "Dockerfile"
+    ],
+    "ignore_files": [
+      ".dockerignore"
+    ],
+    "guide": "docs/Docker部署.md",
+    "inputs": [],
+    "services": [],
+    "evidence": "verification/docker-report.json"
   }
 }

@@ -55,3 +55,7 @@ AI 可复制任务说明：
 - 每个工具的 name、kind、purpose、when_to_use、input、returns、side_effect、order、error_handling
 
 工具目录必须来自实际 MCP 工具，不得编造伪工具。
+
+## Docker接入说明
+
+增加中文Docker部署文档：实际Compose组合、配置优先级、构建/启动/状态/停止/升级/备份/恢复命令，宿主机与容器的数据位置。明确网页、API、MCP、架构图与ER图各自的真实URL，已有/docs、OAuth、接入页与下载路径应保留。MCP采用内置HTTP、独立HTTP或stdio须按实际实现说明；Compose服务名只用于容器间通信，不能写成外部AI客户端地址。部署与验收细则统一引用 Docker交付与验收.md。
