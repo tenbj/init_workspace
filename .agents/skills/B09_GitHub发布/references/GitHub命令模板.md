@@ -18,10 +18,10 @@ Login with a web browser
 
 ## 仓库
 
-创建新仓库并推送：
+只有用户明确要求创建仓库且可见性已确定时才使用；已有仓库发布跳过创建。创建和推送分开，完成分类提交及扫描后再统一推送：
 
 ```powershell
-gh repo create <owner>/<repo> --public --source . --remote origin --push
+gh repo create <owner>/<repo> <已确定的--private或--public> --source . --remote <已确认远端名>
 ```
 
 远端已存在时先只读核对，不自动改 remote URL：
@@ -38,7 +38,7 @@ git branch --show-current
 ```powershell
 git add -- CHANGELOG.md README.md .github/release-notes/vX.Y.Z.md
 git commit -m "chore(release): 发布X.Y.Z"
-git push -u origin <工作分支>
+git push -u <已确认远端名> <工作分支>
 gh pr create --repo <owner/repo> --base <目标基线> --head <工作分支> --title "发布变更的中文标题" --body-file <PR说明文件>
 gh pr view <PR编号> --repo <owner/repo> --json state,mergeable,statusCheckRollup,commits
 ```
@@ -47,7 +47,7 @@ gh pr view <PR编号> --repo <owner/repo> --json state,mergeable,statusCheckRoll
 
 ```powershell
 gh pr merge <PR编号> --repo <owner/repo> --merge --match-head-commit <已核验分支末端SHA> --subject "merge: 中文合并说明" --body-file <合并说明文件>
-git fetch origin <目标基线>
+git fetch <已确认远端名> <目标基线>
 python .agents/skills/B11_Git分支工作流/scripts/verify_pr_merge.py --repo <owner/repo> --base <目标基线> --commit <PR合并SHA> --expected-commit <分类提交SHA1> --expected-commit <分类提交SHA2>
 ```
 
@@ -55,12 +55,12 @@ python .agents/skills/B11_Git分支工作流/scripts/verify_pr_merge.py --repo <
 
 ```powershell
 git tag -a vX.Y.Z <PR合并SHA> -m "发布X.Y.Z"
-git push origin refs/tags/vX.Y.Z
+git push <已确认远端名> refs/tags/vX.Y.Z
 ```
 
-## 更新初始化程序
+## 更新初始化程序（仅核心骨架项目）
 
-默认定位当前 `output/00_系统治理/03_代码程序/src`，全量刷新模板并写入更新清单：
+普通应用跳过本节及下一节。核心骨架项目默认定位当前 `output/00_系统治理/03_代码程序/src`，全量刷新模板并写入更新清单：
 
 ```powershell
 powershell -ExecutionPolicy Bypass -File ".agents\skills\B09_GitHub发布\scripts\update_init_program.ps1" -Version "X.Y.Z"
@@ -72,7 +72,7 @@ powershell -ExecutionPolicy Bypass -File ".agents\skills\B09_GitHub发布\script
 powershell -ExecutionPolicy Bypass -File ".agents\skills\B09_GitHub发布\scripts\update_init_program.ps1" -Version "X.Y.Z" -WhatIf
 ```
 
-## 重新封装初始化工具
+## 重新封装初始化工具（仅核心骨架项目）
 
 ```powershell
 powershell -ExecutionPolicy Bypass -File ".agents\skills\B09_GitHub发布\scripts\build_init_exe.ps1" -ExpectedVersion "X.Y.Z"
@@ -87,16 +87,17 @@ powershell -ExecutionPolicy Bypass -File ".agents\skills\B09_GitHub发布\script
 ## 计算 SHA256
 
 ```powershell
-Get-FileHash -Algorithm SHA256 "path\to\asset.exe"
+Get-FileHash -Algorithm SHA256 "path\to\<交付物>"
 ```
 
 ## 创建 Release
 
 ```powershell
 gh release create vX.Y.Z `
-  "path\to\asset.exe" `
+  "path\to\<交付物>" `
+  --repo "<owner/repo>" `
   --verify-tag `
-  --title "init_workspace vX.Y.Z" `
+  --title "<项目名称> vX.Y.Z" `
   --notes-file ".github\release-notes\vX.Y.Z.md"
 ```
 
