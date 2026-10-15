@@ -25,13 +25,14 @@ import json
 import sys
 import shutil
 import uuid
+import runpy
 import tkinter as tk
 from tkinter import messagebox
 from datetime import datetime
 from pathlib import Path
 
 SKELETON_VERSION = "2.24.0"
-SSO_SPEC_VERSION = "1.32.0"
+SSO_SPEC_VERSION = "1.34.0"
 
 SYSTEM_RECORD_FILES = {
     "规则变更记录.md": "规则变更记录",
@@ -92,6 +93,8 @@ def copy_tree_no_pycache(src: Path, dst: Path):
     for item in src.iterdir():
         if item.name == "__pycache__":
             continue
+        if item.name.lower() in {'.env', '.envs'} or item.name.lower().endswith('.env'):
+            raise ValueError('Private environment data cannot enter managed template copying')
         target = dst / item.name
         if item.is_dir():
             copy_tree_no_pycache(item, target)
@@ -118,6 +121,8 @@ def backup_existing_dir(src: Path, history_dir: Path, ts: str) -> Path | None:
         dirs[:] = [name for name in dirs if name not in {".git", "__pycache__"}]
         for name in dirs + [name for name in files if name != ".git"]:
             item = Path(current) / name
+            if name.lower() in {'.env', '.envs'} or name.lower().endswith('.env'):
+                raise ValueError('Private environment data requires separate safe backup before upgrade')
             if item.is_symlink() or getattr(item.lstat(), "st_file_attributes", 0) & 0x400:
                 raise ValueError(f"Cannot back up link contents automatically: {item}")
     for item in (src, *src.parents):
@@ -537,6 +542,54 @@ def append_system_run_log(workspace: Path, templates: Path, ts: str, stats: dict
 # ──────────────────────────────────────────────────────────────────────
 
 
+def _assert_environment_plain_path(path: Path):
+    for item in (path, *path.parents):
+        try:
+            metadata = item.lstat()
+        except FileNotFoundError:
+            continue
+        if item.is_symlink() or getattr(metadata, 'st_file_attributes', 0) & 0x400:
+            raise ValueError('Linked environment path refused')
+
+
+def _environment_payload(templates: Path, spec: dict) -> dict[str, bytes]:
+    config = spec.get('environmentManagement')
+    if config is None:
+        return {}
+    source = templates / 'environment'
+    manager = source / 'env_manager.py'
+    _assert_environment_plain_path(manager)
+    if not manager.is_file() or manager.is_symlink():
+        raise ValueError('Missing or linked public environment loader')
+    functions = runpy.run_path(str(manager))
+    functions['assert_plain_path'](manager)
+    payload = functions['public_payload_from_directory'](source)
+    if set(payload) != set(config['publicFiles']):
+        raise ValueError('Environment public file list differs from SSOT')
+    for path in source.rglob('*'):
+        functions['assert_plain_path'](path)
+        if path.is_file() and path.relative_to(source).as_posix() not in payload:
+            raise ValueError('Unmanaged file in bundled environment templates')
+    return payload
+
+
+def _init_environment_management(workspace: Path, payload: dict[str, bytes]):
+    root = workspace / '.envs'
+    for relative, contents in payload.items():
+        target = root / relative
+        _assert_environment_plain_path(target)
+    for relative, contents in payload.items():
+        target = root / relative
+        target.parent.mkdir(parents=True, exist_ok=True)
+        if not target.exists():
+            # Exclusive creation also preserves a file created after preflight.
+            try:
+                with target.open('xb') as handle:
+                    handle.write(contents)
+            except FileExistsError:
+                pass
+
+
 def initialize_workspace(workspace: Path, templates: Path, operation_type: str) -> dict:
     """
     在 workspace 下创建完整骨架。
@@ -585,6 +638,7 @@ def initialize_workspace(workspace: Path, templates: Path, operation_type: str) 
     ]
     # Bundled SSOT defines the current skeleton, including B08 progress folders.
     spec = json.loads((templates / 'system' / 'standards' / 'workspace-spec.json').read_text(encoding='utf-8'))
+    environment_payload = _environment_payload(templates, spec)
     skeleton_dirs = spec['rootDirectories'] + spec['requiredLayer']['directories']
     registered = spec['skillsManagement']['registeredSkills']
     for name in registered:
@@ -649,6 +703,9 @@ def initialize_workspace(workspace: Path, templates: Path, operation_type: str) 
 
     # 7. 创建核心骨架子项目 00_系统治理（仅当不存在时）
     _init_core_subproject(workspace)
+
+    # Local credentials are never bundled, read, backed up, or overwritten here.
+    _init_environment_management(workspace, environment_payload)
 
     # 8. 记录本次 EXE 运行事件（初始化/升级）
     append_system_run_log(workspace, templates, ts, stats)
