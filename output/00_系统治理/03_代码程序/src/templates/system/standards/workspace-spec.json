@@ -1,10 +1,11 @@
 {
   "$schema": "workspace-spec/1.0.0",
-  "version": "1.32.0",
+  "version": "1.34.0",
   "description": "工作区骨架规格 — 单一事实源（SSOT）。framework-check.ps1、normalize.ps1、init_workspace.py 均从此文件读取标准。",
   "rootDirectories": [
     ".agents",
     ".claude",
+    ".envs",
     ".history",
     ".memory",
     ".system",
@@ -28,13 +29,15 @@
       "B02_版本控制备份",
       "B03_记忆管理",
       "B06_项目规范化",
-      "B05_课题研究"
+      "B05_课题研究",
+      "B12_环境维护"
     ],
     "standards": [
       "workspace-spec.json",
       "工作区骨架规格.md",
       "工作区命名规范.md",
-      "Skills管理标准.md"
+      "Skills管理标准.md",
+      "环境管理标准.md"
     ]
   },
   "skillsManagement": {
@@ -93,7 +96,8 @@
       "H01_原型设计",
       "H02_原型系统交付",
       "I01_内网穿透",
-      "I02_系统部署升级"
+      "I02_系统部署升级",
+      "B12_环境维护"
     ]
   },
   "frameworkHealthCheck": {
@@ -151,7 +155,9 @@
       ".system/standards",
       ".temp",
       "input",
-      "output"
+      "output",
+      ".envs",
+      ".envs/examples"
     ],
     "files": {
       ".system/standards/workspace-spec.json": {
@@ -215,6 +221,38 @@
       ".memory/任务进度/索引.md": {
         "description": "任务进度恢复入口",
         "createIfMissing": true
+      },
+      ".envs/README.md": {
+        "description": "环境管理非秘密清单、加载器或空白模板；只补缺",
+        "createIfMissing": true
+      },
+      ".envs/catalog.json": {
+        "description": "环境管理非秘密清单、加载器或空白模板；只补缺",
+        "createIfMissing": true
+      },
+      ".envs/env_manager.py": {
+        "description": "环境管理非秘密清单、加载器或空白模板；只补缺",
+        "createIfMissing": true
+      },
+      ".envs/examples/doris.prod.readonly.env.example": {
+        "description": "环境管理非秘密清单、加载器或空白模板；只补缺",
+        "createIfMissing": true
+      },
+      ".envs/examples/doris.test.writer.env.example": {
+        "description": "环境管理非秘密清单、加载器或空白模板；只补缺",
+        "createIfMissing": true
+      },
+      ".envs/examples/aliyun.agent.env.example": {
+        "description": "环境管理非秘密清单、加载器或空白模板；只补缺",
+        "createIfMissing": true
+      },
+      ".system/standards/环境管理标准.md": {
+        "description": "本机连接、私有凭据、加载与分发边界",
+        "createIfMissing": true
+      },
+      ".envs/.gitignore": {
+        "description": "环境目录自带默认忽略规则；只补缺，保留人工规则",
+        "createIfMissing": true
       }
     },
     "coreSubproject": {
@@ -247,7 +285,8 @@
         ".system/standards/workspace-spec.json",
         ".system/standards/工作区骨架规格.md",
         ".system/standards/工作区命名规范.md",
-        ".system/standards/Skills管理标准.md"
+        ".system/standards/Skills管理标准.md",
+        ".system/standards/环境管理标准.md"
       ],
       "historyMirrorDirectories": [
         ".history/.system",
@@ -269,7 +308,11 @@
       ".claude/settings.local.json 本机私有权限值",
       ".history/output/*/",
       ".history/.claude/*",
-      ".history/.system/*_{yyyyMMddHHmmss}/"
+      ".history/.system/*_{yyyyMMddHHmmss}/",
+      ".envs/*.env 本机私有凭据；不覆盖、不分发、不进入普通历史快照",
+      ".envs/keys/<连接ID>/* 本机私有密钥文件",
+      ".envs/.recovery/* 专用加密恢复材料",
+      ".envs/.locks/* 维护并发锁"
     ]
   },
   "naming": {
@@ -418,5 +461,33 @@
     "rootFiles": [
       "全局知识地图.md"
     ]
+  },
+  "environmentManagement": {
+    "directory": ".envs",
+    "catalog": ".envs/catalog.json",
+    "loader": ".envs/env_manager.py",
+    "templateDirectory": "environment",
+    "publicFiles": [
+      ".gitignore",
+      "README.md",
+      "catalog.json",
+      "env_manager.py",
+      "examples/doris.prod.readonly.env.example",
+      "examples/doris.test.writer.env.example",
+      "examples/aliyun.agent.env.example"
+    ],
+    "initializationPolicy": "create-if-missing; preserve existing files",
+    "privateFiles": ".envs/*.env",
+    "ordinaryBackupPolicy": "refuse-private-environment-tree",
+    "executionPolicy": "explicit connection ID; selected variables only; redact output; no automatic fallback",
+    "securityBoundary": "Local plaintext; same-user file access is not isolated.",
+    "maintenanceSkill": "B12",
+    "privatePaths": [
+      ".envs/*.env",
+      ".envs/keys/**",
+      ".envs/.recovery/**",
+      ".envs/.locks/**"
+    ],
+    "routingPolicy": "Exact connection ID and requested variables/files only; metadata-only; never auto-read secret values"
   }
 }

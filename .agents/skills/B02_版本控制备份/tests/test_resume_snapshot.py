@@ -132,7 +132,10 @@ class ResumeSnapshotTests(unittest.TestCase):
         try:
             self.assert_rejected(self.resume())
         finally:
-            os.rmdir(native(junction))
+            # native() resolves a junction to its target; remove the link itself.
+            junction.absolute().relative_to(self.root.absolute())
+            os.rmdir(str(junction.absolute()))
+            self.assertTrue(outside.is_dir(), 'Junction cleanup must preserve its target')
 
 
 if __name__ == "__main__":
