@@ -1,4 +1,34 @@
-﻿# Working-content snapshots deliberately exclude .git files and directories.
+﻿# Refuse private credentials before creating any ordinary snapshot data.
+function Assert-EnvironmentBackupPath {
+    param([string]$Path)
+    $full = [IO.Path]::GetFullPath($Path)
+    $name = [IO.Path]::GetFileName($full.TrimEnd('\'))
+    if ($name -ieq '.env' -or $name -like '*.env') {
+        throw 'Private environment files require a separate encrypted credential backup.'
+    }
+    $match = [regex]::Match($full, '(?i)(^|\\)\.envs(?:\\|$)')
+    if (-not $match.Success) { return }
+    $relative = $full.Substring($match.Index + $match.Length).Replace('\', '/')
+    if (Test-Path -LiteralPath $full -PathType Container) {
+        if ($relative -notin @('', 'examples')) {
+            throw 'Unmanaged environment directory cannot enter ordinary history.'
+        }
+        return
+    }
+    if ($relative -in @('.gitignore', 'README.md', 'catalog.json', 'env_manager.py')) { return }
+    if ($relative -match '^examples/[a-z][a-z0-9.-]*\.env\.example$') {
+        $text = [IO.File]::ReadAllText($full, [Text.Encoding]::UTF8)
+        foreach ($line in ($text -split '\r?\n')) {
+            if ($line -match '^\s*(#.*)?$') { continue }
+            if ($line -notmatch '^\s*[A-Z][A-Z0-9_]*\s*=\s*(#.*)?$') {
+                throw 'Only blank environment examples may enter ordinary history.'
+            }
+        }
+        return
+    }
+    throw 'Private or unmanaged environment files cannot enter ordinary history.'
+}
+# Working-content snapshots deliberately exclude .git files and directories.
 # No gitignore filtering: dirty, untracked, ignored and hidden files are protected.
 function Assert-SnapshotPlainPath {
     param([string]$Path)
@@ -27,6 +57,7 @@ function New-ContentSnapshot {
         $destinationFull.StartsWith($sourceFull + '\', [System.StringComparison]::OrdinalIgnoreCase)) {
         throw 'Snapshot destination must be outside its source tree.'
     }
+    Assert-EnvironmentBackupPath $sourceFull
     Assert-SnapshotPlainPath $sourceFull
     Assert-SnapshotPlainPath $destinationFull
     if (-not (Test-Path -LiteralPath $sourceFull -PathType Container)) {
@@ -45,6 +76,7 @@ function New-ContentSnapshot {
         $directory = $queue.Dequeue()
         foreach ($item in @(Get-ChildItem -LiteralPath $directory -Force -ErrorAction Stop)) {
             if ($item.Name -ieq '.git') { $excluded++; continue }
+            Assert-EnvironmentBackupPath $item.FullName
             if ($item.Attributes -band [System.IO.FileAttributes]::ReparsePoint) {
                 throw "Snapshot cannot protect link contents automatically: $($item.FullName)"
             }
@@ -135,6 +167,7 @@ function Get-RecoverySnapshotManifest {
                 if ($ExcludeGit) { continue }
                 throw 'Pending snapshot unexpectedly contains Git metadata.'
             }
+            Assert-EnvironmentBackupPath $entry
             $attributes = [IO.File]::GetAttributes($entry)
             if ($attributes -band [IO.FileAttributes]::ReparsePoint) {
                 throw 'Recovery tree contains a symbolic link or junction.'
