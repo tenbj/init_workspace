@@ -1,75 +1,47 @@
 ---
 name: C06_DWD字段信息Excel生成
-description: 给定 DWD 表名，复用同目录已有建表语句（或按需拉取），运行脚本生成字段信息 Excel 文件，所有产物统一落到 DWD 输出目录。
-metadata:
-  short-description: DWD 表名 → 字段信息 xlsx，产物与 DWD SQL 同目录
+description: 从最终DWD建表SQL、加工SQL和已确认字段合同生成平台六列Excel，开发阶段即可直接导入，不再根据ODS字段猜类型。
 ---
 
-# DWD字段信息Excel生成
+# C06_DWD字段信息Excel生成
+
+## 本地接入
+
+先遵循当前工作区规则；按 B12 精确路由所需连接，按 B04/B08/B03 管理产物与进度。来源案例、账号、路径、人员和历史授权均不自动继承。
 
 ## 这项技能解决什么问题
 
-给定一张 DWD 表名，定位其 INSERT SQL 文件，自动拉取所依赖的 ODS 和 DIM 建表语句（优先复用已有文件），运行脚本生成标准字段信息 xlsx 文件。所有产物（ODS SQL、DIM SQL、xlsx）统一保存到 DWD 输出目录。
+消费 C18 的最终DDL、加工SQL、字段合同JSON。字段合同包含有序fields数组，每项明确name、type、label、comment、nullable、physical_primary_key；不能根据源表主键、字段后缀或英文名猜目标定义。
 
-## 触发条件
+默认输出平台导入件`正式交付/02_字段文档/{规范表名}_平台字段信息.xlsx`，只有一个工作表和六列：排序序号、Type、字段原名、字段名、字段释义、主键。设计说明Excel可以另存，但必须标注“阅读用，不能导入”。
 
-用户提供 DWD 表名（以 `dwd_` 开头）且需要生成字段信息 Excel 时触发。
+## 先读哪些本地知识
+
+- 按当前注册表解析 C18，读取其 `references/平台建模交接.md`，以最终字段合同、DDL和加工SQL为依据。
+- 读取本技能 `references/自查清单.md` 与 `references/字段类型映射规则.md`，旧源表推断口径不能覆盖最终合同。
 
 ## 固定动作
 
-收到 DWD 表名后，全程不询问用户：
+1. 定位本模型子项目及最终DDL/SQL/字段合同；已有确认直接复用。缺最终合同则回 C18 完成，不能继续输出猜测值。
+2. 读取 C18 的`references/平台建模交接.md`。使用其`assets/平台字段信息模板.xlsx`和共用生成器；不要新建一套Workbook布局。平台导出只用于比对模板是否变化，不在建模阶段重填Excel。
+3. 按电子表格技能加载官方运行时，在本模型开发目录的工作子目录建立指向官方包的node_modules链接。执行该技能要求的artifact operation marker。
+4. 运行唯一入口（路径均传绝对路径，node来自load_workspace_dependencies）：
 
-**输出目录**（以下简称 OUTPUT_DIR）：
-- 单独运行时：先定位 DWD 开发产物子项目，使用其 `03_代码程序/<dwd_table_name>/`
-- 由编排器调用时：编排器传入的统一目录
+```text
+python scripts/generate_field_excel.py --contract <字段合同.json> --ddl <最终建表.sql> --dwd-sql <最终加工.sql> --output <表名_平台字段信息.xlsx> --work-dir <开发材料/字段Excel生成> --node <官方node可执行文件>
+```
 
-**DWD SQL 来源目录**（DWD SQL 始终由 `1对1DWD单表SQL生成` 生成，在子项目内）：
-扫描 DWD 开发产物子项目的 `03_代码程序/` 下 `<dwd_table_name>/<dwd_table_name>.sql`
+5. 脚本先核对合同、最终DDL和INSERT，调用 C18 共用生成器，再从落盘Excel回读核验；核验失败不能交付。保留模板hash、文件hash及校验回执到开发材料。核对生成预览，移除临时依赖链接。
+6. C18交付总检查必须同时通过；回复直接可选的导入文件，说明“静态一致性已通过”与“平台导入已验证”的区别。此步骤不需要连接数据库。
 
-1. **定位 DWD SQL 文件**
-   扫描 DWD 开发产物子项目的 `03_代码程序/` 下 `<dwd_table_name>/<dwd_table_name>.sql`
-   读取文件，提取：
-   - INSERT 字段列表
-   - FROM 子句中的 ODS 表名（格式：`schema.table alias`）
-   - LEFT JOIN 子句中的所有 DIM 实体表名和别名（跳过子查询，取实体表名）
+## 什么时候再读本 skill 的 references
 
-2. **获取 ODS 建表语句**
-   先在 `OUTPUT_DIR` 查找已有 ODS CREATE SQL 文件（文件名含 `ods_`）。
-   - 已存在 → 直接使用，跳过查询
-   - 不存在 → 调用 `Doris建表语句查询` skill，加 `--output-dir <OUTPUT_DIR>`，将 SQL 文件保存到 OUTPUT_DIR
+- 确认交付检查项时读 `references/自查清单.md`；核对类型时读 `references/字段类型映射规则.md`。
+- 平台模板、审计字段或主键约定有疑问时回到 C18 的 `references/平台建模交接.md`。
 
-3. **获取 DIM 建表语句**（如有 DIM 关联）
-   对每张 DIM 实体表，先在 `OUTPUT_DIR` 查找（文件名含表名）。
-   - 已存在 → 直接使用
-   - 不存在 → 调用 `Doris建表语句查询` skill，加 `--output-dir <OUTPUT_DIR>`
+## 边界与旧入口迁移
 
-4. **运行 Excel 生成脚本**
-   在 skill 根目录下执行：
-   ```
-   chcp 65001 && set "PYTHONUTF8=1" && python scripts/generate_field_excel.py \
-     --dwd-sql   <DWD子项目>/03_代码程序/<dwd_name>/<dwd_name>.sql \
-     --ods-sql   <OUTPUT_DIR>/<ods_sql_file> \
-     --dim-sql   <OUTPUT_DIR>/<dim1_sql_file> \
-     --dim-sql   <OUTPUT_DIR>/<dim2_sql_file> \
-     --output    <OUTPUT_DIR>/<dwd_name>_字段信息.xlsx
-   ```
-   skill 根目录 = 本 SKILL.md 所在目录（`.agents/skills/C06_DWD字段信息Excel生成/`）
-
-5. **自查**（对照 `references/自查清单.md`）：全部通过才结束
-
-6. **输出一行总结**
-   报告 xlsx 文件路径、字段总数、系统字段数、业务字段数，以及 ODS/DIM SQL 是复用还是新查。
-
-## 什么时候读 references
-
-- 字段类型映射规则（text/int/datetime → 日期/数值/文本）→ `references/字段类型映射规则.md`
-- 自查项目 → `references/自查清单.md`
-- 脚本报错 → 检查各 SQL 文件路径是否存在
-
-## 边界
-
-- DWD SQL 文件必须已存在（由 `1对1DWD单表SQL生成` 提前生成），本 skill 不生成 SQL
-- 只处理 `INSERT OVERWRITE ... SELECT` 格式的 DWD SQL
-- 所有产物（ODS SQL、DIM SQL、xlsx）统一保存到 `<DWD输出目录>`，不写其他路径
-- 脚本异常退出时报告错误，不自行推断字段信息
-- 已存在同名 xlsx 时覆盖
+- 原脚本从ODS/DIM推断字段并输出11列设计表，已停用；旧参数`--ods-sql/--dim-sql`不能生成正式平台交付。
+- `--dwd-sql`接受显式字段清单的INSERT INTO或INSERT OVERWRITE，要求恰好一个目标INSERT；未覆盖的SQL形式明确报错，不能回退猜测。
+- 六列结构、审计顺序、物理主键、中文名和COMMENT规则在 C18 维护；不在本技能复制第二套生成代码。
+- 全部产物归本模型output子项目；不改源模板，不自动备份，不执行平台或数据库写入。

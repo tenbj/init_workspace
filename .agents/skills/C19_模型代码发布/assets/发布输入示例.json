@@ -9,5 +9,6 @@
   "change_type": "add",
   "change_summary": "",
   "remote": "<已确认远端名>",
-  "base_branch": "<已确认目标分支>"
+  "base_branch": "<已确认目标分支>",
+  "naming_confirmation_file": "<本模型开发材料/表名确认.json>"
 }

@@ -1,6 +1,6 @@
 {
   "$schema": "workspace-spec/1.0.0",
-  "version": "1.34.0",
+  "version": "1.37.0",
   "description": "工作区骨架规格 — 单一事实源（SSOT）。framework-check.ps1、normalize.ps1、init_workspace.py 均从此文件读取标准。",
   "rootDirectories": [
     ".agents",
@@ -79,6 +79,10 @@
       "C18_数据模型SQL开发",
       "C19_模型代码发布",
       "C20_数据平台模型创建",
+      "C21_数据平台新增字段",
+      "C22_海豚节点代码更新",
+      "C23_CK到Doris历史补数",
+      "C24_监控异常诊断修复",
       "D04_架构图生成",
       "E01_模型设计标准化",
       "E02_模型评审编排",

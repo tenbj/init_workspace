@@ -1,0 +1,1 @@
+DELETE FROM cbebg.ods_tenant00001_t_oms_advertised_sppr WHERE Date >= '${StartTime}' AND Date <= '${EndTime} 23:59:59.999' AND Date >= '2022-11-01' AND Date < '2025-10-01'

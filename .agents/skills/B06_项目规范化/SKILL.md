@@ -30,7 +30,7 @@ metadata:
 2. 按 `references/严格规范化流程.md` 运行脚本阶段：先 `--Check`，需要修复时再 `--Fix`
 3. 按 `references/标准自查清单.md` 做大模型复核，重点覆盖 `output/`、`.history/`、`.memory/`
 4. 对 PowerShell 文本读取命令做编码自查；`Get-Content` 读取 UTF-8 文本必须显式使用 `-Encoding UTF8`
-5. 对可确定的差异执行标准化修改；修改前必须按 `B02` Skill 备份目标
+5. 对可确定的差异执行标准化修改；不自动备份目标，版本与目录独立维护
 6. 对无法安全自动判断的异常，按 `references/异常记录规范.md` 写入 `00_系统治理`
 7. 修复后再次运行脚本检查，并人工确认剩余 WARN/FAIL 是否已记录或已有处理结论
 8. 结束前按 `B03` Skill 写入系统治理记录

@@ -26,7 +26,7 @@ metadata:
 
 1. 确认输入路径。标准库默认 `input/标准库.xlsx`；模型设计 Excel 由用户指定；样例设计和 `data-assets` 可选。
 2. 判断输出位置。正式写入 `output/` 前，先按话题归属定位当前 `模型设计标准化` 子项目；不存在时执行 B04 创建，禁止假设子项目编号固定。
-3. 正式写入 `output/` 前，执行 B02 对当前 `模型设计标准化` 子项目做 PROJECT 备份；临时试跑可显式传入 `.temp/...` 作为 `--run-dir`。
+3. 正式写入 `output/` 时直接更新当前 `模型设计标准化` 子项目及版本，不自动备份；临时试跑可显式传入 `.temp/...` 作为 `--run-dir`。
 4. 运行 `scripts/01_parse_workbooks.py`，生成 run 目录、输入清单、Excel 解析产物、模板检查结果、字段 JSONL、标准库原文 JSON 和 `workbook_layout.json`（sheet 顺序/隐藏状态/合并单元格/行列尺寸/字体样式摘要等）。
 5. 运行 `scripts/02_build_ai_batches.py`，按实体 sheet 生成 AI 工作包和 AI 决策模板；生成批次前必须解析并应用字段级控制标识：
    - `是否保留=否` 的字段不进入 AI 评审。
