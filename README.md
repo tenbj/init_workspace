@@ -15,14 +15,14 @@
 
 - 工作区骨架标准：`workspace-spec.json` v1.37.0
 - 系统治理子项目：`00_系统治理`
-- 初始化程序：v3.0.0
-- Windows 可执行文件：`init_workspace_v3.0.0.exe`
+- 初始化程序：v3.1.0
+- Windows 可执行文件：`init_workspace_v3.1.0.exe`
 
-GitHub Release 附件提供 `init_workspace_v3.0.0.exe`，大小 `14,563,331` bytes，SHA256 为 `b79d95528f986cdbc7ea50a68e1465bced12a9e28fbc49c506a63b7c605bc94d`。本版包含58项注册Skill，新增平台操作与历史补数能力，更新字段合同和六列Excel交付；C06旧参数及C19发布输入需按 [v3.0.0升级说明](.github/release-notes/v3.0.0.md) 迁移。
+GitHub Release 附件提供 `init_workspace_v3.1.0.exe`，大小 `14,570,967` bytes，SHA256 为 `a8dd8ca8608734e7c8d80110276fde89517155b5dfeb6ff14d489c1c338ca8f2`。本版包含58项注册Skill，新增监控注释规范、数量差异明细和ODS统计口径验收；详见 [v3.1.0发布说明](.github/release-notes/v3.1.0.md)。从旧版本升级时仍需遵循 [v3.0.0升级说明](.github/release-notes/v3.0.0.md)。
 
 ## 快速使用
 
-1. 下载 Release 中的 `init_workspace_v3.0.0.exe`。
+1. 下载 Release 中的 `init_workspace_v3.1.0.exe`。
 2. 将 exe 放到目标工作区目录。
 3. 双击运行，选择初始化或升级。
 4. 工具会生成或更新 `.agents/`、`.system/`、`.memory/`、`.history/`、`input/`、`output/` 等目录。

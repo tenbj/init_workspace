@@ -31,7 +31,7 @@ from tkinter import messagebox
 from datetime import datetime
 from pathlib import Path
 
-SKELETON_VERSION = "3.0.0"
+SKELETON_VERSION = "3.1.0"
 SSO_SPEC_VERSION = "1.37.0"
 
 SYSTEM_RECORD_FILES = {
