@@ -1,4 +1,4 @@
-"""Quality batch ledger utilities. Run B02 before changing an existing output project."""
+"""Quality batch ledger utilities. Automatic history backups are disabled."""
 import argparse
 import hashlib
 import json
@@ -77,7 +77,7 @@ def check_capture(root, model, evidence):
         raise ValueError('截图元数据字段缺失')
     if evidence['model_id'] != model['id'] or evidence['table'] != model['table']:
         raise ValueError('截图模型身份不匹配')
-    if evidence['kind'] not in ('consistency', 'uniqueness'):
+    if evidence['kind'] not in ('consistency', 'uniqueness', 'validity'):
         raise ValueError('未知指标类型')
     if evidence['result'] not in ('正常', '异常'):
         raise ValueError('截图必须有明确运行结果')
@@ -176,6 +176,22 @@ def verify(root, data, batch_id, model_id=None):
     for model in data['models']:
         sources = [s for s in model['sources'] if s['batch_id'] == batch_id]
         if not sources or (model_id and model['id'] != model_id) or sources[-1].get('skip') or model['in_scope'] is False:
+            continue
+        if model.get('governance_scope') == 'specified_indicators':
+            for indicator in model.get('indicators', []):
+                if indicator.get('batch_id') != batch_id:
+                    continue
+                checked += 1
+                captures = [s for s in model.get('screenshots', [])
+                            if s.get('batch_id') == batch_id and s.get('indicator_id') == indicator['id']]
+                try:
+                    if not captures:
+                        raise ValueError('待运行截图')
+                    if captures[-1].get('kind') != indicator['kind']:
+                        raise ValueError('截图与指标类型不一致')
+                    check_capture(root, model, captures[-1])
+                except (ValueError, OSError, KeyError) as exc:
+                    issues.append({'model_id': model['id'], 'indicator_id': indicator['id'], 'reason': str(exc)})
             continue
         for kind, state in [('consistency', model['stages']['C15']), ('uniqueness', model.get('uniqueness', {}))]:
             if kind == 'uniqueness' and state.get('status') in ('不适用', '用户指定跳过'):

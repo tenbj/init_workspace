@@ -31,8 +31,8 @@ from tkinter import messagebox
 from datetime import datetime
 from pathlib import Path
 
-SKELETON_VERSION = "2.24.0"
-SSO_SPEC_VERSION = "1.34.0"
+SKELETON_VERSION = "3.0.0"
+SSO_SPEC_VERSION = "1.37.0"
 
 SYSTEM_RECORD_FILES = {
     "规则变更记录.md": "规则变更记录",

@@ -5,6 +5,6 @@
   "result": "待核实", "quality_value": null,
   "path": "模型产物/待填/待填/C15/运行结果_时间.png",
   "execution_evidence": "模型产物/待填/待填/C15/本次运行证据.json",
-  "source_url": "https://data-platform.example.invalid/dmp/quality/index",
+  "source_url": "<本任务已确认的数据平台地址>/dmp/quality/index",
   "capture_method": "browser_screenshot", "identity_visible": false, "result_visible": false
 }
