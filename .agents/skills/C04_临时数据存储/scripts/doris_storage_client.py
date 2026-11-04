@@ -1,4 +1,6 @@
 import os
+import importlib.util
+from pathlib import Path
 from typing import List, Dict, Any
 
 try:
@@ -6,31 +8,36 @@ try:
 except ImportError:
     raise ImportError("缺少依赖：请先运行 `pip install pymysql` 再重试")
 
-def _required_env(name: str) -> str:
-    value = os.getenv(name)
-    if not value:
-        raise RuntimeError(f"缺少环境变量：{name}")
-    return value
+_WORKSPACE = Path(__file__).resolve().parents[4]
 
 
-def _int_env(name: str, default: int) -> int:
-    value = os.getenv(name)
-    if not value:
-        return default
-    try:
-        return int(value)
-    except ValueError as exc:
-        raise RuntimeError(f"环境变量 {name} 必须是整数") from exc
+def _load_test_connection() -> Dict[str, str]:
+    loader = _WORKSPACE / ".envs" / "env_manager.py"
+    if not loader.is_file():
+        raise RuntimeError("缺少 .envs/env_manager.py，无法加载 doris.test.writer")
+    spec = importlib.util.spec_from_file_location("_c04_env_manager", loader)
+    manager = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(manager)
+    values = manager.load_connection(_WORKSPACE, "doris.test.writer")
+    if any(name in os.environ and os.environ[name] != value for name, value in values.items()):
+        raise RuntimeError("当前进程环境与 doris.test.writer 冲突；请使用独立进程")
+    if values["DORIS_DATABASE"] != "test":
+        raise RuntimeError("doris.test.writer 的 DORIS_DATABASE 必须为 test")
+    return values
 
 
 class DorisStorageClient:
     """测试库专属的存储构建引擎 (Read/Write)"""
     def __init__(self):
-        self.host = _required_env("DORIS_STORAGE_HOST")
-        self.port = _int_env("DORIS_STORAGE_PORT", 9030)
-        self.user = _required_env("DORIS_STORAGE_USER")
-        self.password = _required_env("DORIS_STORAGE_PASSWORD")
-        self.db = os.getenv("DORIS_STORAGE_DATABASE", "test")  # 临时数据统一放在 test 库
+        values = _load_test_connection()
+        self.host = values["DORIS_HOST"]
+        try:
+            self.port = int(values["DORIS_PORT"])
+        except ValueError:
+            raise RuntimeError("DORIS_PORT 必须是整数") from None
+        self.user = values["DORIS_USER"]
+        self.password = values["DORIS_PASSWORD"]
+        self.db = values["DORIS_DATABASE"]
 
     def get_connection(self):
         return pymysql.connect(

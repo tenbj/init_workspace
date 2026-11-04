@@ -1,5 +1,6 @@
 import os
 import re
+import importlib.util
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
 
@@ -17,58 +18,21 @@ _WRITE_OPS = re.compile(
 _DEFAULT_ROW_LIMIT = 500
 _CONNECT_TIMEOUT = 10
 _READ_TIMEOUT = 60
-_DORIS_ENV_NAMES = (
-    "DORIS_QUERY_HOST",
-    "DORIS_QUERY_PORT",
-    "DORIS_QUERY_USER",
-    "DORIS_QUERY_PASSWORD",
-    "DORIS_QUERY_DEFAULT_DB",
-)
+_WORKSPACE = Path(__file__).resolve().parents[4]
 
 
-def _load_workspace_env_if_missing() -> None:
-    """缺少 Doris 进程变量时，从工作区 input/.env 安全补入当前进程。"""
-    if os.getenv("DORIS_QUERY_LOAD_WORKSPACE_ENV") != "1":
-        return
-    required = ("DORIS_QUERY_HOST", "DORIS_QUERY_USER", "DORIS_QUERY_PASSWORD")
-    if all(os.getenv(name) for name in required):
-        return
-
-    script_path = Path(__file__).resolve()
-    workspace = next((parent for parent in script_path.parents
-                      if (parent / ".system/standards/workspace-spec.json").is_file()), None)
-    if workspace is None:
-        return
-    env_path = workspace / "input" / ".env"
-    if not env_path.is_file():
-        return
-
-    for raw_line in env_path.read_text(encoding="utf-8-sig").splitlines():
-        line = raw_line.strip()
-        if not line or line.startswith("#") or "=" not in line:
-            continue
-        name, value = line.split("=", 1)
-        name = name.strip()
-        if name not in _DORIS_ENV_NAMES or os.getenv(name):
-            continue
-        os.environ[name] = value.strip().strip('"').strip("'")
-
-
-def _required_env(name: str) -> str:
-    value = os.getenv(name)
-    if not value:
-        raise RuntimeError(f"缺少环境变量：{name}")
-    return value
-
-
-def _int_env(name: str, default: int) -> int:
-    value = os.getenv(name)
-    if not value:
-        return default
-    try:
-        return int(value)
-    except ValueError as exc:
-        raise RuntimeError(f"环境变量 {name} 必须是整数") from exc
+def _load_readonly_connection() -> Dict[str, str]:
+    """只加载登记的 Doris 生产只读身份；不扫描旧文件或其他服务。"""
+    loader = _WORKSPACE / ".envs" / "env_manager.py"
+    if not loader.is_file():
+        raise RuntimeError("缺少 .envs/env_manager.py，无法加载 doris.prod.readonly")
+    spec = importlib.util.spec_from_file_location("_c02_env_manager", loader)
+    manager = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(manager)
+    values = manager.load_connection(_WORKSPACE, "doris.prod.readonly")
+    if any(name in os.environ and os.environ[name] != value for name, value in values.items()):
+        raise RuntimeError("当前进程环境与 doris.prod.readonly 冲突；请使用独立进程")
+    return values
 
 
 class DorisQueryClient:
@@ -84,12 +48,15 @@ class DorisQueryClient:
     """
 
     def __init__(self, database: Optional[str] = None, row_limit: int = _DEFAULT_ROW_LIMIT):
-        _load_workspace_env_if_missing()
-        self.host = _required_env("DORIS_QUERY_HOST")
-        self.port = _int_env("DORIS_QUERY_PORT", 9030)
-        self.user = _required_env("DORIS_QUERY_USER")
-        self.password = _required_env("DORIS_QUERY_PASSWORD")
-        self.database = database or os.getenv("DORIS_QUERY_DEFAULT_DB", "cbebg")
+        values = _load_readonly_connection()
+        self.host = values["DORIS_HOST"]
+        try:
+            self.port = int(values["DORIS_PORT"])
+        except ValueError:
+            raise RuntimeError("DORIS_PORT 必须是整数") from None
+        self.user = values["DORIS_USER"]
+        self.password = values["DORIS_PASSWORD"]
+        self.database = database or values["DORIS_DATABASE"]
         self.row_limit = row_limit
 
     # ── 内部工具 ────────────────────────────────────────────────────────────
