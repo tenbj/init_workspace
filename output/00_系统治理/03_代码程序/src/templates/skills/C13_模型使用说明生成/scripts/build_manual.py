@@ -1,4 +1,4 @@
-"""Render a nine-chapter model manual as self-contained HTML; derived from F02."""
+"""Render a nine-chapter model manual as self-contained HTML; derived from F03."""
 from __future__ import annotations
 
 import argparse
@@ -134,7 +134,7 @@ def main() -> int:
     parser.add_argument('--output', type=Path, required=True, help='HTML destination')
     parser.add_argument('--check', type=Path, help='Optional generation manifest JSON')
     parser.add_argument('--status', choices=['draft', 'limited', 'final'], default='draft')
-    parser.add_argument('--force', action='store_true', help='Overwrite specified outputs after backup')
+    parser.add_argument('--force', action='store_true', help='Overwrite only the specified existing outputs')
     args = parser.parse_args()
     try:
         source, destination = args.input.resolve(), args.output.resolve()
@@ -148,7 +148,7 @@ def main() -> int:
             raise ValueError('输入、HTML 和校验文件必须为不同路径。')
         for path in paths[1:]:
             if path.exists() and not args.force:
-                raise ValueError(f'输出已存在，请先备份再使用 --force：{path}')
+                raise ValueError(f'输出已存在，请确认覆盖范围后使用 --force：{path}')
         result, manifest = render(source, args.status)
         atomic_write(destination, result)
         if check:

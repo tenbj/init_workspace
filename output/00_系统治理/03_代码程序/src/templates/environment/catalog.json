@@ -1,0 +1,29 @@
+{
+  "schema_version": 1,
+  "connections": [
+    {
+      "id": "doris.prod.readonly",
+      "purpose": "生产数仓只读查询",
+      "environment": "prod",
+      "permission": "readonly",
+      "file": "doris.prod.readonly.env",
+      "required_variables": ["DORIS_HOST", "DORIS_PORT", "DORIS_DATABASE", "DORIS_USER", "DORIS_PASSWORD"]
+    },
+    {
+      "id": "doris.test.writer",
+      "purpose": "测试库写入",
+      "environment": "test",
+      "permission": "writer",
+      "file": "doris.test.writer.env",
+      "required_variables": ["DORIS_HOST", "DORIS_PORT", "DORIS_DATABASE", "DORIS_USER", "DORIS_PASSWORD"]
+    },
+    {
+      "id": "aliyun.agent",
+      "purpose": "阿里云 Data Agent API",
+      "environment": "service",
+      "permission": "api",
+      "file": "aliyun.agent.env",
+      "required_variables": ["DASHSCOPE_API_KEY"]
+    }
+  ]
+}

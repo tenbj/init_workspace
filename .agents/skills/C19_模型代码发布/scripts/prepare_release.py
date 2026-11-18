@@ -20,6 +20,33 @@ def identifier(value, name):
     return value
 
 
+def naming_record(data, db, domain, layer, table, model):
+    value = data.get('naming_confirmation_file')
+    if not isinstance(value, str) or not value.strip():
+        raise ValueError('缺少 naming_confirmation_file；先独立核名并保存明确用户确认')
+    path = Path(value).resolve()
+    raw = path.read_bytes()
+    record = json.loads(raw.decode('utf-8-sig'))
+    expected = {'table': db + '.' + table, 'database': db, 'domain': domain,
+                'layer': layer.upper(), 'model_name': model,
+                'update_mode': table.split('_')[-2], 'frequency': table.split('_')[-1]}
+    if record.get('status') != 'confirmed':
+        raise ValueError('表名确认记录尚未confirmed，不能进入代码发布')
+    for key, expected_value in expected.items():
+        if record.get(key) != expected_value:
+            raise ValueError('表名确认记录与发布元数据不一致：' + key)
+    for key in ['name_confirmation', 'confirmed_date']:
+        if not isinstance(record.get(key), str) or not record[key].strip():
+            raise ValueError('表名确认记录缺少明确确认依据或日期：' + key)
+    if not (record.get('standard_source') or record.get('naming_basis')):
+        raise ValueError('表名确认记录缺少标准或命名依据')
+    if record['update_mode'] not in ['ilu', 'flu', 'ich', 'fsn']:
+        raise ValueError('更新方式未符合标准，需核对命名依据')
+    if re.search(r'(?:^|_)ais\d{8,}(?:_|$)', table) and not record.get('technical_source_exception'):
+        raise ValueError('DWD包含ODS技术来源编号，需另有明确的技术来源例外依据')
+    return path, hashlib.sha256(raw).hexdigest()
+
+
 def plan(data, check_staged=False):
     repo = Path(data['repo']).resolve()
     source = Path(data['source_sql']).resolve()
@@ -39,6 +66,15 @@ def plan(data, check_staged=False):
     model = data['model_name'].strip()
     if not model or not re.search(r'[\u4e00-\u9fff]', model):
         raise ValueError('必须提供已确认模型中文名称')
+    confirmation_path, confirmation_hash = naming_record(data, db, domain, layer, table, model)
+    # Check the actual write target as well as the folder and filename.
+    source_text = raw.decode('utf-8-sig')
+    if source_text.lstrip().startswith(('--', '#', '/*')):
+        raise ValueError('加工SQL不得有头注释；请修正开发源文件并重新校验后发布')
+    sql = re.sub(r'--[^\n]*', '', source_text)
+    targets = re.findall(r'\binsert\s+(?:overwrite\s+table|into(?:\s+table)?)\s+([`\w.]+)', sql, re.I)
+    if not targets or any(t.replace('`', '').lower() != db + '.' + table for t in targets):
+        raise ValueError('正式SQL实际INSERT目标与已确认库表名不一致')
     branch = data.get('branch') or ('codex/' + layer + '-' + table)
     remote = data.get('remote')
     base_branch = data.get('base_branch')
@@ -58,17 +94,32 @@ def plan(data, check_staged=False):
     target = (repo / relative).resolve()
     if not target.is_relative_to(repo):
         raise ValueError('目标路径越过仓库边界')
+    allowed_paths = [relative.as_posix()]
+    previous = data.get('previous_table')
+    if previous:
+        previous = identifier(previous, 'previous_table')
+        if kind != 'modify' or previous == table or not previous.startswith(layer + '_' + domain + '_'):
+            raise ValueError('previous_table仅用于同层同域的明确改名修改')
+        allowed_paths.append((Path(db) / domain / layer / previous / (previous + '.sql')).as_posix())
     result = {'status': 'planned', 'repo': str(repo), 'source_sql': str(source),
               'source_sha256': hashlib.sha256(raw).hexdigest(), 'target_path': str(target),
               'target_relative': relative.as_posix(), 'branch': branch,
               'commit_message': data.get('commit_message') or ('feat(sql): 新增' + model if kind == 'add' else 'fix(sql): ' + model + '，' + summary),
               'remote': remote, 'base_branch': base_branch,
-              'target_exists': target.exists(), 'source_utf8_valid': True}
+              'target_exists': target.exists(), 'source_utf8_valid': True,
+              'naming_confirmation_file': str(confirmation_path), 'naming_confirmation_sha256': confirmation_hash,
+              'naming_confirmed': True, 'allowed_staged_paths': allowed_paths}
     result['mr_title'] = result['commit_message']
     if check_staged:
-        files = git(repo, 'diff', '--cached', '--name-only', '-z').decode('utf-8').split('\x00')
-        if [f for f in files if f] != [relative.as_posix()]:
-            raise ValueError('暂存集合不是唯一授权加工文件')
+        files = git(repo, 'diff', '--cached', '--no-renames', '--name-only', '-z').decode('utf-8').split('\x00')
+        if sorted(f for f in files if f) != sorted(allowed_paths):
+            raise ValueError('暂存集合不是授权加工文件及明确改名的旧路径：' +
+                             json.dumps({'actual': [f for f in files if f], 'expected': allowed_paths}, ensure_ascii=False))
+        if previous:
+            old_path = allowed_paths[1]
+            deletions = git(repo, 'diff', '--cached', '--no-renames', '--diff-filter=D', '--name-only', '-z').decode('utf-8').split('\x00')
+            if old_path not in deletions:
+                raise ValueError('改名的旧加工路径必须从暂存结果删除')
         git(repo, 'diff', '--cached', '--check')
         staged = git(repo, 'show', ':' + relative.as_posix())
         if staged.replace(b'\r\n', b'\n') != raw.replace(b'\r\n', b'\n'):
@@ -85,7 +136,7 @@ def main():
     args = parser.parse_args()
     try:
         result = plan(json.loads(Path(args.input).read_text(encoding='utf-8-sig')), args.check_staged)
-    except (ValueError, KeyError, OSError, subprocess.SubprocessError) as exc:
+    except (ValueError, TypeError, KeyError, OSError, subprocess.SubprocessError) as exc:
         print(json.dumps({'status': 'blocked', 'error': str(exc)}, ensure_ascii=False))
         return 2
     out = Path(args.output)

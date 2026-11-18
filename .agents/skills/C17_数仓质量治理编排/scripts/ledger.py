@@ -1,4 +1,4 @@
-"""Apply a versioned ledger change and rebuild the offline dashboard. Run B02 first."""
+"""Apply a versioned ledger change and rebuild the offline dashboard. Automatic history backups are disabled."""
 import argparse
 import copy
 import json
@@ -62,7 +62,13 @@ def validate(data):
                     raise ValueError('C15完成必须确认正确模型的SQL已保存并回读一致')
             if state['status'] == '已完成' and stage == 'C11' and not state.get('conclusion'):
                 raise ValueError('C11完成必须有明确结论')
-        if model['stages']['C15']['status'] in ('进行中', '已完成') and model['stages']['C14']['status'] != '已完成':
+        specified_sql_verified = (
+            model.get('governance_scope') == 'specified_indicators'
+            and bool(model.get('indicators'))
+            and all(i.get('sql_saved_readback_verified') is True and i.get('artifacts')
+                    for i in model['indicators'])
+        )
+        if model['stages']['C15']['status'] in ('进行中', '已完成') and model['stages']['C14']['status'] != '已完成' and not specified_sql_verified:
             raise ValueError('C15配置依赖C14完成')
     if len(identities) != len(set(identities)):
         raise ValueError('同一连接/库/表重复登记，应合并来源')

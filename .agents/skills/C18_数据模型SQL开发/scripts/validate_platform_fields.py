@@ -30,7 +30,7 @@ def type_issue(value):
     return '类型形式未被静态检查覆盖或精度写法不正确，需人工核对Doris语法'
 
 
-def validate(excel):
+def validate(excel, contract=None, ddl=None, sql=None):
     errors = []
     def add(row, message):
         errors.append({'row': row, 'message': message})
@@ -85,20 +85,56 @@ def validate(excel):
         for value, count in Counter(values).items():
             if count > 1:
                 add(0, f'{label}重复：{value}')
+    if ddl is not None:
+        from platform_contract import ddl_fields, insert_fields, verify_contract
+        try:
+            final_fields, final_keys = ddl_fields(ddl)
+            final_names = [f['name'] for f in final_fields]
+            expected_order = AUDIT + [n for n in final_names if n not in AUDIT]
+            if names != expected_order:
+                add(0, 'Excel字段集合/顺序与最终DDL不一致')
+            actual = {str(r[2]): r for r in data if len(r) == 6}
+            for f in final_fields:
+                r = actual.get(f['name'])
+                if r and (re.sub(r'\s+', '', str(r[1])).lower() != f['type'] or r[4] != f['comment']):
+                    add(0, f"{f['name']}：类型或COMMENT与最终DDL不一致")
+            if keys != final_keys:
+                add(0, 'Excel物理主键集合与最终DDL不一致')
+            if sql is not None and insert_fields(sql) != final_names:
+                add(0, 'INSERT与最终DDL字段集合/顺序不一致')
+            if contract is not None:
+                if sql is None:
+                    raise ValueError('合同核验须同时传入最终加工SQL')
+                verify_contract(contract, ddl, sql)
+                for f in contract['fields']:
+                    if f['name'] in actual and actual[f['name']][3] != f['label']:
+                        add(0, f"{f['name']}：中文名与已确认合同不一致")
+        except (ValueError, StopIteration, KeyError, IndexError) as exc:
+            add(0, '最终DDL/SQL/合同核验失败：'+str(exc))
+    elif contract is not None or sql is not None:
+        add(0, '完整核验必须提供最终DDL')
     return {'status': 'PASS' if not errors else 'FAIL', 'field_count': len(data),
             'primary_keys': keys, 'errors': errors,
-            'scope': '六列、审计/业务序号、类型小写及常用形式、名称唯一、非空与主键标记；未验证DDL/SQL一致性、COMMENT语义、Doris版本兼容或页面排序键'}
+            'final_ddl_checked': ddl is not None, 'insert_checked': sql is not None,
+            'confirmed_contract_checked': contract is not None,
+            'scope': '六列、序号、类型、名称唯一、主键标记；有最终输入时逐值比对DDL/INSERT/合同。未证明平台导入成功、引擎兼容或页面排序键'}
 
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--excel', required=True)
     parser.add_argument('--output', required=True)
+    parser.add_argument('--contract')
+    parser.add_argument('--ddl')
+    parser.add_argument('--sql')
     args = parser.parse_args()
     source, output = Path(args.excel).resolve(), Path(args.output).resolve()
     if source == output or output.suffix.lower() != '.json':
         parser.error('报告必须是独立JSON，不得覆盖Excel')
-    result = validate(source)
+    result = validate(source,
+        json.loads(Path(args.contract).read_text(encoding='utf-8-sig')) if args.contract else None,
+        Path(args.ddl).read_text(encoding='utf-8-sig') if args.ddl else None,
+        Path(args.sql).read_text(encoding='utf-8-sig') if args.sql else None)
     output.parent.mkdir(parents=True, exist_ok=True)
     output.write_text(json.dumps(result, ensure_ascii=False, indent=2), encoding='utf-8')
     print(json.dumps({'status': result['status'], 'field_count': result['field_count'],

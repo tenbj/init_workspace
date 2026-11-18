@@ -1,0 +1,4 @@
+interface:
+  display_name: "C23_CK到Doris历史补数_v1.5.2"
+  short_description: "从三方探查到历史补数、失败恢复和Excel验收"
+  default_prompt: "请用$C23根据Excel对应清单探查Doris实际源、CK与Doris，确认范围后逐段补齐历史并验收回写。"

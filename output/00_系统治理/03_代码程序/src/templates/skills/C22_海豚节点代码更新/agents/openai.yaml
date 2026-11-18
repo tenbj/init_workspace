@@ -1,0 +1,4 @@
+interface:
+  display_name: "C22_海豚节点代码更新_v1.7.2"
+  short_description: "更新海豚节点代码、试跑排错并恢复原定时"
+  default_prompt: "使用 $C22 更新已有海豚工作流节点代码，核对参数与转义、试跑并恢复原定时。"

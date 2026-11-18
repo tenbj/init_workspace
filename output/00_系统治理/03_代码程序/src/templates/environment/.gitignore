@@ -1,0 +1,8 @@
+*
+!.gitignore
+!README.md
+!catalog.json
+!env_manager.py
+!examples/
+examples/*
+!examples/*.env.example

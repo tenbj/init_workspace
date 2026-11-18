@@ -5,8 +5,8 @@
 ## 最终对象及结果
 
 - 表：cbebg.dwd_ads_sqp_brand_view_ilu_dd；中文名：广告_SQP_品牌视图明细；路径：跨境电商/广告域/DWD。
-- 加工代码：cbebg/ads/dwd/dwd_ads_sqp_brand_view_ilu_dd/dwd_ads_sqp_brand_view_ilu_dd.sql。仓库<当前任务仓库>。
-- MR [!3126](https://git.example.invalid/dw-dev/data-assets/-/merge_requests/3126)，标题DWD-SQP品牌视图；源48a4210510abe40328890e13fa59a39fd654e49b；合并2991994a2a5bd46bf66d365d01742b7e172bb7c2，已核实合并。
+- 加工代码：cbebg/ads/dwd/dwd_ads_sqp_brand_view_ilu_dd/dwd_ads_sqp_brand_view_ilu_dd.sql。仓库F:/gitlab/data-assets。
+- MR [!3126](http://git.rabbitgoo.com/dw-dev/data-assets/-/merge_requests/3126)，标题DWD-SQP品牌视图；源48a4210510abe40328890e13fa59a39fd654e49b；合并2991994a2a5bd46bf66d365d01742b7e172bb7c2，已核实合并。
 - 2026-10-10 09:10:16创建记录2795；11:31:33最后“确认创建”成功。弹窗自动关闭，自动列表中库表/分层/代码路径/调度/参数正确，**仍待上线**。物理表及首次运行未在本轮独立验收。
 
 ## 上游证据
@@ -16,7 +16,7 @@
 | cbebg.ods_ck_sqp_brand_view | CK_SQP_品牌视图 / 2577 | 数据模型/跨境电商/广告域/ODS/CK_SQP_品牌视图 | 历史每小时计划，海豚定时下线；忽略时间推算，保留数据依赖 |
 | cbebg.ods_realtime_db_t_rpa_search_query_performance_brand_view | SQP_品牌视图 / 2045 | 数据模型/跨境电商/广告域/ODS/SQP_品牌视图 | 六次08/13/15/16/17/20整点上线；平台范围T-8至T、筛选localcreatetime |
 | glcd.ctrl_shop_mapping | 店铺映射表 / 2725 | 数据模型/统一公共数据/统一公共数据/CTRL/店铺映射表 | 文件导入，无关联定时 |
-| glcd.dim_shop_ich_dd | 店铺公共维表 / 1470 | 数据模型/统一公共数据/统一公共数据/DIM/店铺公共维表 | 03:20上线；更新范围未核实，不能说无参数或全量 |
+| glcd.dim_shop_ich_dd | 店铺公共维表 / 1470 | 数据模型/统一公共数据/统一公共数据/DIM/店铺公共维表 | 03:20上线（历史证据）；更新范围未核实，不能说无参数或全量；其调度不参与下游时间推算 |
 
 PG参数来自平台模型列表返回updateScopes/etlParams，未独立核查海豚部署参数。浏览器reqid223仅是当次网络记录编号，2045才是平台模型ID。上游中文名同样从平台记录取得，不是临时翻译。
 
@@ -33,7 +33,7 @@ PG参数来自平台模型列表返回updateScopes/etlParams，未独立核查�
 | 历史问题 | 最终正确处理 |
 |---|---|
 | 未登记SQP直接改中文译名 | 用户明确保留SQP且提出登记申请；前缀广告_，后缀明细；不宣称已审批 |
-| 全天只取20:05 | 保留六批次各+5分钟；维表03:20不单独增加03:25 |
+| 全天只取20:05 | 保留六个有效PG批次各+5分钟；按DIM排除规则，维表03:20不参与推算、不增加03:25 |
 | 原2794发布后为验收导航返回列表 | 预填全部丢失，用户授权删除归档；次日2795全程不刷新。不能默认复用删除授权 |
 | 分层改DWD后路径联动重置 | 依次填库/表，等待稳定后最后填代码路径，失焦回读 |
 | Excel文件一致却DDL生成失败 | 查中文名唯一性；按用户确认改两项，重验后生成 |

@@ -37,20 +37,9 @@ from_unixtime(src.<field> / 1000) as <field_snake>
 
 ### FIELD-007：枚举字段（LLM 处理）
 
-脚本仅标记，LLM 负责判断并处理：
+先区分编码与描述。若上游表达式或数仓查询已证明源值为业务描述，直接以 `*_desc` 别名输出并记录证据；下列 NULL 模板仅用于缺少确认映射的枚举编码。
 
-```sql
--- ⚠️ ENUM_FIELDS: status, order_type
--- LLM请为以上字段判断是否需要补充 _desc 列
-```
-
-LLM 处理后，保留顶部来源注释，并追加处理结论：
-
-```sql
--- ⚠️ ENUM_FIELDS: status, order_type
--- LLM请为以上字段判断是否需要补充 _desc 列
--- LLM处理结果：已补 status_desc、order_type_desc，当前使用 NULL 占位，需后续补充 CASE WHEN 映射
-```
+脚本在配套开发说明.md记录枚举候选字段；LLM在同一说明中补充判断和处理结论，保留告警来源。SQL不添加文件头注释。
 
 枚举字段后新增 `_desc` 列，`NULL` 占位必须带行内人工确认注释：
 
@@ -61,16 +50,11 @@ NULL as status_desc, -- TODO_CONFIRM: 补充 status 中文映射后替换 NULL
 
 目标字段列表同步新增 `status_desc`。
 
-字段命名后必须二次扫描最终 INSERT 字段名；如果紧凑字段（如 `settlementstatus`）被重命名为 `settlement_status`，仍需按枚举字段处理，不能只依赖脚本头部注释。
+字段命名后必须二次扫描最终 INSERT 字段名；如果紧凑字段（如 `settlementstatus`）被重命名为 `settlement_status`，仍需按枚举字段处理，不能只依赖配套说明中的脚本候选清单。
 
 ### COMMENT-001：人工确认点注释
 
-SQL 顶部保留脚本输出的 `⚠️` 注释作为来源追踪，不把它们当成可删除噪音。LLM 后处理必须在对应注释后追加 `LLM处理结果`。
-
-```sql
--- ⚠️  未检测到标准维表触发信号，如需维表关联请人工确认
--- LLM处理结果：根据历史确认资料补充 dim_shop 关联，关联条件和过滤条件需人工复核
-```
+脚本告警和LLM处理结果保留在配套开发说明.md中，不作为SQL头注释。对未命中维表的情况记录告警来源、补充关联依据与待确认条件。
 
 凡需要人工确认的 SQL 位置，也必须就地标注：
 
@@ -89,11 +73,13 @@ left join (
 
 ---
 
-## 不可自动生成的情况
+## 脚本无法直接生成的情况
 
-遇到以下情况脚本直接退出，需人工处理：
+遇到以下情况，脚本可能退出或生成不完整初稿；按 `AI接续解析.md` 由 AI 核实并接续，不把脚本限制视为任务失败：
 
 - 找不到 ODS SQL 文件
 - ODS SQL 含 `LATERAL VIEW`、`EXPLODE`
 - ODS SQL 主查询含 `GROUP BY`、`DISTINCT`
 - `INSERT` 目标列数与 `SELECT` 列数不一致
+
+区分上游抽取与本次 DWD 清洗的层级。只有实际要求改变 ODS 到 DWD 粒度或必要证据确实缺失时，才报告不能满足一对一的具体原因。

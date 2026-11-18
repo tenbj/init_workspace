@@ -250,6 +250,16 @@ Write-Host "  program-src : $(Get-RelativePath -Path $programSrc -Root $workspac
 Write-Host "  version     : $currentVersion -> $targetVersion"
 Write-Host "  spec        : $specVersion"
 
+# Export only reviewed public environment files; never recursively copy .envs.
+$environmentLoader = Join-Path $workspaceRoot '.envs\env_manager.py'
+$environmentTemplate = Join-Path $templatesRoot 'environment'
+Assert-UnderPath -Path $environmentTemplate -Root $templatesRoot
+if ($WhatIf) {
+    Write-Host '[WHATIF] Export reviewed public environment templates'
+} else {
+    & python $environmentLoader --workspace $workspaceRoot export-public --destination $environmentTemplate
+    if ($LASTEXITCODE -ne 0) { throw 'Public environment template validation/export failed.' }
+}
 foreach ($item in $copyPlan) {
     if ($item.Kind -eq "file") {
         Copy-FileFresh -Source $item.Source -Destination $item.Destination -TemplateRoot $templatesRoot -DryRun:$WhatIf

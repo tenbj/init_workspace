@@ -1,0 +1,4 @@
+interface:
+  display_name: "C24_监控异常诊断修复_v1.0.1"
+  short_description: "从质量告警追查业务根因，保护历史并完成修复重跑和全量验收"
+  default_prompt: "请使用 $C24 排查并解决指定监控异常，核实历史保护范围，完成授权修复与全量验收。"

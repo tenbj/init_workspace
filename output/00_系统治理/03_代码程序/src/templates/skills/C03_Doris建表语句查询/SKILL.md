@@ -19,6 +19,8 @@ metadata:
 
 - 先读 `references/本地接入.md`；按当前注册表解析依赖。
 
+脚本通过 C02 加载 `.envs` 登记的 `doris.prod.readonly`；仅用于 Doris，平台 MySQL 按 B12 独立路由。
+
 ## 固定动作
 
 收到表名后立即执行，不询问用户：

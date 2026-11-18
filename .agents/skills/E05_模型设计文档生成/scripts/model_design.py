@@ -30,7 +30,7 @@ META_KEYS = ['grain', 'business_keys', 'technical_keys', 'partition', 'increment
 def dump(path, data):
     path = Path(path)
     if path.exists():
-        raise ValueError(f'拒绝覆盖已有文件，请指定新路径或先执行 B02：{path}')
+        raise ValueError(f'拒绝覆盖已有文件，请指定新路径：{path}')
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(json.dumps(data, ensure_ascii=False, indent=2, default=str), encoding='utf-8')
 

@@ -362,24 +362,8 @@ def build_sql(
     )
     join_part = f"\n{join_sql}" if join_sql else ""
 
-    header_lines = []
-    if enum_fields:
-        header_lines.append(
-            f"-- ⚠️ ENUM_FIELDS: {', '.join(enum_fields)}\n"
-            f"-- LLM请为以上字段判断是否需要补充 _desc 列"
-        )
-    if timestamp_fields:
-        header_lines.append(
-            f"-- ⚠️ TIMESTAMP_FIELDS: {', '.join(timestamp_fields)}\n"
-            f"-- LLM请核查以上字段的 ODS 类型后决定是否需要 from_unixtime 转换"
-        )
-    for w in warnings:
-        header_lines.append(f"-- ⚠️  {w}")
-    header = ("\n".join(header_lines) + "\n\n") if header_lines else ""
-
     if strategy == "flu":
         return (
-            f"{header}"
             f"insert overwrite table {dwd_table}\n"
             f"(\n{target_block}\n)\n"
             f"select\n{select_block},\n{audit_block}\n"
@@ -388,7 +372,6 @@ def build_sql(
     else:
         tf = time_field or "biz_date"
         return (
-            f"{header}"
             f"delete from {dwd_table}\n"
             f"where CAST({tf} as Date) >= '${{StartTime}}'\n"
             f"  and CAST({tf} as Date) <= '${{EndTime}}';\n\n"
@@ -573,6 +556,8 @@ def main() -> None:
     issues: list[str] = []
     if enum_fields:
         issues.append(f"枚举候选字段（需补充 _desc 映射）：{', '.join(enum_fields)}")
+    if timestamp_fields:
+        issues.append(f"时间戳候选字段（需核查ODS类型后决定转换）：{', '.join(timestamp_fields)}")
     for w in warnings:
         issues.append(w)
 

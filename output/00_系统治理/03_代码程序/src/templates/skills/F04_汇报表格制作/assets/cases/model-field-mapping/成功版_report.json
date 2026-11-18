@@ -1,0 +1,57 @@
+{
+  "schemaVersion": "1.0.0",
+  "id": "model_field_mapping_20261019",
+  "title": "模型切换与字段差异",
+  "filename": "模型切换与字段差异.xlsx",
+  "sheets": [{
+    "id": "mapping",
+    "name": "模型切换与字段差异",
+    "role": "detail",
+    "columns": [
+      {"key":"no","label":"编号","width":8},
+      {"key":"topic","label":"模型名称","width":25},
+      {"key":"oldTable","label":"旧模型表名","width":42},
+      {"key":"newTable","label":"新模型表名","width":42},
+      {"key":"change","label":"变更类型","width":15,"align":"center"},
+      {"key":"oldField","label":"原字段","width":20},
+      {"key":"newField","label":"新字段","width":34},
+      {"key":"remarks","label":"备注","width":25}
+    ],
+    "rows": [
+      {"id":"week_1","values":{"no":"一","topic":"财务_利润核算周报_OMS","oldTable":"ods_profit_financial_\nsales_profit_week","newTable":"dwd_fin_profit_financial_\nsales_profit_week_ilu_dd","change":"下线","oldField":"顶级分类","newField":"不再提供"}},
+      {"id":"week_2","values":{"change":"下线","oldField":"基础Sku","newField":"不再提供"}},
+      {"id":"week_3","values":{"change":"调整","oldField":"SPU","newField":"五级分类"}},
+      {"id":"week_4","values":{"change":"调整","oldField":"SPU编码","newField":"SPU"}},
+      {"id":"week_5","values":{"change":"调整","oldField":"SKUID","newField":"MSkuID"}},
+      {"id":"week_6","values":{"change":"调整","oldField":"上架日期","newField":"商品首单日期"}},
+      {"id":"month_1","values":{"no":"二","topic":"财务_利润核算月报_OMS","oldTable":"ods_oms_financial_\nsales_profit","newTable":"dwd_fin_profit_financial_\nsales_profit_ilu_dd","change":"调整","oldField":"站点汇率","newField":"美元兑人民币汇率"}},
+      {"id":"str_1","values":{"no":"三","topic":"SP搜索词-STR","oldTable":"ods_advertised_str","newTable":"ods_tenant00001_t_oms_\nadvertised_str","change":"调整","oldField":"广告组合","newField":"活动名称"}},
+      {"id":"str_2","values":{"change":"调整","oldField":"搜索词","newField":"客户搜索词"}},
+      {"id":"execution_1","values":{"no":"四","topic":"备货执行表_金蝶","oldTable":"金蝶直连SQL\n（数仓已有模型）\nods_ais20220302195211_\ninventory_execution","newTable":"ods_ais20220302195211_\ninventory_execution","change":"调整","oldField":"FBA号","newField":"FBA单号","remarks":"当前金蝶直连SQL；\n数仓已有模型，\n报表数据源尚未切换。"}},
+      {"id":"execution_2","values":{"change":"调整","oldField":"账号","newField":"账号名称"}},
+      {"id":"execution_3","values":{"change":"调整","oldField":"电商平台","newField":"电商平台名称"}},
+      {"id":"execution_4","values":{"change":"调整","oldField":"站点","newField":"站点名称"}},
+      {"id":"execution_5","values":{"change":"调整","oldField":"顶级分类","newField":"一级分类"}},
+      {"id":"execution_6","values":{"change":"调整","oldField":"一级分类","newField":"二级分类"}},
+      {"id":"execution_7","values":{"change":"调整","oldField":"二级分类","newField":"三级分类"}},
+      {"id":"execution_8","values":{"change":"调整","oldField":"三级分类","newField":"四级分类"}},
+      {"id":"execution_9","values":{"change":"调整","oldField":"四级分类","newField":"五级分类"}},
+      {"id":"turnover_1","values":{"no":"五","topic":"库存周转分析-OMS","oldTable":"dws_fba_stock_\nturnover_analysis_new","newTable":"dmt_fba_stock_\nturnover_analysis","change":"未列明","remarks":"已适配；\n原文未列字段明细。"}},
+      {"id":"summary_1","values":{"no":"六","topic":"库存_库存汇总查询_金蝶","oldTable":"ods_kd_inventory_\nsummary_search","newTable":"dwd_kd_inv_sum_flu_dd","change":"下线","oldField":"四级分类","newField":"不再提供"}},
+      {"id":"summary_2","values":{"change":"下线","oldField":"五级分类","newField":"不再提供"}},
+      {"id":"summary_3","values":{"change":"调整","oldField":"组织名称","newField":"金蝶组织名称"}},
+      {"id":"summary_4","values":{"change":"调整","oldField":"账号","newField":"账号名称"}},
+      {"id":"summary_5","values":{"change":"调整","oldField":"电商平台","newField":"电商平台名称"}},
+      {"id":"summary_6","values":{"change":"调整","oldField":"站点","newField":"站点名称"}},
+      {"id":"summary_7","values":{"change":"调整","oldField":"一级分类","newField":"商品/物料顶级分类"}},
+      {"id":"summary_8","values":{"change":"调整","oldField":"二级分类","newField":"商品/物料一级分类"}},
+      {"id":"summary_9","values":{"change":"调整","oldField":"三级分类","newField":"商品/物料四级分类","remarks":"按原文保留；\n分类层级映射待核对。"},"emphasis":["newField"]}
+    ],
+    "groups": [
+      {"from":"week_1","to":"week_6","fields":["no","topic","oldTable","newTable"]},
+      {"from":"str_1","to":"str_2","fields":["no","topic","oldTable","newTable"]},
+      {"from":"execution_1","to":"execution_9","fields":["no","topic","oldTable","newTable","remarks"]},
+      {"from":"summary_1","to":"summary_9","fields":["no","topic","oldTable","newTable"]}
+    ]
+  }]
+}

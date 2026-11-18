@@ -457,6 +457,7 @@ if (-not (Test-Path -LiteralPath $TargetPath)) {
     exit 1
 }
 
+Assert-EnvironmentBackupPath $TargetPath
 $item = Get-Item -LiteralPath $TargetPath
 $normalizedTarget = Normalize-PathString $TargetPath
 

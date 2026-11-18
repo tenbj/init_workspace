@@ -66,6 +66,12 @@ def chinese_comment_errors(sql):
     return errors
 
 
+def header_comment_errors(sql):
+    if sql.lstrip('\ufeff \t\r\n').startswith(('--', '#', '/*')):
+        return [{'line': 1, 'message': 'SQL文件不得有头注释，须直接从实际SQL语句开始'}]
+    return []
+
+
 def cte_comma_errors(sql):
     """仅检查 WITH 列表分隔逗号；忽略字符串、注释和子查询内部逗号。"""
     tokens = [p for p in sql_parts(sql) if p[0] not in ('comment', 'hint')]
@@ -157,7 +163,7 @@ def target_field_name_errors(sql):
     return errors
 
 
-def validate(folder, table):
+def validate(folder, table, field_contract=None):
     folder = Path(folder).resolve()
     if not re.fullmatch(r'[a-z][a-z0-9_]*', table):
         raise ValueError('表名须为不含库名的小写标识符')
@@ -187,14 +193,25 @@ def validate(folder, table):
             if path.suffix.lower() == '.sql':
                 try:
                     errors.extend(dict(file=name, **e) for e in chinese_comment_errors(sql))
+                    errors.extend(dict(file=name, **e) for e in header_comment_errors(sql))
                     errors.extend(dict(file=name, **e) for e in cte_comma_errors(sql))
                     errors.extend(dict(file=name, **e) for e in blank_line_errors(sql))
                     errors.extend(dict(file=name, **e) for e in target_field_name_errors(sql))
                 except ValueError as exc:
                     errors.append({'file': name, 'message': str(exc)})
+    platform_result = None
+    platform = folder / f'02_字段文档/{table}_平台字段信息.xlsx'
+    ddl_path = folder / f'01_SQL/{table}/create_{table}.sql'
+    sql_path = folder / f'01_SQL/{table}/{table}.sql'
+    if all(p.is_file() for p in (platform, ddl_path, sql_path)):
+        from validate_platform_fields import validate as validate_platform
+        platform_result = validate_platform(platform, field_contract,
+            ddl_path.read_text(encoding='utf-8-sig'), sql_path.read_text(encoding='utf-8-sig'))
+        errors.extend({'file':platform.relative_to(folder).as_posix(), **e} for e in platform_result['errors'])
     return {'status': 'PASS' if not errors else 'FAIL', 'table': table,
             'file_count': len(files), 'errors': errors, 'sha256': hashes,
-            'scope': '仅文件清单、命名路径、中文注释、无空白行、CTE逗号前置、CREATE/INSERT目标字段命名形式、占位符；未验证SQL执行和字段语义'}
+            'platform_fields':platform_result,
+            'scope': '文件清单、路径、SQL注释/格式、平台Excel六列与最终DDL类型/COMMENT/主键/INSERT列一致性；提供合同时同时核对中文名。未验证平台导入或SQL执行'}
 
 
 def main():
@@ -202,6 +219,7 @@ def main():
     parser.add_argument('--delivery-dir', required=True)
     parser.add_argument('--table', required=True)
     parser.add_argument('--output', required=True)
+    parser.add_argument('--field-contract', help='已确认字段合同JSON')
     args = parser.parse_args()
     folder, output = Path(args.delivery_dir).resolve(), Path(args.output).resolve()
     if output.is_relative_to(folder):
@@ -209,7 +227,8 @@ def main():
     if not folder.is_dir():
         parser.error('正式交付目录不存在')
     try:
-        result = validate(folder, args.table)
+        contract = json.loads(Path(args.field_contract).read_text(encoding='utf-8-sig')) if args.field_contract else None
+        result = validate(folder, args.table, contract)
     except (ValueError, OSError, UnicodeError) as exc:
         parser.error(str(exc))
     output.parent.mkdir(parents=True, exist_ok=True)
