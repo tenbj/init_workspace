@@ -19,16 +19,21 @@ description: 当用户需要交互原型时使用；默认设计手机与桌面�
 - 先读 `references/ASOC协议.md`，确认能力包合同与最小交付集。
 - 再读 `references/原型产物规格.md`，确认文件字段、关联 ID 和完成标准。
 - Web 原型默认读 `references/移动端兼容设计与验收.md`，在信息架构阶段规划手机与桌面；用户明确限定桌面时记录排除理由。
+- 先读 `references/页面类型与视觉路由.md`，按站点级、页面级和区域级识别“品牌化网站”“工具化系统”或“混合页”，不要把整个站点强行归为一种类型。
 - 需求不完整或需要降级时，读 `references/独立运行与迁移规则.md`。
 
 ## 固定动作
 
 1. 按 `input.schema.json` 整理意图、用户、场景、需求、约束和验收标准；缺口写入假设，不静默猜测。
-2. 按 `workflow.yaml` 执行需求建模、信息架构、交互设计、视觉原型、机器协议和验证；在 `ui.schema.json.responsive` 声明布局、视口和核心流程验收场景。
-3. 用 `scripts/create_package.py --output <目录>` 初始化完整包，不手工遗漏必备文件。
-4. 完成 `prd.md`、`prototype.html`、`ui.schema.json`、`interaction.json`、`user-flow.md`、`api.yaml`、`database.sql` 和 `manifest.json`。
-5. 使用一致的需求 ID、组件 ID、事件 ID、状态和接口路径贯穿所有产物。
-6. 运行 `scripts/check_responsive.py <目录>`，再运行 `scripts/validate_package.py <目录> --require-responsive --report <目录>/evaluation/report.json`；布局和实际操作均通过才交付。修改 HTML 或验收场景后重跑，旧报告不能复用。
+2. 在需求建模阶段建立页面类型矩阵：为每个页面记录 page_type（brand_site / tool_system / hybrid）、主要任务、内容密度、导航方式、核心动作、视觉基准和验收场景；同一站点必须允许不同页面使用不同类型。
+3. 按 `workflow.yaml` 执行需求建模、信息架构、交互设计、视觉原型、机器协议和验证；在 `ui.schema.json.responsive` 声明布局、视口和核心流程验收场景。
+4. 对品牌化页面优先验证品牌认知、情绪和入口转化；对工具化页面优先验证定位、查询、状态、详情和下一步动作；对混合页明确主类型与次类型，禁止用一套默认后台模板覆盖全部页面。
+5. 用共享品牌令牌连接不同页面，用页面类型约束决定结构和密度；同一站点的品牌页与工具页可以共享颜色、字体和圆角，但不强制共享导航、信息密度或首屏任务。
+6. 若站点同时包含品牌页和工具页，至少各做一页可点击确认稿，并验证从品牌入口进入工具系统的过渡是否连续。
+7. 用 `scripts/create_package.py --output <目录>` 初始化完整包，不手工遗漏必备文件。
+8. 完成 `prd.md`、`prototype.html`、`ui.schema.json`、`interaction.json`、`user-flow.md`、`api.yaml`、`database.sql` 和 `manifest.json`。
+9. 使用一致的需求 ID、组件 ID、事件 ID、状态和接口路径贯穿所有产物，并在 `prd.md` 或 `manifest.json` 保留页面类型矩阵。
+10. 运行 `scripts/check_responsive.py <目录>`，再运行 `scripts/validate_package.py <目录> --require-responsive --report <目录>/evaluation/report.json`；布局和实际操作均通过才交付。修改 HTML 或验收场景后重跑，旧报告不能复用。
 
 ## 什么时候再读本 skill 的 references
 
