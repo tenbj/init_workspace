@@ -96,4 +96,11 @@ Thumbs.db
 .vscode/
 
 # Local chat attachments; retain on this computer only.
+/.codex-attachments/
 /.codex-remote-attachments/
+
+# Local scratch scripts and generated analysis files
+/tmp/
+/temp_*.py
+/temp_*.txt
+/temp_shared.bin
