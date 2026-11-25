@@ -1,7 +1,7 @@
 {
   "$schema": "workspace-spec/1.0.0",
-  "version": "1.37.0",
-  "description": "工作区骨架规格 — 单一事实源（SSOT）。framework-check.ps1、normalize.ps1、init_workspace.py 均从此文件读取标准。",
+  "version": "1.38.0",
+  "description": "工作区骨架规格 — 单一事实源（SSOT）。framework-check.ps1、normalize.ps1、backup.ps1、init_workspace.py 均从此文件读取标准。",
   "rootDirectories": [
     ".agents",
     ".claude",
@@ -297,9 +297,11 @@
         ".history/.system/standards"
       ],
       "backup": {
-        "mode": "FOLDER",
-        "description": "与 .agents/skills/ 相同：按 .system 内部子文件夹做整文件夹快照，live 文件夹保持原名不变。",
-        "historySnapshot": ".history/.system/{.system子文件夹名}_{yyyyMMddHHmmss}/"
+        "mode": "GIT_ONLY",
+        "exemptFromB02": true,
+        "policyRef": "backupPolicy",
+        "description": ".system 已纳入核心骨架 Git 仓库管理，修改前免 B02 备份；.history/.system/ 仅保留既有历史快照归档。",
+        "legacyHistorySnapshot": ".history/.system/{.system子文件夹名}_{yyyyMMddHHmmss}/"
       }
     }
   },
@@ -493,5 +495,90 @@
       ".envs/.locks/**"
     ],
     "routingPolicy": "Exact connection ID and requested variables/files only; metadata-only; never auto-read secret values"
+  },
+  "backupPolicy": {
+    "description": "工作区版本控制备份策略 — 单一事实源（SSOT）。B02、B06、规则和标准文档均引用此区块，不在多处重复硬编码备份范围。",
+    "project": {
+      "mode": "PROJECT",
+      "targetPattern": "^output\\\\[^\\\\]+$",
+      "includeSubfolders": [
+        "01_问题答疑",
+        "02_课题研究"
+      ],
+      "includeRootFiles": false,
+      "exemptSubfolders": [
+        "03_代码程序"
+      ],
+      "triggerOn": [
+        "01_问题答疑",
+        "02_课题研究"
+      ],
+      "versionRecordFile": "版本记录.md",
+      "historyBase": ".history/output",
+      "description": "output/ 所有子项目仅 01_问题答疑 与 02_课题研究 走 B02 PROJECT 备份；快照只复制这两个目录，不复制 03_代码程序 及子项目根目录其他文件。修改 03_代码程序 或非 01/02 文件不触发 B02。"
+    },
+    "memory": {
+      "mode": "MEMORY",
+      "description": ".memory/ 处于 .gitignore 范围，不受核心骨架 Git 保护；版本化记忆维持 B02 MEMORY 备份现状，追加型与运行态记忆免备份。",
+      "versionedPaths": [
+        ".memory/知识提炼/*.md",
+        ".memory/全局知识地图.md"
+      ],
+      "exemptDirs": [
+        ".memory/对话记录",
+        ".memory/系统记录",
+        ".memory/任务进度"
+      ]
+    },
+    "folder": {
+      "allowedTargets": [],
+      "description": ".agents/skills 与 .system 均已纳入核心骨架 Git 仓库管理，免 B02 FOLDER 备份。"
+    },
+    "config": {
+      "exemptPrefixes": [
+        ".agents/rules",
+        ".system"
+      ],
+      "description": ".agents/rules 与 .system 已纳入核心骨架 Git 仓库管理，免 B02 备份；其他未免除的非秘密独立文件仍可按需使用 CONFIG 备份。"
+    },
+    "exemptPaths": [
+      {
+        "path": "output/*/03_代码程序",
+        "reason": "子项目代码程序由独立 Git 或工具链管理，不触发也不进入 B02 快照"
+      },
+      {
+        "path": "output/*/<非01/02根目录文件>",
+        "reason": "output 子项目仅 01_问题答疑 与 02_课题研究 纳入 B02 备份"
+      },
+      {
+        "path": ".agents/skills",
+        "reason": "核心骨架 Git 仓库已跟踪，免 B02 备份"
+      },
+      {
+        "path": ".agents/rules",
+        "reason": "核心骨架 Git 仓库已跟踪，免 B02 备份"
+      },
+      {
+        "path": ".system",
+        "reason": "核心骨架 Git 仓库已跟踪，免 B02 备份"
+      },
+      {
+        "path": ".memory/对话记录",
+        "reason": "追加型记忆，不做版本备份"
+      },
+      {
+        "path": ".memory/系统记录",
+        "reason": "追加型记忆，不做版本备份"
+      },
+      {
+        "path": ".memory/任务进度",
+        "reason": "B08 运行态任务进度，不做版本备份"
+      }
+    ],
+    "legacyHistoryArchiveDirs": [
+      ".history/.agents/skills",
+      ".history/.agents/rules",
+      ".history/.system"
+    ]
   }
 }

@@ -1,6 +1,6 @@
 # Skills 管理标准
 
-> 版本：1.27.0
+> 版本：1.28.0
 > 定位：Skills 域分类、命名、注册、生命周期管理的正式 SSOT。  
 > 适用范围：`.agents/skills/` 下所有项目级 Skill，以及 `workspace-spec.json`、体检脚本、规范化脚本中的 Skill 引用。
 
@@ -48,7 +48,7 @@
 | 编号 | 技能名 | 职责 |
 |------|-------|------|
 | B01 | 框架体检 | 仅在用户显式请求时执行只读健康检查 |
-| B02 | 版本控制备份 | 修改文件前执行备份 & 版本 bump |
+| B02 | 版本控制备份 | 按 `workspace-spec.json` 的 `backupPolicy` 执行备份 & 版本维护 |
 | B03 | 记忆管理 | 维护对话记录、系统记录、知识提炼 |
 | B04 | 子项目管理 | 在 output/ 下创建标准子项目 |
 | B05 | 课题研究 | 按方法论进行结构化研究 |
@@ -243,7 +243,7 @@ interface:
 
 ### 修改内容（SKILL.md、scripts 等）
 
-1. 执行版本控制备份（FOLDER 模式）
+1. 按 `workspace-spec.json` 的 `backupPolicy`，`.agents/skills/` 已纳入核心骨架 Git 管理，免 B02 备份；修改前先按 `B11` 确认处于工作分支
 2. 修改内容
 3. 按变更幅度判断是否需要 bump `agents/openai.yaml display_name` 中的版本号：
    - 不兼容变更 → MAJOR
@@ -254,7 +254,7 @@ interface:
 
 ### 移动 Skill 到新域
 
-1. 备份原文件夹
+1. 确认处于 `B11` 工作分支（`.agents/skills/` 按 `backupPolicy` 免 B02 备份）
 2. 修改文件夹名的域代码和编号
 3. 更新 YAML name（稳定 Skill ID，不带版本号）与 `display_name` 前缀
 4. 更新 `workspace-spec.json` 中 `skillsManagement.registeredSkills`、`overwriteLayer.skills`（如适用）和 `bomCheck.files`
