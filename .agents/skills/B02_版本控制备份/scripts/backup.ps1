@@ -1,20 +1,16 @@
 ﻿<#
 .SYNOPSIS
-    File, folder, config, memory, and project backup script.
+    SSOT-driven version control backup script (B02).
 .DESCRIPTION
-    Supports five modes:
-    - PROJECT : output/ subproject folders — snapshot working contents (exclude all .git entries) to .history with version + timestamp, bump 版本记录.md only
-    - FOLDER  : .agents/skills/ folders or .system/ subfolders — snapshot with timestamp, source unchanged; .system snapshots append .history/.system/更新日志.md
-    - CONFIG  : .agents/rules/ files and root independent files — copy with timestamp, source unchanged
-    - MEMORY  : versioned .memory files — stable live filename, old versions → .history/.memory/
-    - FILE    : legacy single-file mode (not used for output/ paths)
-
-    output/ backup design (PROJECT mode):
-    - Subproject folder named: {编号}_{主题}
-    - Backup: Copy working contents, excluding .git → .history/output/{name}_v{x.y.z}_{timestamp}
-    - Keep live folder stable; do not rename output/ or .memory/对话记录 files
-    - 版本记录.md inside each subproject tracks version history
-    - Subproject version and individual file versions are independent
+    Reads backupPolicy from .system/standards/workspace-spec.json (SSOT):
+    - PROJECT : output/<subproject> — snapshots only configured includeSubfolders (01_问题答疑, 02_课题研究)
+                to .history/output/{name}_v{x.y.z}_{timestamp}, skipping 03_代码程序 and root files;
+                keeps live folder stable and bumps 版本记录.md.
+    - MEMORY  : versioned .memory files (知识提炼/*.md, 全局知识地图.md) — stable live filename,
+                old versions → .history/.memory/.
+    - CONFIG  : non-exempt independent non-secret config files (.agents/rules and .system are Git-managed and exempt).
+    - FOLDER  : governed by backupPolicy.folder.allowedTargets (empty by default: .agents/skills and .system are Git-managed).
+    - FILE    : legacy single-file mode (not used for output/ or exempt paths).
 #>
 
 param(
@@ -40,6 +36,80 @@ $ErrorActionPreference = "Stop"
 function Normalize-PathString {
     param([string]$Path)
     return ($Path -replace '/', '\')
+}
+
+function Test-PathUnderPrefix {
+    param(
+        [string]$RelativePath,
+        [string]$Prefix
+    )
+    $normRel = (Normalize-PathString $RelativePath).Trim('\')
+    $normPre = (Normalize-PathString $Prefix).Trim('\')
+    if ([string]::IsNullOrWhiteSpace($normPre)) { return $false }
+    return ($normRel.Equals($normPre, [System.StringComparison]::OrdinalIgnoreCase) -or
+            $normRel.StartsWith($normPre + '\', [System.StringComparison]::OrdinalIgnoreCase))
+}
+
+function Test-MatchesAllowedPattern {
+    param(
+        [string]$RelativePath,
+        [string[]]$Patterns
+    )
+    $normRel = (Normalize-PathString $RelativePath).Trim('\')
+    foreach ($pattern in $Patterns) {
+        if ([string]::IsNullOrWhiteSpace($pattern)) { continue }
+        $normPat = (Normalize-PathString $pattern).Trim('\')
+        $regexPattern = '^' + [regex]::Escape($normPat).Replace('\*', '[^\\]+') + '$'
+        if ($normRel -match $regexPattern) {
+            return $true
+        }
+    }
+    return $false
+}
+
+function Assert-NotExemptFromB02 {
+    param(
+        [string]$RelativePath,
+        $BackupPolicy
+    )
+
+    if ($null -eq $BackupPolicy) { return }
+
+    if ($null -ne $BackupPolicy.exemptPaths) {
+        foreach ($entry in @($BackupPolicy.exemptPaths)) {
+            $exemptPath = [string]$entry.path
+            if ([string]::IsNullOrWhiteSpace($exemptPath)) { continue }
+            if ($exemptPath.Contains('*') -or $exemptPath.Contains('<')) { continue }
+            if (Test-PathUnderPrefix -RelativePath $RelativePath -Prefix $exemptPath) {
+                $reason = if ($entry.reason) { [string]$entry.reason } else { "exempt per workspace-spec.json backupPolicy" }
+                Write-Error "Target '$RelativePath' is exempt from B02 backup per workspace-spec.json backupPolicy ($exemptPath): $reason"
+                exit 1
+            }
+        }
+    }
+
+    $normRel = (Normalize-PathString $RelativePath).Trim('\')
+    if ($normRel -match '^output\\([^\\]+)\\([^\\]+)(?:\\.*)?$') {
+        $subprojectName = $Matches[1]
+        $childName = $Matches[2]
+        $includeSubfolders = @($BackupPolicy.project.includeSubfolders)
+        $exemptSubfolders = @($BackupPolicy.project.exemptSubfolders)
+
+        foreach ($ex in $exemptSubfolders) {
+            if ($childName.Equals([string]$ex, [System.StringComparison]::OrdinalIgnoreCase)) {
+                Write-Error "Target '$RelativePath' is under exempt subfolder '$childName' and does not use B02 backup per workspace-spec.json backupPolicy."
+                exit 1
+            }
+        }
+        foreach ($inc in $includeSubfolders) {
+            if ($childName.Equals([string]$inc, [System.StringComparison]::OrdinalIgnoreCase)) {
+                Write-Error "output/ content under '$childName' must be backed up via PROJECT mode on the parent subproject folder (output\$subprojectName), not as individual files or subfolders."
+                exit 1
+            }
+        }
+        Write-Error "Target '$RelativePath' is outside backupPolicy.project.includeSubfolders ($($includeSubfolders -join ', ')) and does not use B02 backup."
+        exit 1
+    }
 }
 
 function Get-RelativePath {
@@ -449,6 +519,8 @@ if (-not $workspaceRoot) {
     exit 1
 }
 
+$backupPolicy = Get-WorkspaceBackupPolicy -WorkspaceRoot $workspaceRoot
+
 $originalTargetPath = $TargetPath
 $TargetPath = Resolve-ProjectPath -Path $TargetPath -WorkspaceRoot $workspaceRoot
 
@@ -456,6 +528,9 @@ if (-not (Test-Path -LiteralPath $TargetPath)) {
     Write-Error "Target not found: $originalTargetPath"
     exit 1
 }
+
+$relativeTarget = Get-RelativePath -Path $TargetPath -Root $workspaceRoot
+Assert-NotExemptFromB02 -RelativePath $relativeTarget -BackupPolicy $backupPolicy
 
 Assert-EnvironmentBackupPath $TargetPath
 $item = Get-Item -LiteralPath $TargetPath
@@ -507,14 +582,20 @@ if ($Mode -eq "PROJECT") {
     }
 
     $projectRelative = Get-RelativePath -Path $TargetPath -Root $workspaceRoot
-    if ($projectRelative -notmatch '^output\\[^\\]+$') {
+    $targetPattern = if ($backupPolicy.project.targetPattern) { [string]$backupPolicy.project.targetPattern } else { '^output\\[^\\]+$' }
+    if ($projectRelative -notmatch $targetPattern) {
         throw "PROJECT mode requires one direct output subproject root: $projectRelative"
     }
+
+    $includeSubfolders = @($backupPolicy.project.includeSubfolders | ForEach-Object { [string]$_ } | Where-Object { -not [string]::IsNullOrWhiteSpace($_) })
+    $includeRootFiles = [bool]$backupPolicy.project.includeRootFiles
+    $versionRecordFileName = if ($backupPolicy.project.versionRecordFile) { [string]$backupPolicy.project.versionRecordFile } else { '版本记录.md' }
+
     $folderItem = Get-Item -LiteralPath $TargetPath
     $folderName = $folderItem.Name
     $projectFullName = Get-ProjectFullName $folderName
     $projectTopic = Get-ProjectTopic $folderName
-    $versionRecordPath = Join-Path $TargetPath "版本记录.md"
+    $versionRecordPath = Join-Path $TargetPath $versionRecordFileName
     $currentVersion = Get-LatestProjectVersionFromRecord $versionRecordPath
     if (-not $currentVersion) {
         $currentVersion = Get-VersionFromName $folderName
@@ -536,6 +617,8 @@ if ($Mode -eq "PROJECT") {
     $historyBaseDir = Join-Path $historyRoot $relativeParent
     $historyTimestampDir = Join-Path $historyBaseDir "${projectFullName}_v${currentVersion}_${timestamp}"
 
+    $useIncludeWhitelist = (-not $includeRootFiles -and $includeSubfolders.Count -gt 0)
+
     Ensure-Directory $historyBaseDir
     if ($ResumeSnapshotPath) {
         $pendingPath = Resolve-ProjectPath -Path $ResumeSnapshotPath -WorkspaceRoot $workspaceRoot
@@ -552,26 +635,36 @@ if ($Mode -eq "PROJECT") {
         }
         [void][datetime]::ParseExact($nameMatch.Groups[2].Value, 'yyyyMMddHHmmss', [Globalization.CultureInfo]::InvariantCulture)
         $historyTimestampDir = Join-Path $historyBaseDir $nameMatch.Groups[1].Value
-        Complete-ContentSnapshot -Source $TargetPath -Pending $pendingPath -Destination $historyTimestampDir
+        if ($useIncludeWhitelist) {
+            Complete-ContentSnapshot -Source $TargetPath -Pending $pendingPath -Destination $historyTimestampDir -IncludeTopLevelDirs $includeSubfolders
+        } else {
+            Complete-ContentSnapshot -Source $TargetPath -Pending $pendingPath -Destination $historyTimestampDir
+        }
     } else {
-        New-ContentSnapshot -Source $TargetPath -Destination $historyTimestampDir
+        if ($useIncludeWhitelist) {
+            New-ContentSnapshot -Source $TargetPath -Destination $historyTimestampDir -IncludeTopLevelDirs $includeSubfolders
+        } else {
+            New-ContentSnapshot -Source $TargetPath -Destination $historyTimestampDir
+        }
     }
     Write-Host "[OK] History snapshot: $historyTimestampDir"
 
     Update-VersionRecord -VersionRecordPath $versionRecordPath -NewVersion $newVersion -ChangeType $ChangeType -DisplayTimestamp $displayTimestamp -ProjectTopic $projectTopic
     Write-Host "[OK] Version record updated: $versionRecordPath"
 
+    $scopeLabel = if ($useIncludeWhitelist) { ($includeSubfolders -join ", ") + " (from workspace-spec.json backupPolicy)" } else { "full working contents" }
     Write-Host ""
     Write-Host "=========================================="
     Write-Host "  Project Backup Complete"
     Write-Host "=========================================="
     Write-Host "  Source    : $TargetPath"
+    Write-Host "  Scope     : $scopeLabel"
     Write-Host "  Snapshot  : $historyTimestampDir"
     Write-Host "  Live Path : $TargetPath"
     Write-Host "  Version   : v$currentVersion --> v$newVersion ($ChangeType)"
     Write-Host "=========================================="
     Write-Host ""
-    Write-Host "Next: edit files in the stable live folder, then fill in 版本记录.md"
+    Write-Host "Next: edit files in the stable live folder, then fill in $versionRecordFileName"
 
     exit 0
 }
@@ -586,9 +679,13 @@ if ($Mode -eq "FOLDER") {
     $folderName = $folderItem.Name
     $relativePath = Get-RelativePath -Path $TargetPath -Root $workspaceRoot
     $relativeParent = Split-Path $relativePath -Parent
-    $validFolderTarget = ($relativePath -match '^\.agents\\skills\\[^\\]+$') -or ($relativePath -match '^\.system\\[^\\]+$')
-    if (-not $validFolderTarget) {
-        Write-Error "FOLDER mode only supports one .agents/skills/<skill> folder or one .system/<folder>. Got: $relativePath"
+    $allowedTargets = @($backupPolicy.folder.allowedTargets | ForEach-Object { [string]$_ } | Where-Object { -not [string]::IsNullOrWhiteSpace($_) })
+    if ($allowedTargets.Count -eq 0) {
+        Write-Error "FOLDER mode has no enabled targets in workspace-spec.json backupPolicy (.agents/skills and .system are managed by core skeleton Git)."
+        exit 1
+    }
+    if (-not (Test-MatchesAllowedPattern -RelativePath $relativePath -Patterns $allowedTargets)) {
+        Write-Error "FOLDER mode target '$relativePath' is not allowed by workspace-spec.json backupPolicy.folder.allowedTargets ($($allowedTargets -join ', '))."
         exit 1
     }
 
@@ -624,10 +721,18 @@ if ($Mode -eq "CONFIG") {
         exit 1
     }
 
+    $relativePath = Get-RelativePath -Path $TargetPath -Root $workspaceRoot
+    $exemptPrefixes = @($backupPolicy.config.exemptPrefixes | ForEach-Object { [string]$_ } | Where-Object { -not [string]::IsNullOrWhiteSpace($_) })
+    foreach ($prefix in $exemptPrefixes) {
+        if (Test-PathUnderPrefix -RelativePath $relativePath -Prefix $prefix) {
+            Write-Error "Target '$relativePath' is exempt from CONFIG backup per workspace-spec.json backupPolicy ($prefix)."
+            exit 1
+        }
+    }
+
     $fileItem = Get-Item $TargetPath
     $baseName = $fileItem.BaseName
     $ext = $fileItem.Extension
-    $relativePath = Get-RelativePath -Path $TargetPath -Root $workspaceRoot
     $relativeParent = Split-Path $relativePath -Parent
     $historyFolderName = $baseName
     if ([string]::IsNullOrWhiteSpace($relativeParent)) {
