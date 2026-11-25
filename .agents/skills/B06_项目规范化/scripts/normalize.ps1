@@ -401,7 +401,23 @@ function Ensure-ProjectSnapshot($projectDir) {
     $histOut = Join-Path $wn ".history\output"
     if (-not (Test-Path $histOut)) { New-Item -ItemType Directory -Path $histOut -Force | Out-Null }
     $snapshot = Join-Path $histOut "${name}_$ts"
-    New-ContentSnapshot -Source $projectDir -Destination $snapshot
+    $policy = Get-WorkspaceBackupPolicy -WorkspaceRoot $wn
+    $includeDirs = @($policy.project.includeSubfolders | ForEach-Object { [string]$_ } | Where-Object { -not [string]::IsNullOrWhiteSpace($_) })
+    $exemptDirs = @($policy.project.exemptSubfolders | ForEach-Object { [string]$_ } | Where-Object { -not [string]::IsNullOrWhiteSpace($_) })
+    $hasIncludedDir = $false
+    foreach ($dirName in $includeDirs) {
+        if (Test-Path -LiteralPath (Join-Path $projectDir $dirName) -PathType Container) {
+            $hasIncludedDir = $true
+            break
+        }
+    }
+    if (-not [bool]$policy.project.includeRootFiles -and $includeDirs.Count -gt 0 -and $hasIncludedDir) {
+        New-ContentSnapshot -Source $projectDir -Destination $snapshot -IncludeTopLevelDirs $includeDirs
+    } elseif ($exemptDirs.Count -gt 0) {
+        New-ContentSnapshot -Source $projectDir -Destination $snapshot -ExcludeTopLevelDirs $exemptDirs
+    } else {
+        New-ContentSnapshot -Source $projectDir -Destination $snapshot
+    }
     $script:snapshottedProjects[$name] = $snapshot
     $script:fixLog += "Snapshot: $projectDir -> $snapshot"
     Write-Host "  [FIXED] Snapshot before project normalization: $($snapshot.Substring($wn.Length+1))"

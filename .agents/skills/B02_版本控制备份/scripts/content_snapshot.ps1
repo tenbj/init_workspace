@@ -1,4 +1,59 @@
-﻿# Refuse private credentials before creating any ordinary snapshot data.
+﻿# Working-content snapshot and SSOT backup policy helpers shared by B02 and B06.
+function Get-WorkspaceBackupPolicy {
+    param(
+        [Parameter(Mandatory = $true)]
+        [string]$WorkspaceRoot
+    )
+
+    $specPath = Join-Path $WorkspaceRoot '.system\standards\workspace-spec.json'
+    if (Test-Path -LiteralPath $specPath -PathType Leaf) {
+        try {
+            $raw = [System.IO.File]::ReadAllText($specPath, [System.Text.UTF8Encoding]::new($false))
+            $spec = $raw | ConvertFrom-Json
+        } catch {
+            throw "Failed to parse SSOT workspace-spec.json at '$specPath': $($_.Exception.Message)"
+        }
+        if ($null -ne $spec -and $null -ne $spec.backupPolicy) {
+            return $spec.backupPolicy
+        }
+    }
+
+    Write-Host "[WARN] backupPolicy not found in .system/standards/workspace-spec.json; using built-in SSOT fallback."
+    return [pscustomobject]@{
+        project = [pscustomobject]@{
+            mode = 'PROJECT'
+            targetPattern = '^output\\[^\\]+$'
+            includeSubfolders = @('01_问题答疑', '02_课题研究')
+            includeRootFiles = $false
+            exemptSubfolders = @('03_代码程序')
+            triggerOn = @('01_问题答疑', '02_课题研究')
+            versionRecordFile = '版本记录.md'
+            historyBase = '.history/output'
+        }
+        memory = [pscustomobject]@{
+            mode = 'MEMORY'
+            versionedPaths = @('.memory/知识提炼/*.md', '.memory/全局知识地图.md')
+            exemptDirs = @('.memory/对话记录', '.memory/系统记录', '.memory/任务进度')
+        }
+        folder = [pscustomobject]@{
+            allowedTargets = @()
+        }
+        config = [pscustomobject]@{
+            exemptPrefixes = @('.agents/rules', '.system')
+        }
+        exemptPaths = @(
+            [pscustomobject]@{ path = 'output/*/03_代码程序'; reason = '子项目代码程序由独立 Git 或工具链管理，不触发也不进入 B02 快照' },
+            [pscustomobject]@{ path = '.agents/skills'; reason = '核心骨架 Git 仓库已跟踪，免 B02 备份' },
+            [pscustomobject]@{ path = '.agents/rules'; reason = '核心骨架 Git 仓库已跟踪，免 B02 备份' },
+            [pscustomobject]@{ path = '.system'; reason = '核心骨架 Git 仓库已跟踪，免 B02 备份' },
+            [pscustomobject]@{ path = '.memory/对话记录'; reason = '追加型记忆，不做版本备份' },
+            [pscustomobject]@{ path = '.memory/系统记录'; reason = '追加型记忆，不做版本备份' },
+            [pscustomobject]@{ path = '.memory/任务进度'; reason = 'B08 运行态任务进度，不做版本备份' }
+        )
+    }
+}
+
+# Refuse private credentials before creating any ordinary snapshot data.
 function Assert-EnvironmentBackupPath {
     param([string]$Path)
     $full = [IO.Path]::GetFullPath($Path)
@@ -28,8 +83,9 @@ function Assert-EnvironmentBackupPath {
     }
     throw 'Private or unmanaged environment files cannot enter ordinary history.'
 }
+
 # Working-content snapshots deliberately exclude .git files and directories.
-# No gitignore filtering: dirty, untracked, ignored and hidden files are protected.
+# No gitignore filtering: dirty, untracked, ignored and hidden files inside included trees are protected.
 function Assert-SnapshotPlainPath {
     param([string]$Path)
     $cursor = [System.IO.Path]::GetFullPath($Path)
@@ -46,11 +102,32 @@ function Assert-SnapshotPlainPath {
     }
 }
 
+function ConvertTo-TopLevelNameSet {
+    param([string[]]$Names)
+    $set = [System.Collections.Generic.HashSet[string]]::new([System.StringComparer]::OrdinalIgnoreCase)
+    if ($null -ne $Names) {
+        foreach ($n in $Names) {
+            if (-not [string]::IsNullOrWhiteSpace($n)) {
+                [void]$set.Add($n.Trim())
+            }
+        }
+    }
+    return ,$set
+}
+
 function New-ContentSnapshot {
     param(
         [Parameter(Mandatory = $true)][string]$Source,
-        [Parameter(Mandatory = $true)][string]$Destination
+        [Parameter(Mandatory = $true)][string]$Destination,
+        [string[]]$IncludeTopLevelDirs = @(),
+        [string[]]$ExcludeTopLevelDirs = @()
     )
+    $includeSet = ConvertTo-TopLevelNameSet $IncludeTopLevelDirs
+    $excludeSet = ConvertTo-TopLevelNameSet $ExcludeTopLevelDirs
+    if ($includeSet.Count -gt 0 -and $excludeSet.Count -gt 0) {
+        throw 'IncludeTopLevelDirs and ExcludeTopLevelDirs cannot be combined.'
+    }
+
     $sourceFull = [System.IO.Path]::GetFullPath($Source).TrimEnd('\')
     $destinationFull = [System.IO.Path]::GetFullPath($Destination).TrimEnd('\')
     if ($destinationFull.Equals($sourceFull, [System.StringComparison]::OrdinalIgnoreCase) -or
@@ -67,15 +144,29 @@ function New-ContentSnapshot {
         throw "Snapshot already exists; refusing to overwrite: $destinationFull"
     }
 
-    # Preflight the whole payload before creating a snapshot. Never silently skip links.
+    # Preflight the selected payload before creating a snapshot. Never silently skip links in included trees.
     $entries = [System.Collections.Generic.List[object]]::new()
     $queue = [System.Collections.Generic.Queue[string]]::new()
     $queue.Enqueue($sourceFull)
     $excluded = 0
+    $matchedTopDirs = 0
     while ($queue.Count -gt 0) {
         $directory = $queue.Dequeue()
+        $isTopLevel = $directory.Equals($sourceFull, [System.StringComparison]::OrdinalIgnoreCase)
         foreach ($item in @(Get-ChildItem -LiteralPath $directory -Force -ErrorAction Stop)) {
             if ($item.Name -ieq '.git') { $excluded++; continue }
+            if ($isTopLevel) {
+                if ($includeSet.Count -gt 0) {
+                    if (-not $includeSet.Contains($item.Name)) { continue }
+                    if ($item.Attributes -band [System.IO.FileAttributes]::ReparsePoint) {
+                        throw "Snapshot cannot protect link contents automatically: $($item.FullName)"
+                    }
+                    if (-not $item.PSIsContainer) { continue }
+                    $matchedTopDirs++
+                } elseif ($excludeSet.Count -gt 0 -and $item.PSIsContainer -and $excludeSet.Contains($item.Name)) {
+                    continue
+                }
+            }
             Assert-EnvironmentBackupPath $item.FullName
             if ($item.Attributes -band [System.IO.FileAttributes]::ReparsePoint) {
                 throw "Snapshot cannot protect link contents automatically: $($item.FullName)"
@@ -87,6 +178,10 @@ function New-ContentSnapshot {
             })
             if ($item.PSIsContainer) { $queue.Enqueue($item.FullName) }
         }
+    }
+
+    if ($includeSet.Count -gt 0 -and $matchedTopDirs -eq 0) {
+        throw "Snapshot source does not contain any configured backup subdirectories ($($IncludeTopLevelDirs -join ', ')): $sourceFull"
     }
 
     $parent = Split-Path $destinationFull -Parent
@@ -153,22 +248,48 @@ function Assert-RecoveryPlainPath {
 }
 
 function Get-RecoverySnapshotManifest {
-    param([string]$Root, [switch]$ExcludeGit)
+    param(
+        [string]$Root,
+        [switch]$ExcludeGit,
+        [string[]]$IncludeTopLevelDirs = @(),
+        [string[]]$ExcludeTopLevelDirs = @()
+    )
+    $includeSet = ConvertTo-TopLevelNameSet $IncludeTopLevelDirs
+    $excludeSet = ConvertTo-TopLevelNameSet $ExcludeTopLevelDirs
+    if ($includeSet.Count -gt 0 -and $excludeSet.Count -gt 0) {
+        throw 'IncludeTopLevelDirs and ExcludeTopLevelDirs cannot be combined.'
+    }
+
     Assert-RecoveryPlainPath $Root
     $nativeRoot = ConvertTo-SnapshotExtendedPath $Root
     if (-not [IO.Directory]::Exists($nativeRoot)) { throw 'Recovery tree is missing.' }
     $manifest = [Collections.Generic.Dictionary[string,string]]::new([StringComparer]::OrdinalIgnoreCase)
     $queue = [Collections.Generic.Queue[string]]::new()
     $queue.Enqueue($nativeRoot)
+    $matchedTopDirs = 0
     while ($queue.Count -gt 0) {
         $directory = $queue.Dequeue()
+        $isTopLevel = $directory.Equals($nativeRoot, [StringComparison]::OrdinalIgnoreCase)
         foreach ($entry in [IO.Directory]::EnumerateFileSystemEntries($directory)) {
-            if ([IO.Path]::GetFileName($entry) -ieq '.git') {
+            $entryName = [IO.Path]::GetFileName($entry)
+            if ($entryName -ieq '.git') {
                 if ($ExcludeGit) { continue }
                 throw 'Pending snapshot unexpectedly contains Git metadata.'
             }
-            Assert-EnvironmentBackupPath $entry
             $attributes = [IO.File]::GetAttributes($entry)
+            if ($isTopLevel) {
+                if ($includeSet.Count -gt 0) {
+                    if (-not $includeSet.Contains($entryName)) { continue }
+                    if ($attributes -band [IO.FileAttributes]::ReparsePoint) {
+                        throw 'Recovery tree contains a symbolic link or junction.'
+                    }
+                    if (-not ($attributes -band [IO.FileAttributes]::Directory)) { continue }
+                    $matchedTopDirs++
+                } elseif ($excludeSet.Count -gt 0 -and ($attributes -band [IO.FileAttributes]::Directory) -and $excludeSet.Contains($entryName)) {
+                    continue
+                }
+            }
+            Assert-EnvironmentBackupPath $entry
             if ($attributes -band [IO.FileAttributes]::ReparsePoint) {
                 throw 'Recovery tree contains a symbolic link or junction.'
             }
@@ -189,6 +310,9 @@ function Get-RecoverySnapshotManifest {
             }
         }
     }
+    if ($includeSet.Count -gt 0 -and $matchedTopDirs -eq 0) {
+        throw 'Recovery source does not contain any configured backup subdirectories.'
+    }
     return ,$manifest
 }
 
@@ -206,7 +330,9 @@ function Complete-ContentSnapshot {
     param(
         [Parameter(Mandatory=$true)][string]$Source,
         [Parameter(Mandatory=$true)][string]$Pending,
-        [Parameter(Mandatory=$true)][string]$Destination
+        [Parameter(Mandatory=$true)][string]$Destination,
+        [string[]]$IncludeTopLevelDirs = @(),
+        [string[]]$ExcludeTopLevelDirs = @()
     )
     # Caller validates workspace/project/version/name. Recheck all traversed paths here.
     Assert-RecoveryPlainPath $Source
@@ -217,11 +343,11 @@ function Complete-ContentSnapshot {
     if ([IO.Directory]::Exists($nativeDestination) -or [IO.File]::Exists($nativeDestination)) {
         throw 'Recovery destination already exists; refusing to overwrite.'
     }
-    $sourceBefore = Get-RecoverySnapshotManifest -Root $Source -ExcludeGit
+    $sourceBefore = Get-RecoverySnapshotManifest -Root $Source -ExcludeGit -IncludeTopLevelDirs $IncludeTopLevelDirs -ExcludeTopLevelDirs $ExcludeTopLevelDirs
     $pendingManifest = Get-RecoverySnapshotManifest -Root $Pending
     Assert-RecoveryManifestEqual $sourceBefore $pendingManifest
     # Catch changes during the full hash pass. Callers must keep source writers quiescent.
-    $sourceAfter = Get-RecoverySnapshotManifest -Root $Source -ExcludeGit
+    $sourceAfter = Get-RecoverySnapshotManifest -Root $Source -ExcludeGit -IncludeTopLevelDirs $IncludeTopLevelDirs -ExcludeTopLevelDirs $ExcludeTopLevelDirs
     Assert-RecoveryManifestEqual $sourceBefore $sourceAfter
     Assert-RecoveryPlainPath $Pending
     Assert-RecoveryPlainPath $Destination
