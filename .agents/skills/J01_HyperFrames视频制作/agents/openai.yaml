@@ -1,0 +1,4 @@
+interface:
+  display_name: "J01_HyperFrames视频制作_v1.0.0"
+  short_description: "桥接 HyperFrames 制作网页动效与演示视频"
+  default_prompt: "使用 $J01 制作一个 HyperFrames 视频项目并预览渲染"
